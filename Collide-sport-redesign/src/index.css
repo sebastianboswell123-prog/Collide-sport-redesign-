@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+@theme {
+  /* Brand colors */
+  --color-navy: #0e1b4d;
+  --color-navy-dark: #080f2e;
+  --color-blue: #4770db;
+  --color-blue-light: #5a82e8;
+  --color-green: #47db71;
+  --color-green-dim: #3bc260;
+  --color-lavender: #eff0f5;
+  --color-lavender-dark: #dfe0e8;
+
+  /* Fonts */
+  --font-display: "Plus Jakarta Sans", "Outfit", sans-serif;
+  --font-mono: "JetBrains Mono", monospace;
+}
+
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  src: url("https://fonts.gstatic.com/s/plusjakartasans/v8/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_KU7NShXUEKi4Rw.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "DM Sans";
+  src: url("https://fonts.gstatic.com/s/dmsans/v15/rP2tp2ywxg089UriI5-g4vlH9VoD8CmcqZG40F9JadbnoEwAop-hSA.woff2") format("woff2");
+  font-weight: 100 1000;
+  font-style: normal;
+  font-display: swap;
+}
+
+html {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: #4770db #eff0f5;
+}
+
+body {
+  color: #0e1b4d;
+  -webkit-font-smoothing: antialiased;
+  background-color: #fff;
+  font-family: "DM Sans", sans-serif;
+  overflow-x: hidden;
+}
+
+::selection {
+  color: #fff;
+  background-color: #4770db;
+}
+
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #eff0f5; }
+::-webkit-scrollbar-thumb { background: #4770db; border-radius: 3px; }
+
+/* Utilities */
+.text-stroke-blue  { -webkit-text-stroke: 2px #4770db; color: transparent; }
+.text-stroke-navy  { -webkit-text-stroke: 2px #0e1b4d; color: transparent; }
+
+.diagonal-line {
+  background: repeating-linear-gradient(
+    -45deg,
+    transparent,
+    transparent 4px,
+    rgba(71, 112, 219, 0.06) 4px,
+    rgba(71, 112, 219, 0.06) 5px
+  );
+}
+
+.grid-bg {
+  background-image:
+    linear-gradient(rgba(14, 27, 77, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(14, 27, 77, 0.04) 1px, transparent 1px);
+  background-size: 60px 60px;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
+}
+.animate-marquee { animation: marquee 25s linear infinite; }
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 0px rgba(71, 219, 113, 0.4); }
+  50%       { box-shadow: 0 0 20px 5px rgba(71, 219, 113, 0.2); }
+}
+.animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }

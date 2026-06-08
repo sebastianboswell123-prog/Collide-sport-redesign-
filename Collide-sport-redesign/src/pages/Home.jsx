@@ -1,0 +1,139 @@
+import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
+
+const STATS = [
+  { value: '12K+', label: 'Active Players' },
+  { value: '850+', label: 'Teams' },
+  { value: '3.2K', label: 'Games Played' },
+  { value: '98%', label: 'Satisfaction' },
+]
+
+const MARQUEE_ITEMS = ['Play Hard', 'Train Smart', 'Win Together', 'Level Up', 'Stay Ready']
+
+export default function Home() {
+  return (
+    <>
+      {/* Hero */}
+      <section className="relative min-h-screen bg-navy-dark grid-bg flex flex-col justify-center pt-14 overflow-hidden">
+        {/* Glow blobs */}
+        <div className="absolute top-1/4 left-1/4 w-[600px] h-[600px] bg-blue/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-1/3 right-1/4 w-[400px] h-[400px] bg-green/10 rounded-full blur-[100px] pointer-events-none" />
+
+        <div className="relative mx-auto max-w-[1440px] px-6 lg:px-12 py-24 lg:py-32">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+          >
+            <span className="inline-flex items-center gap-2 bg-white/10 border border-white/10 rounded-full px-4 py-1.5 text-xs text-white/70 font-mono tracking-wider mb-8">
+              <span className="w-1.5 h-1.5 rounded-full bg-green animate-pulse-glow" />
+              NOW IN BETA — JOIN THE WAITLIST
+            </span>
+
+            <h1 className="font-display font-extrabold text-[clamp(2.8rem,8vw,5.5rem)] leading-[0.95] text-white tracking-tight mb-6">
+              SPORT IS<br />
+              <span className="text-stroke-blue">BETTER</span><br />
+              TOGETHER.
+            </h1>
+
+            <p className="text-white/50 text-lg max-w-md leading-relaxed mb-10">
+              Collide connects players, coaches, and teams on one platform — scheduling, stats, and community built for how sport actually works.
+            </p>
+
+            <div className="flex flex-wrap gap-4">
+              <Link
+                to="/join"
+                className="bg-blue text-white font-semibold px-8 py-4 rounded-full hover:bg-blue-light transition-colors"
+              >
+                Get Started Free
+              </Link>
+              <Link
+                to="/features"
+                className="border border-white/20 text-white/70 font-semibold px-8 py-4 rounded-full hover:border-white/40 hover:text-white transition-colors"
+              >
+                See Features
+              </Link>
+            </div>
+          </motion.div>
+
+          {/* Stats */}
+          <div className="mt-20 grid grid-cols-2 lg:grid-cols-4 gap-8">
+            {STATS.map(({ value, label }, i) => (
+              <motion.div
+                key={label}
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3 + i * 0.08 }}
+                className="border-l-2 border-blue/20 pl-5"
+              >
+                <div className="font-display font-extrabold text-4xl text-white">{value}</div>
+                <div className="text-sm text-white/40 mt-1">{label}</div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Marquee */}
+      <div className="bg-blue py-4 overflow-hidden">
+        <div className="animate-marquee flex gap-12 whitespace-nowrap w-max">
+          {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
+            <span key={i} className="font-display font-extrabold text-white text-xl tracking-widest uppercase">
+              {item} <span className="text-white/30 mx-2">·</span>
+            </span>
+          ))}
+        </div>
+      </div>
+
+      {/* Features teaser */}
+      <section className="py-24 lg:py-32 bg-lavender">
+        <div className="mx-auto max-w-[1440px] px-6 lg:px-12">
+          <div className="mb-16">
+            <p className="text-xs font-mono tracking-widest text-blue uppercase mb-3">Platform</p>
+            <h2 className="font-display font-extrabold text-4xl lg:text-5xl text-navy tracking-tight">
+              Everything your team needs.
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {[
+              { title: 'Smart Scheduling', desc: 'Auto-generate fixtures around your squad's availability.' },
+              { title: 'Player Profiles', desc: 'Track stats, form, and history across every session.' },
+              { title: 'Live Events', desc: 'Stream updates, scores, and highlights as they happen.' },
+              { title: 'Coach Tools', desc: 'Drill boards, session plans, and performance insights.' },
+            ].map(({ title, desc }) => (
+              <div key={title} className="bg-white rounded-2xl p-6 border border-navy/5 hover:shadow-lg hover:shadow-navy/5 transition-shadow group">
+                <div className="w-10 h-10 rounded-xl bg-blue/10 mb-5 group-hover:bg-blue/15 transition-colors" />
+                <h3 className="font-display font-bold text-lg text-navy mb-2">{title}</h3>
+                <p className="text-sm text-navy/50 leading-relaxed">{desc}</p>
+              </div>
+            ))}
+          </div>
+          <div className="mt-10 text-center">
+            <Link to="/features" className="inline-flex items-center gap-2 text-blue font-semibold hover:text-blue-light transition-colors">
+              Explore all features →
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="bg-navy py-24 lg:py-32 relative overflow-hidden">
+        <div className="absolute inset-0 diagonal-line opacity-30" />
+        <div className="relative mx-auto max-w-[1440px] px-6 lg:px-12 text-center">
+          <h2 className="font-display font-extrabold text-[clamp(2.8rem,8vw,5.5rem)] text-white tracking-tight leading-[0.95] mb-6">
+            READY TO<br />COLLIDE?
+          </h2>
+          <p className="text-white/50 text-lg max-w-sm mx-auto mb-10">
+            Join thousands of players and coaches already on the platform.
+          </p>
+          <Link
+            to="/join"
+            className="inline-block bg-green text-navy font-extrabold px-10 py-4 rounded-full hover:bg-green-dim transition-colors"
+          >
+            Join for Free
+          </Link>
+        </div>
+      </section>
+    </>
+  )
+}
