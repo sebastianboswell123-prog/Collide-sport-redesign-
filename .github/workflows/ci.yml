@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build & Lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: Collide-sport-redesign/package-lock.json
+
+      - name: Install dependencies
+        working-directory: Collide-sport-redesign
+        run: npm ci
+
+      - name: Build
+        working-directory: Collide-sport-redesign
+        run: npm run build
