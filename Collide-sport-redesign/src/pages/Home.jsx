@@ -78,7 +78,7 @@ export default function Home() {
       <div className="bg-blue py-4 overflow-hidden">
         <div className="animate-marquee flex gap-12 whitespace-nowrap w-max">
           {[...MARQUEE_ITEMS, ...MARQUEE_ITEMS].map((item, i) => (
-            <span key={i} className="font-display font-extrabold text-white text-xl tracking-widest uppercase">
+            <span key={`${item}-${i}`} className="font-display font-extrabold text-white text-xl tracking-widest uppercase">
               {item} <span className="text-white/30 mx-2">·</span>
             </span>
           ))}

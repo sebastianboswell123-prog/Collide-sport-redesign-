@@ -5,14 +5,14 @@ const CartContext = createContext(null)
 function reducer(state, action) {
   switch (action.type) {
     case 'ADD': {
-      const idx = state.findIndex(i => i.id === action.product.id)
-      if (idx > -1) {
-        return state.map((item, n) => n === idx ? { ...item, qty: item.qty + 1 } : item)
+      const index = state.findIndex(item => item.id === action.product.id)
+      if (index > -1) {
+        return state.map((item, j) => j === index ? { ...item, qty: item.qty + 1 } : item)
       }
       return [...state, { ...action.product, qty: 1 }]
     }
     case 'REMOVE':
-      return state.filter(i => i.id !== action.id)
+      return state.filter(item => item.id !== action.id)
     case 'CLEAR':
       return []
     default:
@@ -31,8 +31,8 @@ export function CartProvider({ children }) {
 
   const removeFromCart = (id) => dispatch({ type: 'REMOVE', id })
   const clearCart = () => dispatch({ type: 'CLEAR' })
-  const totalItems = items.reduce((sum, i) => sum + i.qty, 0)
-  const totalPrice = items.reduce((sum, i) => sum + i.price * i.qty, 0)
+  const totalItems = items.reduce((sum, item) => sum + item.qty, 0)
+  const totalPrice = items.reduce((sum, item) => sum + item.price * item.qty, 0)
 
   return (
     <CartContext.Provider value={{ items, addToCart, removeFromCart, clearCart, totalItems, totalPrice, open, setOpen }}>
