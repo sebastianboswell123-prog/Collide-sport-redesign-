@@ -1,5 +1,5 @@
 const FEATURES = [
-  { title: 'Smart Scheduling', category: 'Organisation', desc: 'Auto-generate fixtures around your squad's availability. Avoid clashes, set recurring sessions, and send instant reminders.' },
+  { title: 'Smart Scheduling', category: 'Organisation', desc: "Auto-generate fixtures around your squad's availability. Avoid clashes, set recurring sessions, and send instant reminders." },
   { title: 'Player Profiles', category: 'Performance', desc: 'Track stats, form, and history across every session. Compare across seasons and share your highlights.' },
   { title: 'Live Events', category: 'Community', desc: 'Stream live scores, event updates, and match highlights as they happen. Keep the whole club in the loop.' },
   { title: 'Coach Tools', category: 'Coaching', desc: 'Drill boards, session plans, and performance insights. Communicate lineups and tactics in one place.' },

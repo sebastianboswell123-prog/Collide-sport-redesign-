@@ -96,7 +96,7 @@ export default function Home() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { title: 'Smart Scheduling', desc: 'Auto-generate fixtures around your squad's availability.' },
+              { title: 'Smart Scheduling', desc: "Auto-generate fixtures around your squad's availability." },
               { title: 'Player Profiles', desc: 'Track stats, form, and history across every session.' },
               { title: 'Live Events', desc: 'Stream updates, scores, and highlights as they happen.' },
               { title: 'Coach Tools', desc: 'Drill boards, session plans, and performance insights.' },
