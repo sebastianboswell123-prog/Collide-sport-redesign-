@@ -1,9 +1,15 @@
 import { useState } from 'react'
 
 export default function Join() {
+  const [form, setForm] = useState({ name: '', email: '', role: '' })
   const [submitted, setSubmitted] = useState(false)
 
-  const handleSubmit = (e) => {
+  function handleChange(e) {
+    const { name, value } = e.target
+    setForm(prev => ({ ...prev, [name]: value }))
+  }
+
+  function handleSubmit(e) {
     e.preventDefault()
     setSubmitted(true)
   }
@@ -24,25 +30,35 @@ export default function Join() {
             <div className="bg-green/10 border border-green/20 rounded-2xl p-8 text-center">
               <div className="w-10 h-10 rounded-full bg-green mx-auto mb-4 animate-pulse-glow" />
               <p className="font-display font-bold text-white text-xl">You're on the list.</p>
-              <p className="text-white/50 text-sm mt-2">We'll be in touch soon.</p>
+              <p className="text-white/50 text-sm mt-2">
+                Thanks {form.name.split(' ')[0]}, we'll be in touch soon.
+              </p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
               <input
                 type="text"
+                name="name"
+                value={form.name}
+                onChange={handleChange}
                 placeholder="Full name"
                 required
                 className="w-full bg-white/10 border border-white/10 rounded-xl px-5 py-4 text-white placeholder:text-white/30 focus:outline-none focus:border-blue/50 transition-colors"
               />
               <input
                 type="email"
+                name="email"
+                value={form.email}
+                onChange={handleChange}
                 placeholder="Email address"
                 required
                 className="w-full bg-white/10 border border-white/10 rounded-xl px-5 py-4 text-white placeholder:text-white/30 focus:outline-none focus:border-blue/50 transition-colors"
               />
               <select
+                name="role"
+                value={form.role}
+                onChange={handleChange}
                 required
-                defaultValue=""
                 className="w-full bg-white/10 border border-white/10 rounded-xl px-5 py-4 text-white/70 focus:outline-none focus:border-blue/50 transition-colors"
               >
                 <option value="" disabled>I am a...</option>
@@ -52,7 +68,7 @@ export default function Join() {
               </select>
               <button
                 type="submit"
-                className="w-full bg-green text-navy font-extrabold py-4 rounded-full hover:bg-green-dim transition-colors"
+                className="w-full bg-green text-navy font-extrabold py-4 rounded-full hover:bg-green-dim transition-colors active:scale-95"
               >
                 Join the Waitlist
               </button>
