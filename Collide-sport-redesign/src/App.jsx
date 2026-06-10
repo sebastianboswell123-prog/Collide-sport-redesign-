@@ -12,6 +12,7 @@ import Join from './pages/Join'
 import Contact from './pages/Contact'
 import Profile from './pages/Profile'
 import Catalogue from './pages/Catalogue'
+import NotFound from './pages/NotFound'
 
 export default function App() {
   return (
@@ -29,6 +30,7 @@ export default function App() {
           <Route path="join" element={<Join />} />
           <Route path="contact" element={<Contact />} />
           <Route path="catalogue" element={<Catalogue />} />
+          <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>
     </CartProvider>
