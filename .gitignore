@@ -1,0 +1,15 @@
+# Build output at repo root (app build output lives in Collide-sport-redesign/dist)
+dist/
+
+# Claude Code editor config
+.claude/
+*/.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment files
+.env
+.env.local
+.env*.local
