@@ -94,6 +94,31 @@ If the build fails, fix it before opening the PR.
 
 ---
 
+## Merge Conflict Hotspots
+
+These files are edited by everyone — expect conflicts when multiple branches are merged close together:
+
+| File | Why it conflicts | How to handle |
+|------|-----------------|---------------|
+| `src/App.jsx` | All routes live here — anyone adding a page touches this | Add your `<Route>` in the correct position, keep others untouched |
+| `src/components/layout/Navbar.jsx` | All nav links live in the `NAV_LINKS` array | Add your entry, keep the existing array entries unchanged |
+| `package.json` / `package-lock.json` | Installing a new package changes both | Run `npm install` after pulling main to regenerate the lock file |
+
+**When you get a conflict:**
+```bash
+git checkout main
+git pull origin main
+git checkout your-branch
+git merge main        # resolve conflicts in your editor, then:
+git add .
+git commit -m "Merge main into branch"
+git push
+```
+
+The PR will update automatically — CI re-runs after the push.
+
+---
+
 ## Staying Up to Date
 
 If `main` has moved ahead while you're working on your branch:
