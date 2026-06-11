@@ -1,41 +1,48 @@
-const PH = 'https://placehold.co/400x400'
+const CDN = 'https://collidesport.co.za/cdn/shop/files'
 
 export const CATEGORIES = [
-  { value: 'jerseys',     label: 'Jerseys' },
-  { value: 'footwear',    label: 'Footwear' },
-  { value: 'equipment',   label: 'Equipment' },
-  { value: 'accessories', label: 'Accessories' },
+  { value: 'scrum-caps',       label: 'Scrum Caps' },
+  { value: 'premium-caps',     label: 'Premium Caps' },
+  { value: 'activewear',       label: 'Activewear' },
+]
+
+export const COLOURS = [
+  'Black', 'White', 'Blue', 'Navy', 'Turquoise', 'Green', 'Gold', 'Grey', 'Red', 'Maroon', 'Camo',
 ]
 
 export const PRODUCTS = [
-  // Jerseys
-  { id:  1, name: 'Pro Match Jersey',        category: 'jerseys',     price:  899, stock: 15, createdAt: '2024-03-10', image: `${PH}/4770db/ffffff?text=JERSEY` },
-  { id:  2, name: 'Team Training Jersey',    category: 'jerseys',     price:  649, stock:  8, createdAt: '2024-02-20', image: `${PH}/5a82e8/ffffff?text=JERSEY` },
-  { id:  3, name: 'Home Kit Jersey',         category: 'jerseys',     price: 1199, stock:  0, createdAt: '2024-01-15', image: `${PH}/3a5fc0/ffffff?text=HOME+KIT` },
-  { id:  4, name: 'Away Kit Jersey',         category: 'jerseys',     price: 1199, stock:  3, createdAt: '2024-01-20', image: `${PH}/6090f0/ffffff?text=AWAY+KIT` },
-  { id:  5, name: 'Goalkeeper Jersey',       category: 'jerseys',     price:  799, stock:  6, createdAt: '2024-02-05', image: `${PH}/4770db/ffffff?text=GK+JERSEY` },
-  { id:  6, name: 'Youth Match Jersey',      category: 'jerseys',     price:  549, stock: 20, createdAt: '2024-03-01', image: `${PH}/7aa0f5/ffffff?text=YOUTH` },
-  // Footwear
-  { id:  7, name: 'Sprint Pro Cleats',       category: 'footwear',    price: 1899, stock: 12, createdAt: '2024-03-15', image: `${PH}/0e1b4d/ffffff?text=CLEATS` },
-  { id:  8, name: 'Training Sneakers',       category: 'footwear',    price: 1299, stock:  7, createdAt: '2024-02-28', image: `${PH}/0e1b4d/eeeeee?text=SNEAKERS` },
-  { id:  9, name: 'Turf Shoes',              category: 'footwear',    price:  999, stock:  0, createdAt: '2024-01-10', image: `${PH}/1a2b5d/ffffff?text=TURF` },
-  { id: 10, name: 'Indoor Court Shoes',      category: 'footwear',    price: 1099, stock:  5, createdAt: '2024-02-15', image: `${PH}/1e3070/ffffff?text=INDOOR` },
-  { id: 11, name: 'Elite Speed Boots',       category: 'footwear',    price: 2499, stock:  2, createdAt: '2024-03-20', image: `${PH}/080f2e/ffffff?text=ELITE` },
-  { id: 12, name: 'Junior Cleats',           category: 'footwear',    price:  749, stock: 11, createdAt: '2024-03-05', image: `${PH}/0e1b4d/aaaaff?text=JUNIOR` },
-  // Equipment
-  { id: 13, name: 'Match Ball Pro',          category: 'equipment',   price:  599, stock: 30, createdAt: '2024-03-18', image: `${PH}/47db71/0e1b4d?text=BALL` },
-  { id: 14, name: 'Training Cones (20pk)',   category: 'equipment',   price:  299, stock: 50, createdAt: '2024-01-25', image: `${PH}/3bc260/0e1b4d?text=CONES` },
-  { id: 15, name: 'Speed Agility Ladder',    category: 'equipment',   price:  449, stock: 14, createdAt: '2024-02-10', image: `${PH}/47db71/0e1b4d?text=LADDER` },
-  { id: 16, name: 'Resistance Band Kit',     category: 'equipment',   price:  349, stock:  0, createdAt: '2024-01-05', image: `${PH}/3bc260/0e1b4d?text=BANDS` },
-  { id: 17, name: 'Pop-Up Goal Set',         category: 'equipment',   price:  899, stock:  8, createdAt: '2024-02-22', image: `${PH}/55e080/0e1b4d?text=GOAL` },
-  { id: 18, name: 'Tackle Shield',           category: 'equipment',   price:  749, stock:  4, createdAt: '2024-03-08', image: `${PH}/47db71/0e1b4d?text=SHIELD` },
-  // Accessories
-  { id: 19, name: 'Team Duffel Bag',         category: 'accessories', price:  799, stock: 11, createdAt: '2024-03-12', image: `${PH}/dfe0e8/0e1b4d?text=BAG` },
-  { id: 20, name: 'Compression Socks',       category: 'accessories', price:  199, stock: 40, createdAt: '2024-02-18', image: `${PH}/dfe0e8/0e1b4d?text=SOCKS` },
-  { id: 21, name: 'Sport Shin Guards',       category: 'accessories', price:  299, stock:  0, createdAt: '2024-01-30', image: `${PH}/c5c6d0/0e1b4d?text=GUARDS` },
-  { id: 22, name: 'Moisture-Wicking Cap',    category: 'accessories', price:  249, stock: 25, createdAt: '2024-03-22', image: `${PH}/dfe0e8/0e1b4d?text=CAP` },
-  { id: 23, name: 'Water Bottle 750ml',      category: 'accessories', price:  179, stock: 60, createdAt: '2024-02-08', image: `${PH}/eff0f5/0e1b4d?text=BOTTLE` },
-  { id: 24, name: 'Grip Tape Roll',          category: 'accessories', price:   89, stock:  0, createdAt: '2024-01-18', image: `${PH}/d0d1db/0e1b4d?text=TAPE` },
+  // ── Scrum Caps ──────────────────────────────────────────────────────────
+  { id:  1, name: 'Rugby Scrum Cap — Turquoise/White',          category: 'scrum-caps', price: 550, stock: 12, colours: ['Turquoise','White'],  badge: null,      image: `${CDN}/ScrumCap-Turquoise_White.jpg?v=1689063382&width=533` },
+  { id:  2, name: 'Rugby Scrum Cap — Navy/Gold',                category: 'scrum-caps', price: 550, stock:  8, colours: ['Navy','Gold'],         badge: null,      image: `${CDN}/ScrumCap-Navy_Gold.jpg?v=1689063348&width=533` },
+  { id:  3, name: 'Rugby Scrum Cap — Black/Grey',               category: 'scrum-caps', price: 550, stock: 10, colours: ['Black','Grey'],        badge: null,      image: `${CDN}/ScrumCap-Black_Grey.jpg?v=1689232549&width=533` },
+  { id:  4, name: 'Rugby Scrum Cap — Black',                    category: 'scrum-caps', price: 550, stock:  6, colours: ['Black'],               badge: null,      image: `${CDN}/ScrumCap-Black.jpg?v=1689015482&width=533` },
+  { id:  5, name: 'Rugby Scrum Cap — White/Black Border',       category: 'scrum-caps', price: 550, stock: 14, colours: ['White','Black'],       badge: null,      image: `${CDN}/0fa2da60fdc932d655d4a4d0ec1af3a7_48c2aac8-0c5f-4f98-8843-00c8d9a329ed.png?v=1719768481&width=533` },
+  { id:  6, name: 'Rugby Scrum Cap — Royal Blue/Black',         category: 'scrum-caps', price: 550, stock:  5, colours: ['Blue','Black'],        badge: null,      image: `${CDN}/ScrumCap-RoyalBlue_Black_1.jpg?v=1689015686&width=533` },
+  { id:  7, name: 'Rugby Scrum Cap — Turquoise/Black',          category: 'scrum-caps', price: 550, stock:  9, colours: ['Turquoise','Black'],   badge: null,      image: `${CDN}/8378F7F2-7EA7-4A45-93B4-38F9E4CA96F3.png?v=1692564303&width=533` },
+  { id:  8, name: 'Rugby Scrum Cap — Blue & White Camo',        category: 'scrum-caps', price: 550, stock: 11, colours: ['Blue','White','Camo'], badge: null,      image: `${CDN}/PHOTO-2023-09-22-12-03-492.jpg?v=1696703796&width=533` },
+  { id:  9, name: 'Primal Camo Scrum Cap — Black Border',       category: 'scrum-caps', price: 550, stock:  7, colours: ['Camo','Black'],        badge: null,      image: `${CDN}/IMG-8654.jpg?v=1696704119&width=533` },
+  { id: 10, name: 'Primal Camo Scrum Cap — Grey Border',        category: 'scrum-caps', price: 550, stock:  3, colours: ['Camo','Grey'],         badge: 'Low Stock', image: `${CDN}/4c18b2db-1206-4880-bf77-d3e515d2b27e.jpg?v=1696704167&width=533` },
+  { id: 11, name: 'White Tribal Rugby Scrum Cap',               category: 'scrum-caps', price: 550, stock: 15, colours: ['White'],               badge: null,      image: `${CDN}/TribelLeft.jpg?v=1696703994&width=533` },
+  { id: 12, name: 'Darker Blue Camo Rugby Scrum Cap',           category: 'scrum-caps', price: 550, stock:  4, colours: ['Blue','Grey','Camo'],  badge: 'Low Stock', image: `${CDN}/P230725122545_2_RAW_162Large.jpg?v=1696705870&width=533` },
+  { id: 13, name: 'Rugby Scrum Cap — White Border',             category: 'scrum-caps', price: 550, stock: 10, colours: ['White'],               badge: null,      image: `${CDN}/Collide_white_cap_newest.jpg?v=1719768757&width=533` },
+  { id: 14, name: 'Warrior Scrum Cap',                          category: 'scrum-caps', price: 550, stock: 13, colours: ['Black','Grey'],        badge: null,      image: `${CDN}/Warrior_Scrum_Cap.jpg?v=1724349324&width=533` },
+  { id: 15, name: 'Tribal Scrum Cap — Black Border',            category: 'scrum-caps', price: 550, stock: 16, colours: ['White','Black'],       badge: null,      image: `${CDN}/Tribal_Scrum_Cap_with_Black_Border.jpg?v=1722097747&width=533` },
+  { id: 16, name: 'Rugby Scrum Cap — Navy & White',             category: 'scrum-caps', price: 550, stock:  8, colours: ['Navy','White'],        badge: null,      image: `${CDN}/PHOTO-2024-07-24-16-31-06.jpg?v=1722103434&width=533` },
+  { id: 17, name: 'Rugby Scrum Cap — Green & Black',            category: 'scrum-caps', price: 450, stock: 20, colours: ['Green','Black'],       badge: null,      image: `${CDN}/1_165a1aff-9c87-41b8-b1c2-d8304dff7ab1.jpg?v=1722102398&width=533` },
+  { id: 18, name: 'Rugby Scrum Cap — Graffiti',                 category: 'scrum-caps', price: 450, stock: 18, colours: ['White','Black'],       badge: null,      image: `${CDN}/2_edc879f4-ec89-432d-abdb-fa6a49b88508.jpg?v=1722102793&width=533` },
+  { id: 19, name: 'Blue & White Camo — Black Border',           category: 'scrum-caps', price: 550, stock:  6, colours: ['Blue','White','Camo','Black'], badge: 'New', image: `${CDN}/2_5983c119-b758-4faf-9162-85a5b20e170c.jpg?v=1779389799&width=533` },
+
+  // ── Premium Caps ────────────────────────────────────────────────────────
+  { id: 20, name: 'Predator Scrum Cap — Navy & Gold',           category: 'premium-caps', price: 750, stock:  5, colours: ['Navy','Gold'],       badge: 'Premium', image: `${CDN}/52E885BC-C2E8-4007-8B49-04A5AC567F56.jpg?v=1750614416&width=533` },
+  { id: 21, name: 'Predator Scrum Cap — Maroon & Gold',         category: 'premium-caps', price: 750, stock:  4, colours: ['Maroon','Gold'],     badge: 'Premium', image: `${CDN}/AE502E8A-BFEE-4C4E-B07A-D1172C2A0491.png?v=1750614673&width=533` },
+  { id: 22, name: 'White & Red Tribal Scrum Cap',               category: 'premium-caps', price: 650, stock:  7, colours: ['White','Red'],       badge: 'New',     image: `${CDN}/6D305D90-7B2E-4186-AC61-AFB7A8CF0DB3.png?v=1756738038&width=533` },
+  { id: 23, name: 'Red Fury Scrum Cap — White Border',          category: 'premium-caps', price: 650, stock:  6, colours: ['Red','White'],       badge: 'New',     image: `${CDN}/B45B48B7-A9B9-421B-865A-2DF787C1C0E0.png?v=1756736851&width=533` },
+
+  // ── Activewear ──────────────────────────────────────────────────────────
+  { id: 24, name: 'Compression Top — Black',                    category: 'activewear', price: 299, stock: 20, colours: ['Black'],               badge: null,      image: `${CDN}/SabreCompressionTop-Black.jpg?v=1689063664&width=533` },
+  { id: 25, name: 'Compression Top — White',                    category: 'activewear', price: 299, stock: 15, colours: ['White'],               badge: null,      image: `${CDN}/SabreCompressionTop-White.jpg?v=1689016014&width=533` },
+  { id: 26, name: 'Running Top — Black',                        category: 'activewear', price: 399, stock: 12, colours: ['Black'],               badge: null,      image: `${CDN}/SabreRunningTop-Black_1.jpg?v=1689063515&width=533` },
+  { id: 27, name: 'Undershorts — Black',                        category: 'activewear', price: 449, stock: 10, colours: ['Black'],               badge: null,      image: `${CDN}/editedblackundershorts.jpg?v=1689431134&width=533` },
 ]
 
 export const PRICE_MIN = Math.min(...PRODUCTS.map(p => p.price))
