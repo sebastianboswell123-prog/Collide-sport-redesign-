@@ -54,6 +54,22 @@ const SLIDES = [
     glowA: 'rgba(71,112,219,0.10)',
     glowB: 'rgba(71,219,113,0.14)',
   },
+  {
+    id: 4,
+    type: 'video',
+    eyebrow: 'WATCH THE ACTION',
+    lines: ['FEEL THE', 'COLLIDE', 'DIFFERENCE.'],
+    accent: 1,
+    sub: 'Rugby. Built different. Gear that keeps up with every tackle, sprint, and scrum.',
+    cta: { label: 'Shop Now', to: '/catalogue' },
+    cta2: { label: 'See Features', to: '/features' },
+    // ← Swap this URL for your own video — or drop hero-video.mp4 into /public and use '/hero-video.mp4'
+    videoSrc: 'https://media.w3.org/2010/05/sintel/trailer.mp4',
+    bg: 'linear-gradient(135deg, #040c20 0%, #0b1840 100%)',
+    stroke: 'text-stroke-blue',
+    glowA: 'rgba(71,112,219,0.20)',
+    glowB: 'rgba(71,219,113,0.12)',
+  },
 ]
 
 const STATS = [
@@ -123,15 +139,34 @@ export default function Home() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.7 }}
           >
-            {/* Glow blobs */}
-            <div
-              className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[130px] pointer-events-none"
-              style={{ background: slide.glowA }}
-            />
-            <div
-              className="absolute bottom-1/3 right-1/4 w-[420px] h-[420px] rounded-full blur-[100px] pointer-events-none"
-              style={{ background: slide.glowB }}
-            />
+            {slide.type === 'video' && slide.videoSrc ? (
+              <>
+                {/* Full-bleed video background */}
+                <video
+                  key={slide.videoSrc}
+                  className="absolute inset-0 w-full h-full object-cover"
+                  src={slide.videoSrc}
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                />
+                {/* Dark navy overlay so text stays readable */}
+                <div className="absolute inset-0 bg-[#040c20]/75" />
+              </>
+            ) : (
+              <>
+                {/* Glow blobs for non-video slides */}
+                <div
+                  className="absolute top-1/4 left-1/4 w-[600px] h-[600px] rounded-full blur-[130px] pointer-events-none"
+                  style={{ background: slide.glowA }}
+                />
+                <div
+                  className="absolute bottom-1/3 right-1/4 w-[420px] h-[420px] rounded-full blur-[100px] pointer-events-none"
+                  style={{ background: slide.glowB }}
+                />
+              </>
+            )}
           </motion.div>
         </AnimatePresence>
 
