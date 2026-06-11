@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import { PRODUCTS } from '../data/products'
 
 const INTERVAL = 5000
 const CDN = 'https://collidesport.co.za/cdn/shop/files'
@@ -46,29 +47,46 @@ export const DEFAULT_SLIDES = [
   },
 ]
 
+// 4 category tiles — 2×2 on mobile, 4-across on desktop
 const CATEGORY_TILES = [
-  { label: 'Scrum Caps', img: `${CDN}/ScrumCap-Black.jpg?v=1689015482&width=533`, to: '/catalogue?categories=scrum-caps' },
-  { label: 'Premium Caps', img: `${CDN}/52E885BC-C2E8-4007-8B49-04A5AC567F56.jpg?v=1750614416&width=533`, to: '/catalogue?categories=premium-caps' },
-  { label: 'Activewear', img: `${CDN}/SabreCompressionTop-Black.jpg?v=1689063664&width=533`, to: '/catalogue?categories=activewear' },
+  {
+    label: 'Scrum Caps',
+    img: `${CDN}/ScrumCap-Black.jpg?v=1689015482&width=533`,
+    to: '/catalogue?categories=scrum-caps',
+    objectPosition: 'center top',
+  },
+  {
+    label: 'Premium Caps',
+    img: `${CDN}/52E885BC-C2E8-4007-8B49-04A5AC567F56.jpg?v=1750614416&width=533`,
+    to: '/catalogue?categories=premium-caps',
+    objectPosition: 'center center',
+  },
+  {
+    label: 'Activewear',
+    img: `${CDN}/SabreCompressionTop-Black.jpg?v=1689063664&width=533`,
+    to: '/catalogue?categories=activewear',
+    objectPosition: 'center center',
+  },
+  {
+    label: 'New Arrivals',
+    img: `${CDN}/2_5983c119-b758-4faf-9162-85a5b20e170c.jpg?v=1779389799&width=533`,
+    to: '/catalogue?badge=New',
+    objectPosition: 'center center',
+  },
 ]
 
 const TRUST_SIGNALS = [
   { icon: 'shield', text: '5★ Rated on Takealot' },
-  { icon: 'truck', text: 'Free Delivery on R1000+' },
-  { icon: 'lock', text: 'Secure Checkout' },
-  { icon: 'refresh', text: '30-Day Returns' },
+  { icon: 'truck',  text: 'Free Delivery on R1 000+' },
+  { icon: 'lock',   text: 'Secure Checkout' },
+  { icon: 'refresh',text: '30-Day Returns' },
 ]
 
-const FEATURED_PRODUCTS = [
-  { name: 'Rugby Scrum Cap — Turquoise/White', price: 550, img: `${CDN}/ScrumCap-Turquoise_White.jpg?v=1689063382&width=533`, to: '/catalogue' },
-  { name: 'Rugby Scrum Cap — Navy/Gold', price: 550, img: `${CDN}/ScrumCap-Navy_Gold.jpg?v=1689063348&width=533`, to: '/catalogue' },
-  { name: 'Rugby Scrum Cap — Black/Grey', price: 550, img: `${CDN}/ScrumCap-Black_Grey.jpg?v=1689232549&width=533`, to: '/catalogue' },
-  { name: 'Rugby Scrum Cap — Black', price: 550, img: `${CDN}/ScrumCap-Black.jpg?v=1689015482&width=533`, to: '/catalogue' },
-  { name: 'White Tribal Rugby Scrum Cap', price: 550, img: `${CDN}/TribelLeft.jpg?v=1696703994&width=533`, to: '/catalogue' },
-  { name: 'Warrior Scrum Cap', price: 550, img: `${CDN}/Warrior_Scrum_Cap.jpg?v=1724349324&width=533`, to: '/catalogue' },
-  { name: 'Rugby Scrum Cap — Royal Blue/Black', price: 550, img: `${CDN}/ScrumCap-RoyalBlue_Black_1.jpg?v=1689015686&width=533`, to: '/catalogue' },
-  { name: 'Rugby Scrum Cap — Blue & White Camo', price: 550, img: `${CDN}/PHOTO-2023-09-22-12-03-492.jpg?v=1696703796&width=533`, to: '/catalogue' },
-]
+// Pull real product data so badges stay in sync with products.js
+const FEATURED_IDS = [14, 11, 20, 22, 23, 19, 1, 15]
+const FEATURED_PRODUCTS = FEATURED_IDS
+  .map(id => PRODUCTS.find(p => p.id === id))
+  .filter(Boolean)
 
 const FEATURES = [
   {
@@ -86,9 +104,9 @@ const FEATURES = [
 ]
 
 const TESTIMONIALS = [
-  { name: 'HE', text: 'Fits perfectly, looks great and serves its purpose well.' },
-  { name: 'Cristelle', text: 'Very happy with this product and sizing is good. Quality is great.' },
-  { name: 'Chad', text: 'Helping me so much from not getting another concussion.' },
+  { name: 'HE',       text: 'Fits perfectly, looks great and serves its purpose well.' },
+  { name: 'Cristelle',text: 'Very happy with this product and sizing is good. Quality is great.' },
+  { name: 'Chad',     text: 'Helping me so much from not getting another concussion.' },
 ]
 
 function ChevronLeft() {
@@ -117,16 +135,39 @@ function StarIcon() {
 
 function TrustIcon({ type }) {
   if (type === 'shield') return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+    </svg>
   )
   if (type === 'truck') return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+      <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+    </svg>
   )
   if (type === 'lock') return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+    </svg>
   )
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/>
+    </svg>
+  )
+}
+
+function BadgeChip({ badge }) {
+  if (!badge) return null
+  const styles = {
+    'New':       'bg-green text-navy',
+    'Premium':   'bg-blue text-white',
+    'Low Stock': 'bg-red-500 text-white',
+  }
+  return (
+    <span className={`absolute top-2.5 left-2.5 z-10 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide ${styles[badge] ?? 'bg-navy text-white'}`}>
+      {badge}
+    </span>
   )
 }
 
@@ -185,11 +226,10 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
             transition={{ duration: 0.7, ease: 'easeOut' }}
           >
             {slide.layout === 'split' ? (
-              /* ── Split layout: navy left panel + product image right, fully visible ── */
+              /* ── Split layout: navy panel left + product fully visible right ── */
               <div className="absolute inset-0 flex">
-                {/* Left: solid brand panel — text sits on top of this */}
                 <div className="w-full lg:w-1/2 bg-navy-dark flex-shrink-0" />
-                {/* Right: product image contained so no cropping */}
+                {/* Desktop right panel: object-contain so cap is never cropped */}
                 <motion.div
                   className="hidden lg:flex flex-1 items-center justify-center bg-navy relative overflow-hidden"
                   initial={{ x: 40, opacity: 0 }}
@@ -202,22 +242,21 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
                     className="w-full h-full object-contain p-8"
                     style={{ objectPosition: slide.objectPosition || 'center center' }}
                   />
-                  {/* Subtle inner glow on the right panel */}
                   <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-navy/30 pointer-events-none" />
                 </motion.div>
-                {/* On mobile: show image as full background cover with overlay */}
-                <div className="lg:hidden absolute inset-0">
+                {/* Mobile fallback: object-contain with dark bg so cap still shows in full */}
+                <div className="lg:hidden absolute inset-0 bg-navy-dark flex items-center justify-center">
                   <img
                     src={slide.img}
                     alt={slide.heading}
-                    className="absolute inset-0 w-full h-full object-cover"
+                    className="w-full h-full object-contain"
                     style={{ objectPosition: slide.objectPosition || 'center center' }}
                   />
-                  <div className="absolute inset-0 bg-navy-dark/75" />
+                  <div className="absolute inset-0 bg-navy-dark/60" />
                 </div>
               </div>
             ) : (
-              /* ── Full-bleed layout for banner/landscape images ── */
+              /* ── Full-bleed for wide banner images ── */
               <>
                 <motion.img
                   src={slide.img}
@@ -231,12 +270,12 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
                 <div className={`absolute inset-0 bg-gradient-to-r ${slide.gradient || 'from-navy-dark/80 via-navy-dark/45 to-transparent'}`} />
               </>
             )}
-            {/* Bottom fade — keeps dots/counter legible on all slide types */}
+            {/* Bottom fade for dots readability */}
             <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-navy-dark/70 to-transparent pointer-events-none" />
           </motion.div>
         </AnimatePresence>
 
-        {/* Slide content */}
+        {/* Slide text */}
         <div className="relative h-full flex items-center z-10">
           <motion.div
             key={current}
@@ -248,15 +287,12 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
             <h1 className="font-display font-extrabold text-[clamp(2rem,6vw,4.5rem)] leading-[1.05] text-white tracking-tight max-w-2xl mb-4">
               {slide.heading}
             </h1>
-
             {slide.sub && (
-              <p className="text-white/70 text-lg lg:text-xl max-w-lg leading-relaxed mb-8">
+              <p className="text-white/70 text-base lg:text-xl max-w-lg leading-relaxed mb-8">
                 {slide.sub}
               </p>
             )}
-
             {!slide.sub && <div className="mb-8" />}
-
             <Link
               to={slide.cta.to}
               className="inline-block bg-blue text-white font-semibold px-8 py-3.5 rounded-full hover:bg-blue-light transition-colors"
@@ -282,21 +318,23 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
           <ChevronRight />
         </button>
 
-        {/* Slide counter + dots */}
-        <div className="absolute bottom-6 left-0 right-0 px-6 lg:px-16 max-w-[1440px] mx-auto flex items-center justify-between z-20">
+        {/* Dots + counter — wrapped in larger touch targets for mobile */}
+        <div className="absolute bottom-8 left-0 right-0 px-6 lg:px-16 max-w-[1440px] mx-auto flex items-center justify-between z-20">
           <span className="font-mono text-white/40 text-sm tabular-nums select-none">
             {current + 1} / {SLIDES.length}
           </span>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             {SLIDES.map((_, i) => (
               <button
                 key={i}
                 onClick={() => goTo(i)}
                 aria-label={`Go to slide ${i + 1}`}
-                className={`h-[3px] rounded-full transition-all duration-300 ${
+                className="p-2 -m-2 flex items-center justify-center"
+              >
+                <span className={`block h-[3px] rounded-full transition-all duration-300 ${
                   i === current ? 'bg-blue w-8' : 'bg-white/30 w-4 hover:bg-white/50'
-                }`}
-              />
+                }`} />
+              </button>
             ))}
           </div>
         </div>
@@ -313,32 +351,53 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
         </div>
       </section>
 
-      {/* ── Trust Signals Strip — always visible ── */}
-      <div className="sticky top-14 z-30 bg-navy text-white border-b border-white/5">
-        <div className="mx-auto max-w-[1440px] px-4 lg:px-12 py-2.5 flex items-center justify-center gap-6 lg:gap-12 overflow-x-auto">
+      {/* ── Trust Signals Strip ──
+          Desktop: 4 signals in a row.
+          Mobile: auto-scrolling marquee — no horizontal scroll required. ── */}
+      <div className="sticky top-14 z-30 bg-navy text-white border-b border-white/5 overflow-hidden">
+        {/* Desktop */}
+        <div className="hidden lg:flex mx-auto max-w-[1440px] px-12 py-2.5 items-center justify-center gap-12">
           {TRUST_SIGNALS.map(({ icon, text }) => (
-            <div key={text} className="flex items-center gap-2 flex-shrink-0">
+            <div key={text} className="flex items-center gap-2">
               <span className="text-green"><TrustIcon type={icon} /></span>
-              <span className="text-[11px] lg:text-xs font-medium text-white/80 whitespace-nowrap">{text}</span>
+              <span className="text-xs font-medium text-white/80 whitespace-nowrap">{text}</span>
             </div>
           ))}
         </div>
+        {/* Mobile marquee */}
+        <div className="lg:hidden py-2.5">
+          <div className="animate-marquee flex gap-10 whitespace-nowrap w-max">
+            {[...TRUST_SIGNALS, ...TRUST_SIGNALS].map(({ icon, text }, i) => (
+              <div key={i} className="flex items-center gap-2 flex-shrink-0">
+                <span className="text-green"><TrustIcon type={icon} /></span>
+                <span className="text-[11px] font-medium text-white/80">{text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
 
-      {/* ── Category Tiles ── */}
+      {/* ── Category Tiles ──
+          4 tiles. Mobile: 2×2 grid. Desktop: 4 across.
+          Square aspect keeps tiles compact on all screens. ── */}
       <section className="py-12 lg:py-16 bg-lavender">
         <div className="mx-auto max-w-[1440px] px-6 lg:px-12">
           <h2 className="font-display font-extrabold text-2xl lg:text-3xl text-navy tracking-tight mb-8 text-center">
             Shop by Category
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6">
-            {CATEGORY_TILES.map(({ label, img, to }) => (
-              <Link key={label} to={to} className="group relative aspect-[4/3] rounded-2xl overflow-hidden">
-                <img src={img} alt={label} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                <div className="absolute inset-0 bg-gradient-to-t from-navy/70 via-navy/20 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <h3 className="font-display font-extrabold text-xl text-white">{label}</h3>
-                  <span className="text-white/70 text-sm font-medium group-hover:text-white transition-colors">Shop now →</span>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6">
+            {CATEGORY_TILES.map(({ label, img, to, objectPosition }) => (
+              <Link key={label} to={to} className="group relative aspect-square rounded-2xl overflow-hidden">
+                <img
+                  src={img}
+                  alt={label}
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  style={{ objectPosition: objectPosition || 'center center' }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-navy/20 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-4 lg:p-5">
+                  <h3 className="font-display font-extrabold text-base lg:text-lg text-white leading-tight">{label}</h3>
+                  <span className="text-white/60 text-xs font-medium group-hover:text-white transition-colors">Shop now →</span>
                 </div>
               </Link>
             ))}
@@ -346,31 +405,40 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
         </div>
       </section>
 
-      {/* ── Featured Products ── */}
+      {/* ── Featured Products ──
+          Pulls from real product data so badges (New/Premium/Low Stock) display correctly.
+          Quick Shop overlay on hover/focus. 2-col mobile, 4-col desktop. ── */}
       <section className="py-16 lg:py-24 bg-white">
         <div className="mx-auto max-w-[1440px] px-6 lg:px-12">
-          <h2 className="font-display font-extrabold text-3xl lg:text-4xl text-navy tracking-tight mb-10 text-center">
-            Featured Scrum Caps
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
+          <div className="flex items-end justify-between mb-8 lg:mb-10">
+            <h2 className="font-display font-extrabold text-2xl lg:text-4xl text-navy tracking-tight">
+              Featured Scrum Caps
+            </h2>
+            <Link to="/catalogue" className="text-sm text-blue font-semibold hover:text-blue-light transition-colors whitespace-nowrap ml-4">
+              View all →
+            </Link>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 lg:gap-6">
             {FEATURED_PRODUCTS.map((p) => (
-              <Link key={p.name} to={p.to} className="group">
-                <div className="aspect-square rounded-2xl overflow-hidden bg-lavender mb-3">
+              <Link key={p.id} to="/catalogue" className="group">
+                <div className="relative aspect-square rounded-xl lg:rounded-2xl overflow-hidden bg-lavender mb-2.5">
                   <img
-                    src={p.img}
+                    src={p.image}
                     alt={p.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
+                  <BadgeChip badge={p.badge} />
+                  {/* Quick Shop — slides up on hover, full-width tap on mobile */}
+                  <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-10">
+                    <div className="bg-navy/90 backdrop-blur-sm px-4 py-3 text-center">
+                      <span className="text-white font-semibold text-sm">Quick Shop →</span>
+                    </div>
+                  </div>
                 </div>
-                <h3 className="font-display font-semibold text-sm text-navy leading-snug mb-1">{p.name}</h3>
+                <h3 className="font-display font-semibold text-xs lg:text-sm text-navy leading-snug mb-1 line-clamp-2">{p.name}</h3>
                 <p className="text-blue font-bold text-sm">R {p.price.toFixed(2)}</p>
               </Link>
             ))}
-          </div>
-          <div className="mt-10 text-center">
-            <Link to="/catalogue" className="inline-flex items-center gap-2 text-blue font-semibold hover:text-blue-light transition-colors">
-              View All Products →
-            </Link>
           </div>
         </div>
       </section>
@@ -428,13 +496,10 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
 
       {/* ── Product Feature Strips ── */}
       <section className="bg-navy-dark overflow-hidden">
-        {/* Tribal Scrum Cap */}
         <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[400px]">
           <div className="flex items-center justify-center p-10 lg:p-16">
             <div>
-              <h2 className="font-display font-extrabold text-3xl lg:text-4xl text-white tracking-tight mb-4">
-                Tribal Scrum Cap
-              </h2>
+              <h2 className="font-display font-extrabold text-3xl lg:text-4xl text-white tracking-tight mb-4">Tribal Scrum Cap</h2>
               <p className="text-white/60 text-base max-w-md leading-relaxed mb-8">
                 Flexible as well as durable to sit comfortably on all head shapes. Our most popular cap — stand out on the field of play.
               </p>
@@ -444,28 +509,16 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
             </div>
           </div>
           <div className="bg-lavender">
-            <img
-              src={`${CDN}/TribelLeft.jpg?v=1696703994&width=800`}
-              alt="Tribal Scrum Cap"
-              className="w-full h-full object-cover min-h-[300px]"
-            />
+            <img src={`${CDN}/TribelLeft.jpg?v=1696703994&width=800`} alt="Tribal Scrum Cap" className="w-full h-full object-cover min-h-[300px]" />
           </div>
         </div>
-
-        {/* Compression Tops */}
         <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[400px]">
           <div className="bg-lavender order-2 lg:order-1">
-            <img
-              src={`${CDN}/SabreCompressionTop-Black.jpg?v=1689063664&width=800`}
-              alt="Compression Top — Black"
-              className="w-full h-full object-cover min-h-[300px]"
-            />
+            <img src={`${CDN}/SabreCompressionTop-Black.jpg?v=1689063664&width=800`} alt="Compression Top" className="w-full h-full object-cover min-h-[300px]" />
           </div>
           <div className="flex items-center justify-center p-10 lg:p-16 order-1 lg:order-2">
             <div>
-              <h2 className="font-display font-extrabold text-3xl lg:text-4xl text-white tracking-tight mb-4">
-                Compression Tops
-              </h2>
+              <h2 className="font-display font-extrabold text-3xl lg:text-4xl text-white tracking-tight mb-4">Compression Tops</h2>
               <p className="text-white/60 text-base max-w-md leading-relaxed mb-8">
                 Available in White and Black. Designed for comfort and performance during training and match day.
               </p>
@@ -475,14 +528,10 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
             </div>
           </div>
         </div>
-
-        {/* Warrior Scrum Cap */}
         <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[400px]">
           <div className="flex items-center justify-center p-10 lg:p-16">
             <div>
-              <h2 className="font-display font-extrabold text-3xl lg:text-4xl text-white tracking-tight mb-4">
-                Warrior Scrum Cap
-              </h2>
+              <h2 className="font-display font-extrabold text-3xl lg:text-4xl text-white tracking-tight mb-4">Warrior Scrum Cap</h2>
               <p className="text-white/60 text-base max-w-md leading-relaxed mb-8">
                 Score tries under the defence's radar in our warrior scrum cap. Built for players who give everything on the field.
               </p>
@@ -492,11 +541,7 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
             </div>
           </div>
           <div className="bg-lavender">
-            <img
-              src={`${CDN}/Warrior_Scrum_Cap.jpg?v=1724349324&width=800`}
-              alt="Warrior Scrum Cap"
-              className="w-full h-full object-cover min-h-[300px]"
-            />
+            <img src={`${CDN}/Warrior_Scrum_Cap.jpg?v=1724349324&width=800`} alt="Warrior Scrum Cap" className="w-full h-full object-cover min-h-[300px]" />
           </div>
         </div>
       </section>
@@ -526,8 +571,8 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
         </div>
       </section>
 
-      {/* ── CTA ── */}
-      <section className="bg-navy py-16 lg:py-24 relative overflow-hidden">
+      {/* ── CTA — pb-20 on mobile clears the fixed MobileBottomBar ── */}
+      <section className="bg-navy py-16 lg:py-24 relative overflow-hidden pb-20 lg:pb-24">
         <div className="absolute inset-0 diagonal-line opacity-30" />
         <div className="relative mx-auto max-w-[1440px] px-6 lg:px-12 text-center">
           <h2 className="font-display font-extrabold text-[clamp(2rem,6vw,4rem)] text-white tracking-tight leading-[1.05] mb-4">
