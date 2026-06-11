@@ -1,5 +1,6 @@
 # Build output at repo root (app build output lives in Collide-sport-redesign/dist)
 dist/
+.vite/
 
 # Claude Code editor config
 .claude/

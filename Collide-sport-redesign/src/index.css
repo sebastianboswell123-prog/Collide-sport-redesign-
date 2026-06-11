@@ -58,6 +58,7 @@ body {
 /* Utilities */
 .text-stroke-blue  { -webkit-text-stroke: 2px #4770db; color: transparent; }
 .text-stroke-navy  { -webkit-text-stroke: 2px #0e1b4d; color: transparent; }
+.text-stroke-green { -webkit-text-stroke: 2px #47db71; color: transparent; }
 
 .diagonal-line {
   background: repeating-linear-gradient(
