@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom'
 const INTERVAL = 5000
 const CDN = 'https://collidesport.co.za/cdn/shop/files'
 
-const SLIDES = [
+export const DEFAULT_SLIDES = [
   {
     id: 0,
     heading: 'Play Hard with Collide Sport',
@@ -34,6 +34,19 @@ const SLIDES = [
     cta: { label: 'Shop Now', to: '/catalogue' },
     img: `${CDN}/E3A94B05-ABD7-454F-B24A-B3E9FF34BAEA.jpg?v=1719767691&width=1920`,
   },
+]
+
+const CATEGORY_TILES = [
+  { label: 'Scrum Caps', img: `${CDN}/ScrumCap-Black.jpg?v=1689015482&width=533`, to: '/catalogue?categories=scrum-caps' },
+  { label: 'Premium Caps', img: `${CDN}/52E885BC-C2E8-4007-8B49-04A5AC567F56.jpg?v=1750614416&width=533`, to: '/catalogue?categories=premium-caps' },
+  { label: 'Activewear', img: `${CDN}/SabreCompressionTop-Black.jpg?v=1689063664&width=533`, to: '/catalogue?categories=activewear' },
+]
+
+const TRUST_SIGNALS = [
+  { icon: 'shield', text: '5★ Rated on Takealot' },
+  { icon: 'truck', text: 'Free Delivery on R1000+' },
+  { icon: 'lock', text: 'Secure Checkout' },
+  { icon: 'refresh', text: '30-Day Returns' },
 ]
 
 const FEATURED_PRODUCTS = [
@@ -92,7 +105,23 @@ function StarIcon() {
   )
 }
 
-export default function Home() {
+function TrustIcon({ type }) {
+  if (type === 'shield') return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+  )
+  if (type === 'truck') return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+  )
+  if (type === 'lock') return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+  )
+  return (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+  )
+}
+
+export default function Home({ slides = DEFAULT_SLIDES }) {
+  const SLIDES = slides
   const [current, setCurrent] = useState(0)
   const [dir, setDir] = useState(1)
   const timerRef = useRef(null)
@@ -103,7 +132,7 @@ export default function Home() {
       setDir(1)
       setCurrent(c => (c + 1) % SLIDES.length)
     }, INTERVAL)
-  }, [])
+  }, [SLIDES.length])
 
   const goTo = useCallback((i) => {
     setDir(i > current ? 1 : -1)
@@ -232,6 +261,39 @@ export default function Home() {
         </div>
       </section>
 
+      {/* ── Trust Signals Strip — always visible ── */}
+      <div className="sticky top-14 z-30 bg-navy text-white border-b border-white/5">
+        <div className="mx-auto max-w-[1440px] px-4 lg:px-12 py-2.5 flex items-center justify-center gap-6 lg:gap-12 overflow-x-auto">
+          {TRUST_SIGNALS.map(({ icon, text }) => (
+            <div key={text} className="flex items-center gap-2 flex-shrink-0">
+              <span className="text-green"><TrustIcon type={icon} /></span>
+              <span className="text-[11px] lg:text-xs font-medium text-white/80 whitespace-nowrap">{text}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* ── Category Tiles ── */}
+      <section className="py-12 lg:py-16 bg-lavender">
+        <div className="mx-auto max-w-[1440px] px-6 lg:px-12">
+          <h2 className="font-display font-extrabold text-2xl lg:text-3xl text-navy tracking-tight mb-8 text-center">
+            Shop by Category
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6">
+            {CATEGORY_TILES.map(({ label, img, to }) => (
+              <Link key={label} to={to} className="group relative aspect-[4/3] rounded-2xl overflow-hidden">
+                <img src={img} alt={label} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-t from-navy/70 via-navy/20 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-6">
+                  <h3 className="font-display font-extrabold text-xl text-white">{label}</h3>
+                  <span className="text-white/70 text-sm font-medium group-hover:text-white transition-colors">Shop now →</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── Featured Products ── */}
       <section className="py-16 lg:py-24 bg-white">
         <div className="mx-auto max-w-[1440px] px-6 lg:px-12">
@@ -272,13 +334,13 @@ export default function Home() {
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <Link
-              to="/catalogue"
+              to="/catalogue?categories=scrum-caps"
               className="bg-blue text-white font-semibold px-8 py-3.5 rounded-full hover:bg-blue-light transition-colors"
             >
               Explore Scrum Caps
             </Link>
             <Link
-              to="/catalogue"
+              to="/catalogue?categories=activewear"
               className="border-2 border-navy/15 text-navy font-semibold px-8 py-3.5 rounded-full hover:border-navy/30 transition-colors"
             >
               Explore Activewear
