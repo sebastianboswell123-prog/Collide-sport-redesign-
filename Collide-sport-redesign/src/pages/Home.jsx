@@ -12,6 +12,8 @@ export const DEFAULT_SLIDES = [
     sub: null,
     cta: { label: 'Shop Now', to: '/catalogue' },
     img: `${CDN}/Sabre_Sport_Banner_2_02d6cd8e-fd57-410e-baac-c9e18c9daaa4.jpg?v=1689090191&width=1920`,
+    objectPosition: 'center center',
+    gradient: 'from-navy-dark/75 via-navy-dark/40 to-transparent',
   },
   {
     id: 1,
@@ -19,6 +21,8 @@ export const DEFAULT_SLIDES = [
     sub: 'Closed-cell foam design  |  Flexible & durable  |  Dual expansion technology',
     cta: { label: 'Shop Now', to: '/catalogue' },
     img: `${CDN}/Sabre_Sport_Banner_3_48fe279e-896b-4f4f-8ecc-42d42a6427a3.jpg?v=1689316782&width=1920`,
+    objectPosition: 'center top',
+    gradient: 'from-navy-dark/80 via-navy-dark/45 to-transparent',
   },
   {
     id: 2,
@@ -26,6 +30,8 @@ export const DEFAULT_SLIDES = [
     sub: 'Our most popular Tribal Cap',
     cta: { label: 'Shop Now', to: '/catalogue' },
     img: `${CDN}/2_4240e760-94b0-44bb-8213-0b752403e682.jpg?v=1715450720&width=1920`,
+    objectPosition: 'center center',
+    gradient: 'from-navy-dark/70 via-navy-dark/35 to-transparent',
   },
   {
     id: 3,
@@ -33,6 +39,8 @@ export const DEFAULT_SLIDES = [
     sub: 'Blue Camouflage Scrum Cap',
     cta: { label: 'Shop Now', to: '/catalogue' },
     img: `${CDN}/E3A94B05-ABD7-454F-B24A-B3E9FF34BAEA.jpg?v=1719767691&width=1920`,
+    objectPosition: 'center center',
+    gradient: 'from-navy-dark/80 via-navy-dark/45 to-transparent',
   },
 ]
 
@@ -162,25 +170,28 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
   return (
     <>
       {/* ── Hero Slideshow ── */}
-      <section className="relative h-[85vh] min-h-[500px] max-h-[800px] bg-navy-dark overflow-hidden">
+      <section className="relative h-screen min-h-[600px] bg-navy-dark overflow-hidden">
 
         {/* Slide background image */}
         <AnimatePresence mode="sync">
           <motion.div
             key={`bg-${current}`}
             className="absolute inset-0"
-            initial={{ opacity: 0, scale: 1.05 }}
+            initial={{ opacity: 0, scale: 1.04 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.9, ease: 'easeOut' }}
           >
             <img
               src={slide.img}
               alt=""
               className="absolute inset-0 w-full h-full object-cover"
+              style={{ objectPosition: slide.objectPosition || 'center center' }}
             />
-            {/* Dark overlay for text readability */}
-            <div className="absolute inset-0 bg-gradient-to-r from-navy-dark/80 via-navy-dark/50 to-transparent" />
+            {/* Per-slide gradient so text is readable without hiding the product */}
+            <div className={`absolute inset-0 bg-gradient-to-r ${slide.gradient || 'from-navy-dark/80 via-navy-dark/45 to-transparent'}`} />
+            {/* Bottom fade so dots/counter stay legible */}
+            <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-navy-dark/60 to-transparent" />
           </motion.div>
         </AnimatePresence>
 
