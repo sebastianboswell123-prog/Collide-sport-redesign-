@@ -30,8 +30,9 @@ export const DEFAULT_SLIDES = [
     sub: 'Our most popular Tribal Cap',
     cta: { label: 'Shop Now', to: '/catalogue' },
     img: `${CDN}/2_4240e760-94b0-44bb-8213-0b752403e682.jpg?v=1715450720&width=1920`,
-    objectPosition: 'center center',
-    gradient: 'from-navy-dark/70 via-navy-dark/35 to-transparent',
+    objectPosition: 'center 30%',
+    gradient: 'from-navy-dark/80 via-navy-dark/50 to-transparent',
+    layout: 'split',
   },
   {
     id: 3,
@@ -39,8 +40,9 @@ export const DEFAULT_SLIDES = [
     sub: 'Blue Camouflage Scrum Cap',
     cta: { label: 'Shop Now', to: '/catalogue' },
     img: `${CDN}/E3A94B05-ABD7-454F-B24A-B3E9FF34BAEA.jpg?v=1719767691&width=1920`,
-    objectPosition: 'center center',
+    objectPosition: 'center 35%',
     gradient: 'from-navy-dark/80 via-navy-dark/45 to-transparent',
+    layout: 'split',
   },
 ]
 
@@ -172,26 +174,65 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
       {/* ── Hero Slideshow ── */}
       <section className="relative h-screen min-h-[600px] bg-navy-dark overflow-hidden">
 
-        {/* Slide background image */}
+        {/* Slide background */}
         <AnimatePresence mode="sync">
           <motion.div
             key={`bg-${current}`}
             className="absolute inset-0"
-            initial={{ opacity: 0, scale: 1.04 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.9, ease: 'easeOut' }}
+            transition={{ duration: 0.7, ease: 'easeOut' }}
           >
-            <img
-              src={slide.img}
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover"
-              style={{ objectPosition: slide.objectPosition || 'center center' }}
-            />
-            {/* Per-slide gradient so text is readable without hiding the product */}
-            <div className={`absolute inset-0 bg-gradient-to-r ${slide.gradient || 'from-navy-dark/80 via-navy-dark/45 to-transparent'}`} />
-            {/* Bottom fade so dots/counter stay legible */}
-            <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-navy-dark/60 to-transparent" />
+            {slide.layout === 'split' ? (
+              /* ── Split layout: navy left panel + product image right, fully visible ── */
+              <div className="absolute inset-0 flex">
+                {/* Left: solid brand panel — text sits on top of this */}
+                <div className="w-full lg:w-1/2 bg-navy-dark flex-shrink-0" />
+                {/* Right: product image contained so no cropping */}
+                <motion.div
+                  className="hidden lg:flex flex-1 items-center justify-center bg-navy relative overflow-hidden"
+                  initial={{ x: 40, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ duration: 0.7, delay: 0.2, ease: 'easeOut' }}
+                >
+                  <img
+                    src={slide.img}
+                    alt={slide.heading}
+                    className="w-full h-full object-contain p-8"
+                    style={{ objectPosition: slide.objectPosition || 'center center' }}
+                  />
+                  {/* Subtle inner glow on the right panel */}
+                  <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-navy/30 pointer-events-none" />
+                </motion.div>
+                {/* On mobile: show image as full background cover with overlay */}
+                <div className="lg:hidden absolute inset-0">
+                  <img
+                    src={slide.img}
+                    alt={slide.heading}
+                    className="absolute inset-0 w-full h-full object-cover"
+                    style={{ objectPosition: slide.objectPosition || 'center center' }}
+                  />
+                  <div className="absolute inset-0 bg-navy-dark/75" />
+                </div>
+              </div>
+            ) : (
+              /* ── Full-bleed layout for banner/landscape images ── */
+              <>
+                <motion.img
+                  src={slide.img}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover"
+                  style={{ objectPosition: slide.objectPosition || 'center center' }}
+                  initial={{ scale: 1.04 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 6, ease: 'easeOut' }}
+                />
+                <div className={`absolute inset-0 bg-gradient-to-r ${slide.gradient || 'from-navy-dark/80 via-navy-dark/45 to-transparent'}`} />
+              </>
+            )}
+            {/* Bottom fade — keeps dots/counter legible on all slide types */}
+            <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-navy-dark/70 to-transparent pointer-events-none" />
           </motion.div>
         </AnimatePresence>
 
@@ -199,10 +240,10 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
         <div className="relative h-full flex items-center z-10">
           <motion.div
             key={current}
-            className="mx-auto max-w-[1440px] w-full px-6 lg:px-16"
+            className={`w-full px-6 lg:px-16 ${slide.layout === 'split' ? 'lg:max-w-[50%]' : 'mx-auto max-w-[1440px]'}`}
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.15 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
           >
             <h1 className="font-display font-extrabold text-[clamp(2rem,6vw,4.5rem)] leading-[1.05] text-white tracking-tight max-w-2xl mb-4">
               {slide.heading}
