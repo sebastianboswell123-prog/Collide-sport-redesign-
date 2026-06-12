@@ -13,6 +13,7 @@ import Contact from './pages/Contact'
 import Profile from './pages/Profile'
 import Catalogue from './pages/Catalogue'
 import Cart from './pages/Cart'
+import ProductDetail from './pages/ProductDetail'
 import FitFinder from './pages/FitFinder'
 import Compare from './pages/Compare'
 import TeamKit from './pages/TeamKit'
@@ -37,6 +38,7 @@ export default function App() {
           <Route path="contact" element={<Contact />} />
           <Route path="catalogue" element={<Catalogue />} />
           <Route path="cart" element={<Cart />} />
+          <Route path="product/:slug" element={<ProductDetail />} />
           <Route path="fit-finder" element={<FitFinder />} />
           <Route path="compare" element={<Compare />} />
           <Route path="team-kit" element={<TeamKit />} />

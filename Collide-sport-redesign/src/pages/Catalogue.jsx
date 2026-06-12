@@ -216,7 +216,20 @@ export default function Catalogue() {
             ) : (
               <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {paginated.map((product, i) => (
-                  <ProductCard key={product.id} product={product} index={i} onQuickView={trackView} />
+                  <ProductCard
+                    key={product.id}
+                    image={product.image}
+                    name={product.name}
+                    price={product.price}
+                    salePrice={product.salePrice}
+                    inStock={product.stock > 0}
+                    slug={String(product.id)}
+                    badge={product.badge}
+                    colours={product.colours}
+                    category={product.category}
+                    index={i}
+                    onQuickView={() => trackView(product)}
+                  />
                 ))}
               </div>
             )}

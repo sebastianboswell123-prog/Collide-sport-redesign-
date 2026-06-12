@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { PRODUCTS } from '../data/products'
+import ProductCard from '../components/catalogue/ProductCard'
 
 const INTERVAL = 5000
 const CDN = 'https://collidesport.co.za/cdn/shop/files'
@@ -157,19 +158,6 @@ function TrustIcon({ type }) {
   )
 }
 
-function BadgeChip({ badge }) {
-  if (!badge) return null
-  const styles = {
-    'New':       'bg-green text-navy',
-    'Premium':   'bg-blue text-white',
-    'Low Stock': 'bg-red-500 text-white',
-  }
-  return (
-    <span className={`absolute top-2.5 left-2.5 z-10 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide ${styles[badge] ?? 'bg-navy text-white'}`}>
-      {badge}
-    </span>
-  )
-}
 
 export default function Home({ slides = DEFAULT_SLIDES }) {
   const SLIDES = slides
@@ -419,25 +407,20 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
             </Link>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 lg:gap-6">
-            {FEATURED_PRODUCTS.map((p) => (
-              <Link key={p.id} to="/catalogue" className="group">
-                <div className="relative aspect-square rounded-xl lg:rounded-2xl overflow-hidden bg-lavender mb-2.5">
-                  <img
-                    src={p.image}
-                    alt={p.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <BadgeChip badge={p.badge} />
-                  {/* Quick Shop — slides up on hover, full-width tap on mobile */}
-                  <div className="absolute inset-x-0 bottom-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out z-10">
-                    <div className="bg-navy/90 backdrop-blur-sm px-4 py-3 text-center">
-                      <span className="text-white font-semibold text-sm">Quick Shop →</span>
-                    </div>
-                  </div>
-                </div>
-                <h3 className="font-display font-semibold text-xs lg:text-sm text-navy leading-snug mb-1 line-clamp-2">{p.name}</h3>
-                <p className="text-blue font-bold text-sm">R {p.price.toFixed(2)}</p>
-              </Link>
+            {FEATURED_PRODUCTS.map((p, i) => (
+              <ProductCard
+                key={p.id}
+                image={p.image}
+                name={p.name}
+                price={p.price}
+                salePrice={p.salePrice}
+                inStock={p.stock > 0}
+                slug={String(p.id)}
+                badge={p.badge}
+                colours={p.colours}
+                category={p.category}
+                index={i}
+              />
             ))}
           </div>
         </div>
