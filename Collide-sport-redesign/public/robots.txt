@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Block cart and account pages from indexing
+Disallow: /cart
+Disallow: /profile
+Disallow: /join
+
+Sitemap: https://www.collidesport.co.za/sitemap.xml
