@@ -249,6 +249,24 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
           </div>
         </div>
 
+        {/* ── Floating Trust Signals Strip ── */}
+        <div className="absolute bottom-10 left-0 right-0 z-20 flex justify-center px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="flex items-center gap-4 lg:gap-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-6 py-3 shadow-xl overflow-x-auto max-w-full"
+          >
+            {TRUST_SIGNALS.map(({ icon, text }, i) => (
+              <div key={text} className="flex items-center gap-2 flex-shrink-0">
+                {i > 0 && <span className="hidden sm:block w-px h-4 bg-white/20 mr-2" />}
+                <span className="text-green"><TrustIcon type={icon} /></span>
+                <span className="text-[11px] lg:text-xs font-semibold text-white whitespace-nowrap">{text}</span>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+
         {/* Progress bar */}
         <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-white/10 z-20">
           <motion.div
@@ -260,18 +278,6 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
           />
         </div>
       </section>
-
-      {/* ── Trust Signals Strip — always visible ── */}
-      <div className="sticky top-14 z-30 bg-navy text-white border-b border-white/5">
-        <div className="mx-auto max-w-[1440px] px-4 lg:px-12 py-2.5 flex items-center justify-center gap-6 lg:gap-12 overflow-x-auto">
-          {TRUST_SIGNALS.map(({ icon, text }) => (
-            <div key={text} className="flex items-center gap-2 flex-shrink-0">
-              <span className="text-green"><TrustIcon type={icon} /></span>
-              <span className="text-[11px] lg:text-xs font-medium text-white/80 whitespace-nowrap">{text}</span>
-            </div>
-          ))}
-        </div>
-      </div>
 
       {/* ── Category Tiles ── */}
       <section className="py-12 lg:py-16 bg-lavender">
