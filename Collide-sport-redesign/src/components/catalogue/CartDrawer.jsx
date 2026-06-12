@@ -294,15 +294,17 @@ export default function CartDrawer() {
                     All prices include 15% VAT
                   </p>
 
-                  {/* Checkout button */}
-                  <button
+                  {/* View Cart page */}
+                  <Link
+                    to="/cart"
+                    onClick={close}
                     className="w-full py-3.5 rounded-full bg-[#47db71] text-[#0e1b4d]
-                               font-bold text-sm tracking-wide
+                               font-bold text-sm tracking-wide text-center block
                                hover:bg-[#47db71]/90 active:scale-[0.98]
                                transition-all shadow-lg shadow-[#47db71]/25"
                   >
-                    Proceed to Checkout
-                  </button>
+                    View Cart &amp; Checkout
+                  </Link>
 
                   {/* Continue shopping */}
                   <button

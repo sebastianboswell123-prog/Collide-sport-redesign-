@@ -64,9 +64,9 @@ export default function Navbar() {
               </svg>
             </button>
 
-            {/* Cart */}
-            <button
-              onClick={() => openCart(true)}
+            {/* Cart — click goes to /cart page; badge shows count */}
+            <Link
+              to="/cart"
               className="relative p-2 text-navy/50 hover:text-navy transition-colors"
               aria-label={`Cart (${totalItems} items)`}
             >
@@ -80,7 +80,7 @@ export default function Navbar() {
                   {totalItems > 9 ? '9+' : totalItems}
                 </span>
               )}
-            </button>
+            </Link>
 
             <Link
               to="/catalogue"
@@ -102,8 +102,8 @@ export default function Navbar() {
               </svg>
             </button>
 
-            <button
-              onClick={() => openCart(true)}
+            <Link
+              to="/cart"
               className="relative p-2 text-navy/50 hover:text-navy transition-colors"
               aria-label="Cart"
             >
@@ -117,7 +117,7 @@ export default function Navbar() {
                   {totalItems > 9 ? '9+' : totalItems}
                 </span>
               )}
-            </button>
+            </Link>
 
             <button
               className="text-navy p-2"
