@@ -63,29 +63,57 @@ const RETURNS_POLICY = [
   },
 ]
 
-// ── Payment badge SVG components ──────────────────────────────────────────────
+// ── Payment badge components — CSS/text only, no path SVGs ───────────────────
 function VisaBadge() {
   return (
-    <div title="Visa" className="bg-[#1A1F71] h-8 px-3 rounded flex items-center justify-center flex-shrink-0">
-      <svg viewBox="0 0 60 20" className="h-[13px] w-auto" fill="none" aria-label="Visa">
-        <path
-          d="M23.3 1L17 19H12.4L6.1 4.4C5.9 3.6 5.6 3.3 4.9 3C3.6 2.3 2.1 1.8 0.5 1.5L0.7 1h7.7c1 0 1.9.7 2 1.8L12.2 13 17 1h6.3zM26.8 1L23.2 19h-5.4L21.5 1h5.3zM35.9 12.2c0-2.3-3.2-2.4-3.2-3.4 0-.3.3-.7 1-.7 1.1-.1 2.2.1 3.1.6l.6-2.6C36.4 5.7 35.4 5.5 34.3 5.5c-3.3 0-5.5 1.7-5.5 4.2 0 1.8 1.6 2.8 2.9 3.4 1.3.6 1.7 1 1.7 1.6 0 .9-1 1.3-1.9 1.3-1.2 0-2.4-.3-3.4-.9l-.6 2.7c1.1.4 2.3.7 3.5.7 3.5 0 5.6-1.6 5.6-4.3zm13.9 6.8L46 1h-4.2c-.9 0-1.6.5-2 1.4L33.6 19h5.4l1.1-2.9h6.6l.6 2.9h4.5zm-6.4-12.5l1.6 7.3H41z"
-          fill="white"
-        />
-      </svg>
+    <div
+      title="Visa"
+      className="h-8 px-4 rounded flex items-center justify-center flex-shrink-0"
+      style={{ backgroundColor: '#1A1F71' }}
+    >
+      <span style={{
+        fontFamily: '"Arial Black", "Arial Bold", Arial, sans-serif',
+        fontWeight: 900,
+        fontStyle: 'italic',
+        fontSize: '15px',
+        color: '#ffffff',
+        letterSpacing: '2px',
+        lineHeight: 1,
+        userSelect: 'none',
+      }}>
+        VISA
+      </span>
     </div>
   )
 }
 
 function MastercardBadge() {
   return (
-    <div title="Mastercard" className="bg-white h-8 px-2.5 rounded flex items-center gap-1.5 flex-shrink-0">
-      {/* Overlapping circles */}
-      <div className="relative w-9 h-5 flex items-center">
-        <div className="absolute left-0 w-5 h-5 rounded-full bg-[#EB001B]" />
-        <div className="absolute left-3.5 w-5 h-5 rounded-full bg-[#F79E1B] mix-blend-multiply" />
+    <div
+      title="Mastercard"
+      className="h-8 px-3 rounded flex items-center gap-2 flex-shrink-0"
+      style={{ backgroundColor: '#ffffff' }}
+    >
+      {/* Two overlapping circles — inline styles for cross-browser reliability */}
+      <div style={{ position: 'relative', width: '34px', height: '22px', flexShrink: 0 }}>
+        <div style={{
+          position: 'absolute', left: 0, top: '50%', transform: 'translateY(-50%)',
+          width: '22px', height: '22px', borderRadius: '50%', backgroundColor: '#EB001B',
+        }} />
+        <div style={{
+          position: 'absolute', right: 0, top: '50%', transform: 'translateY(-50%)',
+          width: '22px', height: '22px', borderRadius: '50%', backgroundColor: '#F79E1B', opacity: 0.88,
+        }} />
       </div>
-      <span className="text-[9px] font-bold text-[#252525] leading-none tracking-tight" style={{ fontFamily: 'Arial, sans-serif' }}>
+      <span style={{
+        fontFamily: 'Arial, sans-serif',
+        fontSize: '10px',
+        fontWeight: '500',
+        color: '#333333',
+        letterSpacing: '0.2px',
+        lineHeight: 1,
+        userSelect: 'none',
+      }}>
         mastercard
       </span>
     </div>
@@ -94,13 +122,27 @@ function MastercardBadge() {
 
 function PayFastBadge() {
   return (
-    <div title="PayFast" className="bg-white h-8 px-3 rounded flex items-center gap-px flex-shrink-0">
-      <span className="text-[11px] font-extrabold text-[#0066CC] leading-none" style={{ fontFamily: 'Arial, sans-serif' }}>
-        Pay
-      </span>
-      <span className="text-[11px] font-extrabold text-[#FF6600] leading-none" style={{ fontFamily: 'Arial, sans-serif' }}>
-        Fast
-      </span>
+    <div
+      title="PayFast"
+      className="h-8 px-3 rounded flex items-center flex-shrink-0"
+      style={{ backgroundColor: '#ffffff' }}
+    >
+      <span style={{
+        fontFamily: '"Arial Black", Arial, sans-serif',
+        fontWeight: 800,
+        fontSize: '13px',
+        color: '#0066CC',
+        lineHeight: 1,
+        userSelect: 'none',
+      }}>Pay</span>
+      <span style={{
+        fontFamily: '"Arial Black", Arial, sans-serif',
+        fontWeight: 800,
+        fontSize: '13px',
+        color: '#FF6600',
+        lineHeight: 1,
+        userSelect: 'none',
+      }}>Fast</span>
     </div>
   )
 }
