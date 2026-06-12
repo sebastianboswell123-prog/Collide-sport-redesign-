@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import CollideLogo from '../components/CollideLogo'
 
 const CDN = 'https://collidesport.co.za/cdn/shop/files'
 
@@ -189,6 +190,9 @@ export default function About() {
         <div className="relative mx-auto max-w-[1440px] px-6 lg:px-12">
           <motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <p className="text-xs font-mono tracking-widest text-blue uppercase mb-4">About Us</p>
+            <div className="mb-5">
+              <CollideLogo size="xl" variant="light" layout="stacked" />
+            </div>
             <h1 className="font-display font-extrabold text-4xl lg:text-6xl text-white tracking-tight leading-[0.95] mb-6">
               Built for rugby.<br />
               <span className="text-stroke-blue">Built in South Africa.</span>

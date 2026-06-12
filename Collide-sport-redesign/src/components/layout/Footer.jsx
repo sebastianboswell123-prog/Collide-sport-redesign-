@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { AnimatePresence, motion } from 'framer-motion'
+import CollideLogo from '../CollideLogo'
 
 // ── Store details — update these when confirmed ───────────────────────────────
 const STORE_EMAIL     = 'hello@collidesport.co.za'
@@ -229,10 +230,8 @@ export default function Footer() {
             {/* Brand + contact (spans 2 cols on desktop) */}
             <div className="col-span-2">
               {/* Logo */}
-              <Link to="/" className="inline-block">
-                <span className="font-display font-extrabold text-2xl tracking-tight">
-                  COLLIDE<span className="text-blue">.</span>
-                </span>
+              <Link to="/" aria-label="Collide Sport — Home">
+                <CollideLogo size="md" variant="light" layout="stacked" />
               </Link>
               <p className="mt-3 text-sm text-white/45 max-w-xs leading-relaxed">
                 South Africa's most trusted rugby scrum cap brand. Quality protection at every level of the game.

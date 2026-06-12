@@ -3,6 +3,7 @@ import { Link, NavLink } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCart } from '../../context/CartContext'
 import SearchOverlay from '../SearchOverlay'
+import CollideLogo from '../CollideLogo'
 
 const NAV_LINKS = [
   { label: 'Catalogue', to: '/catalogue' },
@@ -24,8 +25,8 @@ export default function Navbar() {
       <header className="fixed inset-x-0 top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-navy/8">
         <div className="mx-auto max-w-[1440px] px-6 lg:px-12 flex items-center justify-between h-14">
           {/* Logo */}
-          <Link to="/" className="font-display font-extrabold text-xl tracking-tight text-navy">
-            COLLIDE<span className="text-blue">.</span>
+          <Link to="/" aria-label="Collide Sport — Home">
+            <CollideLogo size="sm" variant="dark" layout="inline" />
           </Link>
 
           {/* Desktop nav */}
