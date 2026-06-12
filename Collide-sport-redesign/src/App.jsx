@@ -19,6 +19,9 @@ import Ambassadors from './pages/Ambassadors'
 import Blog from './pages/Blog'
 import Product from './pages/Product'
 import Cart from './pages/Cart'
+import Checkout from './pages/Checkout'
+import OrderConfirmation from './pages/OrderConfirmation'
+import ReturnsPolicy from './pages/ReturnsPolicy'
 import Configurator from './pages/Configurator'
 import Bundles from './pages/Bundles'
 import Sustainability from './pages/Sustainability'
@@ -44,6 +47,9 @@ export default function App() {
           <Route path="catalogue" element={<Catalogue />} />
           <Route path="catalogue/:id" element={<Product />} />
           <Route path="cart" element={<Cart />} />
+          <Route path="checkout" element={<Checkout />} />
+          <Route path="order-confirmation" element={<OrderConfirmation />} />
+          <Route path="returns-policy" element={<ReturnsPolicy />} />
           <Route path="fit-finder" element={<FitFinder />} />
           <Route path="compare" element={<Compare />} />
           <Route path="team-kit" element={<TeamKit />} />
