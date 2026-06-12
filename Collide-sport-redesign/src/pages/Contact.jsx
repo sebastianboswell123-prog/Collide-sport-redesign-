@@ -20,9 +20,9 @@ const ADDRESS = {
   mapQuery: 'De+Waterkant+Cape+Town+South+Africa',
 }
 
-const WHATSAPP_NUMBER = '27000000000' // Replace with real number e.g. '27821234567'
+const WHATSAPP_NUMBER = '27827804116'
 const STORE_EMAIL     = 'info@collidesport.co.za'
-const STORE_PHONE     = '+27 00 000 0000'
+const STORE_PHONE     = '+27 82 780 4116'
 
 export default function Contact() {
   const [form, setForm]           = useState({ name:'', email:'', phone:'', subject:'', message:'' })

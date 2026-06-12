@@ -207,7 +207,7 @@ export default function About() {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-4xl mx-auto mb-14">
             {/* WhatsApp */}
             <a
-              href="https://wa.me/27000000000?text=Hi%20Collide%20Sport%2C%20I%20have%20a%20question%20about%20your%20products."
+              href="https://wa.me/27827804116?text=Hi%20Collide%20Sport%2C%20I%20have%20a%20question%20about%20your%20products."
               target="_blank"
               rel="noopener noreferrer"
               className="flex flex-col items-center gap-4 bg-lavender rounded-2xl p-8 hover:shadow-lg transition-shadow group"
@@ -219,7 +219,7 @@ export default function About() {
               </div>
               <div className="text-center">
                 <p className="font-display font-bold text-navy mb-1">WhatsApp</p>
-                <p className="text-sm text-navy/50">+27 00 000 0000</p>
+                <p className="text-sm text-navy/50">+27 82 780 4116</p>
                 <p className="text-xs text-[#25D366] font-semibold mt-2">Chat with us →</p>
               </div>
             </a>

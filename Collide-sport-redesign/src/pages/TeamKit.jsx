@@ -456,8 +456,8 @@ export default function TeamKit() {
         </motion.h2>
         <p style={{ margin: 0, fontSize: '1rem', opacity: 0.9 }}>
           WhatsApp us or email{' '}
-          <a href="mailto:teams@collidesport.co.za" style={{ color: C.green, fontWeight: 600 }}>
-            teams@collidesport.co.za
+          <a href="mailto:info@collidesport.co.za" style={{ color: C.green, fontWeight: 600 }}>
+            info@collidesport.co.za
           </a>
         </p>
       </section>

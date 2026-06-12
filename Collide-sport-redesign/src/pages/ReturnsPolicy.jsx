@@ -28,7 +28,7 @@ const SECTIONS = [
   },
   {
     title: '7. Contact',
-    body: 'For all returns and refund enquiries: info@collidesport.co.za | WhatsApp: +27 00 000 0000 | Or use our contact form.',
+    body: 'For all returns and refund enquiries: info@collidesport.co.za | WhatsApp: +27 82 780 4116 | Or use our contact form.',
   },
 ]
 

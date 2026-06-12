@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 
-const WHATSAPP_NUMBER = "27000000000";
+const WHATSAPP_NUMBER = "27827804116";
 const PREFILLED_TEXT = "Hi! I'm interested in Collide Sport products.";
 
 const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(PREFILLED_TEXT)}`;
