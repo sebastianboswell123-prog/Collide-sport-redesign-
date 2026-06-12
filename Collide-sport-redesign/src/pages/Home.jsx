@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import EditorialLookbook from '../components/EditorialLookbook'
+import AthleteSpotlight from '../components/AthleteSpotlight'
+import PressWall from '../components/PressWall'
 
 const INTERVAL = 5000
 const CDN = 'https://collidesport.co.za/cdn/shop/files'
@@ -479,6 +482,15 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
           </div>
         </div>
       </section>
+
+      {/* ── Editorial Lookbook ── */}
+      <EditorialLookbook />
+
+      {/* ── Athlete Spotlight ── */}
+      <AthleteSpotlight />
+
+      {/* ── Press Wall ── */}
+      <PressWall />
 
       {/* ── CTA ── */}
       <section className="bg-navy py-16 lg:py-24 relative overflow-hidden">

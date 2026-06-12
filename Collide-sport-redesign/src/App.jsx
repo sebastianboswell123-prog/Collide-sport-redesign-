@@ -17,6 +17,11 @@ import Compare from './pages/Compare'
 import TeamKit from './pages/TeamKit'
 import Ambassadors from './pages/Ambassadors'
 import Blog from './pages/Blog'
+import Configurator from './pages/Configurator'
+import Bundles from './pages/Bundles'
+import Sustainability from './pages/Sustainability'
+import Lookbook from './pages/Lookbook'
+import LoyaltyPage from './pages/LoyaltyPage'
 import NotFound from './pages/NotFound'
 
 export default function App() {
@@ -40,6 +45,11 @@ export default function App() {
           <Route path="team-kit" element={<TeamKit />} />
           <Route path="ambassadors" element={<Ambassadors />} />
           <Route path="blog" element={<Blog />} />
+          <Route path="configurator" element={<Configurator />} />
+          <Route path="bundles" element={<Bundles />} />
+          <Route path="sustainability" element={<Sustainability />} />
+          <Route path="lookbook" element={<Lookbook />} />
+          <Route path="loyalty" element={<LoyaltyPage />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

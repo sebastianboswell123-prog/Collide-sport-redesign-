@@ -3,6 +3,8 @@ import { Link, NavLink } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCart } from '../../context/CartContext'
 import SearchOverlay from '../SearchOverlay'
+import CurrencySelector from '../CurrencySelector'
+import { useLogoClick } from '../EasterEgg'
 
 const NAV_LINKS = [
   { label: 'Catalogue', to: '/catalogue' },
@@ -18,13 +20,14 @@ export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
   const { totalItems, setOpen: openCart } = useCart()
+  const logoClickHandler = useLogoClick()
 
   return (
     <>
       <header className="fixed inset-x-0 top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-navy/8">
         <div className="mx-auto max-w-[1440px] px-6 lg:px-12 flex items-center justify-between h-14">
           {/* Logo */}
-          <Link to="/" className="font-display font-extrabold text-xl tracking-tight text-navy">
+          <Link to="/" onClick={logoClickHandler} className="font-display font-extrabold text-xl tracking-tight text-navy">
             COLLIDE<span className="text-blue">.</span>
           </Link>
 
@@ -48,6 +51,7 @@ export default function Navbar() {
             <Link to="/contact" className="text-sm font-medium text-navy/60 hover:text-navy transition-colors">
               Contact
             </Link>
+            <CurrencySelector />
 
             {/* Search */}
             <button
