@@ -17,6 +17,7 @@ import Compare from './pages/Compare'
 import TeamKit from './pages/TeamKit'
 import Ambassadors from './pages/Ambassadors'
 import Blog from './pages/Blog'
+import Product from './pages/Product'
 import Configurator from './pages/Configurator'
 import Bundles from './pages/Bundles'
 import Sustainability from './pages/Sustainability'
@@ -40,6 +41,7 @@ export default function App() {
           <Route path="join" element={<Join />} />
           <Route path="contact" element={<Contact />} />
           <Route path="catalogue" element={<Catalogue />} />
+          <Route path="catalogue/:id" element={<Product />} />
           <Route path="fit-finder" element={<FitFinder />} />
           <Route path="compare" element={<Compare />} />
           <Route path="team-kit" element={<TeamKit />} />

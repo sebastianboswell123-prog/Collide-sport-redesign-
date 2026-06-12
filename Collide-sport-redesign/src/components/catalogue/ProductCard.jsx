@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import { Link } from 'react-router-dom'
 import { useCart } from '../../context/CartContext'
 import { useCurrency } from '../../context/CurrencyContext'
 import { useCartFly } from '../CartFlyAnimation'
@@ -33,7 +34,7 @@ export default function ProductCard({ product, index = 0, onQuickView }) {
       {/* Image */}
       <div
         className="relative aspect-square rounded-2xl overflow-hidden bg-lavender mb-3 cursor-pointer"
-        onClick={() => onQuickView?.(product)}
+        onClick={() => onQuickView ? onQuickView(product) : null}
       >
         {!imgLoaded && (
           <div className="absolute inset-0 bg-lavender-dark/60 animate-pulse" />
@@ -104,9 +105,11 @@ export default function ProductCard({ product, index = 0, onQuickView }) {
       </p>
 
       {/* Name */}
-      <h3 className="font-display font-semibold text-sm text-navy leading-snug mb-1.5">
-        {product.name}
-      </h3>
+      <Link to={`/catalogue/${product.id}`} className="block group/name">
+        <h3 className="font-display font-semibold text-sm text-navy leading-snug mb-1.5 group-hover/name:text-blue transition-colors">
+          {product.name}
+        </h3>
+      </Link>
 
       {/* Price */}
       <div className="mb-3">
