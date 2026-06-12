@@ -11,10 +11,6 @@ function detectCurrency() {
   try {
     const stored = localStorage.getItem('collide_currency')
     if (stored && CURRENCIES[stored]) return stored
-    const lang = navigator.language || 'en-ZA'
-    if (lang.startsWith('en-ZA')) return 'ZAR'
-    if (lang.startsWith('en-US')) return 'USD'
-    if (lang.startsWith('en-GB')) return 'GBP'
   } catch { /* ignore */ }
   return 'ZAR'
 }
