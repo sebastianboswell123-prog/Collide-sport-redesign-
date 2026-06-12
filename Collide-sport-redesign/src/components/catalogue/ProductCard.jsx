@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useCart } from '../../context/CartContext'
+import { useCurrency } from '../../context/CurrencyContext'
+import { useCartFly } from '../CartFlyAnimation'
 
 const COLOUR_MAP = {
   Black: '#1a1a1a', White: '#f5f5f5', Blue: '#4770db', Navy: '#0e1b4d',
@@ -14,10 +16,10 @@ const BADGE_STYLES = {
   'Low Stock': 'bg-orange-500 text-white',
 }
 
-const fmt = new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', maximumFractionDigits: 0 })
-
 export default function ProductCard({ product, index = 0, onQuickView }) {
   const { addToCart } = useCart()
+  const { formatPrice } = useCurrency()
+  const cartFly = useCartFly()
   const [imgLoaded, setImgLoaded] = useState(false)
   const outOfStock = product.stock === 0
 
@@ -107,11 +109,19 @@ export default function ProductCard({ product, index = 0, onQuickView }) {
       </h3>
 
       {/* Price */}
-      <p className="text-blue font-bold text-sm mb-3">{fmt.format(product.price)}</p>
+      <div className="mb-3">
+        <p className="text-blue font-bold text-sm leading-tight">{formatPrice(product.price)}</p>
+        <p className="text-[10px] text-navy/35 font-mono mt-0.5">incl. 15% VAT</p>
+      </div>
 
       {/* Add to Cart */}
       <button
-        onClick={(e) => { e.stopPropagation(); !outOfStock && addToCart(product) }}
+        onClick={(e) => {
+          e.stopPropagation()
+          if (outOfStock) return
+          addToCart(product)
+          cartFly?.triggerFly(e, product)
+        }}
         disabled={outOfStock}
         className={`w-full py-2.5 rounded-full text-sm font-semibold transition-colors ${
           outOfStock
