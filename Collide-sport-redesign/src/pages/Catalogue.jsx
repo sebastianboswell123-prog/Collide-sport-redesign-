@@ -1,4 +1,5 @@
-import { useMemo, useState, useEffect } from 'react'
+import { useMemo, useState, useEffect, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 import { useSearchParams, Link } from 'react-router-dom'
 import { PRODUCTS, CATEGORIES, COLOURS, PRICE_MIN, PRICE_MAX } from '../data/products'
 import ProductCard from '../components/catalogue/ProductCard'
@@ -9,64 +10,290 @@ const PAGE_SIZE = 12
 
 // ── Lifestyle photos extracted from old collidesport.co.za site ───────────────
 const CDN_G = 'https://collidesport.co.za/cdn/shop/files'
+
+// Resting tilt for each card (alternating subtle angles — editorial scatter feel)
+const TILTS = [-2, 1.5, -1, 2, -1.5, 1, -2.5, 1.5]
+
 const LIFESTYLE_PHOTOS = [
-  { src: `${CDN_G}/Warrior_Cap_on_Bosch_1st_Team.jpg?v=1724349538&width=900`,
+  { src: `${CDN_G}/Warrior_Cap_on_Bosch_1st_Team.jpg?v=1724349538`,
     alt: 'Rondebosch Boys 1st XV wearing Warrior Scrum Caps', tall: true },
-  { src: `${CDN_G}/Warrior_Scrum_Cap_on_Rondebosch_Boy.jpg?v=1724349409&width=700`,
+  { src: `${CDN_G}/Warrior_Scrum_Cap_on_Rondebosch_Boy.jpg?v=1724349409`,
     alt: 'Player wearing Warrior Scrum Cap on the field', tall: false },
-  { src: `${CDN_G}/DSC3288_1__Original.jpg?v=1734264287&width=900`,
+  { src: `${CDN_G}/DSC3288_1__Original.jpg?v=1734264287`,
     alt: 'Rugby player in Collide Sport scrum cap during match', tall: true },
-  { src: `${CDN_G}/Warrior_and_Tribal_Cap_2.jpg?v=1724350156&width=900`,
+  { src: `${CDN_G}/Warrior_and_Tribal_Cap_2.jpg?v=1724350156`,
     alt: 'Warrior and Tribal scrum caps worn in play', tall: false },
-  { src: `${CDN_G}/DSC7768_1.jpg?v=1724140961&width=700`,
+  { src: `${CDN_G}/DSC7768_1.jpg?v=1724140961`,
     alt: 'Match action — Collide Sport scrum cap in play', tall: true },
-  { src: `${CDN_G}/DSC7896_1_3c2f3ba4-dec8-4be1-9dba-98a7b048c9e8.png?v=1724143605&width=700`,
+  { src: `${CDN_G}/DSC7896_1_3c2f3ba4-dec8-4be1-9dba-98a7b048c9e8.png?v=1724143605`,
     alt: 'Rugby player in Collide Sport scrum cap', tall: false },
-  { src: `${CDN_G}/29544158-Large-Digital-Photo-Download-3428x2285.jpg?v=1744747280&width=900`,
+  { src: `${CDN_G}/29544158-Large-Digital-Photo-Download-3428x2285.jpg?v=1744747280`,
     alt: 'Predator Scrum Cap player in action', tall: true },
-  { src: `${CDN_G}/29544063-Large-Digital-Photo-Download-2810x1873.jpg?v=1744747333&width=900`,
+  { src: `${CDN_G}/29544063-Large-Digital-Photo-Download-2810x1873.jpg?v=1744747333`,
     alt: 'Rugby player wearing Predator Scrum Cap', tall: false },
 ]
 
+// ── Lightbox ─────────────────────────────────────────────────────────────────
+function Lightbox({ photos, index, onClose, onPrev, onNext }) {
+  const [zoomed, setZoomed]   = useState(false)
+  const [pos, setPos]         = useState({ x: 0, y: 0 })
+  const [dragging, setDragging] = useState(false)
+  const pointerStart            = useRef(null)
+  const photo                   = photos[index]
+
+  // Reset zoom + position when navigating
+  useEffect(() => { setZoomed(false); setPos({ x: 0, y: 0 }) }, [index])
+
+  // Lock body scroll while open
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [])
+
+  // Keyboard navigation
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === 'Escape')     { if (zoomed) { setZoomed(false); setPos({ x: 0, y: 0 }) } else onClose() }
+      if (e.key === 'ArrowLeft'  && !zoomed) onPrev()
+      if (e.key === 'ArrowRight' && !zoomed) onNext()
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [zoomed, onClose, onPrev, onNext])
+
+  function handleImgClick(e) {
+    e.stopPropagation()
+    if (pointerStart.current?.moved) return   // ignore drags
+    if (zoomed) { setZoomed(false); setPos({ x: 0, y: 0 }) } else setZoomed(true)
+  }
+
+  function onPointerDown(e) {
+    e.currentTarget.setPointerCapture(e.pointerId)
+    pointerStart.current = { x: e.clientX - pos.x, y: e.clientY - pos.y, moved: false }
+    setDragging(false)
+  }
+
+  function onPointerMove(e) {
+    if (!pointerStart.current || !zoomed) return
+    const dx = e.clientX - (pointerStart.current.x + pos.x)
+    const dy = e.clientY - (pointerStart.current.y + pos.y)
+    if (Math.abs(dx) > 4 || Math.abs(dy) > 4) {
+      pointerStart.current.moved = true
+      setDragging(true)
+    }
+    if (pointerStart.current.moved) {
+      setPos({ x: e.clientX - pointerStart.current.x, y: e.clientY - pointerStart.current.y })
+    }
+  }
+
+  function onPointerUp() {
+    pointerStart.current = null
+    setDragging(false)
+  }
+
+  const lbSrc = `${photo.src}&width=1600`
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.22 }}
+      className="fixed inset-0 z-[200] flex items-center justify-center bg-black/92 backdrop-blur-md"
+      onClick={() => { if (!zoomed) onClose() }}
+    >
+      {/* Usage hint */}
+      <p className="absolute top-4 left-1/2 -translate-x-1/2 text-white/35 text-[11px] font-mono tracking-widest select-none pointer-events-none">
+        {zoomed ? 'DRAG TO PAN  ·  CLICK TO ZOOM OUT' : 'CLICK IMAGE TO ZOOM  ·  ESC TO CLOSE'}
+      </p>
+
+      {/* Close */}
+      <button
+        onClick={onClose}
+        className="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white transition-colors"
+        aria-label="Close"
+      >
+        <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+          <path d="M18 6 6 18M6 6l12 12"/>
+        </svg>
+      </button>
+
+      {/* Prev */}
+      {index > 0 && (
+        <motion.button
+          whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}
+          onClick={e => { e.stopPropagation(); onPrev() }}
+          className="absolute left-4 z-10 w-12 h-12 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white text-3xl font-light transition-colors"
+          aria-label="Previous"
+        >‹</motion.button>
+      )}
+
+      {/* Image */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={index}
+          initial={{ opacity: 0, scale: 0.88, y: 24 }}
+          animate={{ opacity: 1, scale: 1, y: 0 }}
+          exit={{ opacity: 0, scale: 0.88, y: -24 }}
+          transition={{ type: 'spring', damping: 26, stiffness: 320 }}
+          className="relative rounded-2xl overflow-hidden select-none"
+          style={{
+            maxWidth: '90vw',
+            maxHeight: '82vh',
+            cursor: zoomed ? (dragging ? 'grabbing' : 'grab') : 'zoom-in',
+          }}
+          onClick={handleImgClick}
+          onPointerDown={onPointerDown}
+          onPointerMove={onPointerMove}
+          onPointerUp={onPointerUp}
+          onPointerLeave={onPointerUp}
+        >
+          <img
+            src={lbSrc}
+            alt={photo.alt}
+            draggable={false}
+            className="block rounded-2xl"
+            style={{
+              maxWidth:   zoomed ? 'none' : '90vw',
+              maxHeight:  zoomed ? 'none' : '82vh',
+              width:      zoomed ? 'auto' : '100%',
+              height:     zoomed ? 'auto' : '100%',
+              objectFit:  'contain',
+              transform:  zoomed
+                ? `scale(2.2) translate(${pos.x / 2.2}px, ${pos.y / 2.2}px)`
+                : 'scale(1)',
+              transition: dragging ? 'none' : 'transform 0.35s cubic-bezier(0.34,1.56,0.64,1)',
+            }}
+          />
+          {/* Zoom icon hint (visible when not zoomed, fades on hover) */}
+          {!zoomed && (
+            <div className="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity duration-200 pointer-events-none">
+              <div className="w-14 h-14 rounded-full bg-black/40 backdrop-blur-sm flex items-center justify-center">
+                <svg className="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/>
+                </svg>
+              </div>
+            </div>
+          )}
+        </motion.div>
+      </AnimatePresence>
+
+      {/* Next */}
+      {index < photos.length - 1 && (
+        <motion.button
+          whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.95 }}
+          onClick={e => { e.stopPropagation(); onNext() }}
+          className="absolute right-4 z-10 w-12 h-12 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white text-3xl font-light transition-colors"
+          aria-label="Next"
+        >›</motion.button>
+      )}
+
+      {/* Caption + dot indicators */}
+      <div className="absolute bottom-5 left-0 right-0 text-center pointer-events-none">
+        <p className="text-white/50 text-sm px-8 leading-snug">{photo.alt}</p>
+        <div className="flex items-center justify-center gap-2 mt-3">
+          {photos.map((_, i) => (
+            <motion.div
+              key={i}
+              animate={{ width: i === index ? 20 : 6, opacity: i === index ? 1 : 0.35 }}
+              transition={{ type: 'spring', damping: 22, stiffness: 300 }}
+              className="h-1.5 rounded-full bg-white"
+            />
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
+// ── Action gallery strip ──────────────────────────────────────────────────────
 function ActionGallery({ selectedCats }) {
   const show = selectedCats.length === 0 || selectedCats.some(c => c === 'scrum-caps' || c === 'premium-caps')
+  const [lightboxIndex, setLightboxIndex] = useState(null)
+
   if (!show) return null
+
   return (
     <section className="bg-navy-dark border-t border-white/5">
       <div className="mx-auto max-w-[1440px] px-6 lg:px-12 pt-8 pb-10">
-        <div className="flex items-end justify-between mb-6">
+        <div className="flex items-end justify-between mb-7">
           <div>
             <p className="text-[10px] font-mono tracking-widest text-blue uppercase mb-1.5">On the field</p>
             <h2 className="font-display font-extrabold text-2xl lg:text-3xl text-white tracking-tight">Worn in real matches</h2>
           </div>
           <p className="text-white/25 text-xs font-mono hidden sm:block">Rondebosch Boys · Club & School Rugby · SA</p>
         </div>
-        {/* Horizontal photo strip — staggered heights */}
+
+        {/* Photo strip — cards animate in with tilt, hover lifts */}
         <div
-          className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory"
+          className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory"
           style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
         >
           {LIFESTYLE_PHOTOS.map((photo, i) => (
-            <div
+            <motion.div
               key={i}
-              className={`flex-shrink-0 snap-start rounded-2xl overflow-hidden bg-navy/40 ${
-                photo.tall
-                  ? 'w-[240px] lg:w-[300px]'
-                  : 'w-[190px] lg:w-[240px]'
+              /* Entrance: slide in from below + big tilt → unwind to subtle resting tilt */
+              initial={{ opacity: 0, y: 80, rotate: TILTS[i] * 3.5 }}
+              whileInView={{ opacity: 1, y: 0, rotate: TILTS[i] }}
+              viewport={{ once: true, margin: '-60px' }}
+              transition={{ delay: i * 0.07, type: 'spring', damping: 16, stiffness: 160 }}
+              /* Hover: scale up, straighten, lift off */
+              whileHover={{
+                scale: 1.07,
+                rotate: 0,
+                y: -12,
+                zIndex: 20,
+                transition: { type: 'spring', damping: 18, stiffness: 380 },
+              }}
+              whileTap={{ scale: 0.97 }}
+              onClick={() => setLightboxIndex(i)}
+              className={`relative flex-shrink-0 snap-start rounded-2xl overflow-hidden bg-navy/40 cursor-pointer group shadow-lg ${
+                photo.tall ? 'w-[230px] lg:w-[290px]' : 'w-[180px] lg:w-[230px]'
               }`}
-              style={{ height: photo.tall ? 360 : 280 }}
+              style={{ height: photo.tall ? 350 : 270 }}
             >
               <img
-                src={photo.src}
+                src={`${photo.src}&width=700`}
                 alt={photo.alt}
-                className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                 loading="lazy"
                 decoding="async"
               />
-            </div>
+
+              {/* Hover overlay with expand icon */}
+              <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 scale-75 group-hover:scale-100">
+                <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-sm border border-white/30 flex items-center justify-center">
+                  <svg className="w-5 h-5 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round">
+                    <circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/>
+                  </svg>
+                </div>
+              </div>
+
+              {/* Bottom caption strip */}
+              <div className="absolute bottom-0 left-0 right-0 translate-y-full group-hover:translate-y-0 transition-transform duration-300 bg-gradient-to-t from-navy-dark/90 to-transparent px-3 pb-3 pt-6">
+                <p className="text-white text-xs font-medium leading-snug line-clamp-2">{photo.alt}</p>
+              </div>
+            </motion.div>
           ))}
         </div>
+
+        {/* Swipe hint on mobile */}
+        <p className="text-white/20 text-[10px] font-mono text-center mt-3 lg:hidden">swipe to see more · tap to zoom</p>
       </div>
+
+      {/* Lightbox */}
+      <AnimatePresence>
+        {lightboxIndex !== null && (
+          <Lightbox
+            photos={LIFESTYLE_PHOTOS}
+            index={lightboxIndex}
+            onClose={() => setLightboxIndex(null)}
+            onPrev={() => setLightboxIndex(i => Math.max(0, i - 1))}
+            onNext={() => setLightboxIndex(i => Math.min(LIFESTYLE_PHOTOS.length - 1, i + 1))}
+          />
+        )}
+      </AnimatePresence>
     </section>
   )
 }
