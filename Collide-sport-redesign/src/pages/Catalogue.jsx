@@ -7,6 +7,70 @@ import QuickView from '../components/catalogue/QuickView'
 
 const PAGE_SIZE = 12
 
+// ── Lifestyle photos extracted from old collidesport.co.za site ───────────────
+const CDN_G = 'https://collidesport.co.za/cdn/shop/files'
+const LIFESTYLE_PHOTOS = [
+  { src: `${CDN_G}/Warrior_Cap_on_Bosch_1st_Team.jpg?v=1724349538&width=900`,
+    alt: 'Rondebosch Boys 1st XV wearing Warrior Scrum Caps', tall: true },
+  { src: `${CDN_G}/Warrior_Scrum_Cap_on_Rondebosch_Boy.jpg?v=1724349409&width=700`,
+    alt: 'Player wearing Warrior Scrum Cap on the field', tall: false },
+  { src: `${CDN_G}/DSC3288_1__Original.jpg?v=1734264287&width=900`,
+    alt: 'Rugby player in Collide Sport scrum cap during match', tall: true },
+  { src: `${CDN_G}/Warrior_and_Tribal_Cap_2.jpg?v=1724350156&width=900`,
+    alt: 'Warrior and Tribal scrum caps worn in play', tall: false },
+  { src: `${CDN_G}/DSC7768_1.jpg?v=1724140961&width=700`,
+    alt: 'Match action — Collide Sport scrum cap in play', tall: true },
+  { src: `${CDN_G}/DSC7896_1_3c2f3ba4-dec8-4be1-9dba-98a7b048c9e8.png?v=1724143605&width=700`,
+    alt: 'Rugby player in Collide Sport scrum cap', tall: false },
+  { src: `${CDN_G}/29544158-Large-Digital-Photo-Download-3428x2285.jpg?v=1744747280&width=900`,
+    alt: 'Predator Scrum Cap player in action', tall: true },
+  { src: `${CDN_G}/29544063-Large-Digital-Photo-Download-2810x1873.jpg?v=1744747333&width=900`,
+    alt: 'Rugby player wearing Predator Scrum Cap', tall: false },
+]
+
+function ActionGallery({ selectedCats }) {
+  const show = selectedCats.length === 0 || selectedCats.some(c => c === 'scrum-caps' || c === 'premium-caps')
+  if (!show) return null
+  return (
+    <section className="bg-navy-dark border-t border-white/5">
+      <div className="mx-auto max-w-[1440px] px-6 lg:px-12 pt-8 pb-10">
+        <div className="flex items-end justify-between mb-6">
+          <div>
+            <p className="text-[10px] font-mono tracking-widest text-blue uppercase mb-1.5">On the field</p>
+            <h2 className="font-display font-extrabold text-2xl lg:text-3xl text-white tracking-tight">Worn in real matches</h2>
+          </div>
+          <p className="text-white/25 text-xs font-mono hidden sm:block">Rondebosch Boys · Club & School Rugby · SA</p>
+        </div>
+        {/* Horizontal photo strip — staggered heights */}
+        <div
+          className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory"
+          style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+        >
+          {LIFESTYLE_PHOTOS.map((photo, i) => (
+            <div
+              key={i}
+              className={`flex-shrink-0 snap-start rounded-2xl overflow-hidden bg-navy/40 ${
+                photo.tall
+                  ? 'w-[240px] lg:w-[300px]'
+                  : 'w-[190px] lg:w-[240px]'
+              }`}
+              style={{ height: photo.tall ? 360 : 280 }}
+            >
+              <img
+                src={photo.src}
+                alt={photo.alt}
+                className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}
+
 const SORT_OPTIONS = [
   { value: 'newest',     label: 'Newest' },
   { value: 'price-asc',  label: 'Price: Low → High' },
@@ -117,6 +181,8 @@ export default function Catalogue() {
           <p className="text-white/40 mt-3 text-sm font-mono">{filtered.length} product{filtered.length !== 1 ? 's' : ''}</p>
         </div>
       </div>
+
+      <ActionGallery selectedCats={selectedCats} />
 
       <div className="mx-auto max-w-[1440px] px-6 lg:px-12 py-8">
         <div className="flex gap-8 items-start">
