@@ -4,6 +4,8 @@ import { Link } from 'react-router-dom'
 import EditorialLookbook from '../components/EditorialLookbook'
 import AthleteSpotlight from '../components/AthleteSpotlight'
 import PressWall from '../components/PressWall'
+import { PRODUCTS } from '../data/products'
+import ProductCard from '../components/catalogue/ProductCard'
 
 const INTERVAL = 5000
 const CDN = 'https://collidesport.co.za/cdn/shop/files'
@@ -15,6 +17,8 @@ export const DEFAULT_SLIDES = [
     sub: null,
     cta: { label: 'Shop Now', to: '/catalogue' },
     img: `${CDN}/Sabre_Sport_Banner_2_02d6cd8e-fd57-410e-baac-c9e18c9daaa4.jpg?v=1689090191&width=1920`,
+    objectPosition: 'center center',
+    gradient: 'from-navy-dark/75 via-navy-dark/40 to-transparent',
   },
   {
     id: 1,
@@ -22,6 +26,8 @@ export const DEFAULT_SLIDES = [
     sub: 'Closed-cell foam design  |  Flexible & durable  |  Dual expansion technology',
     cta: { label: 'Shop Now', to: '/catalogue' },
     img: `${CDN}/Sabre_Sport_Banner_3_48fe279e-896b-4f4f-8ecc-42d42a6427a3.jpg?v=1689316782&width=1920`,
+    objectPosition: 'center top',
+    gradient: 'from-navy-dark/80 via-navy-dark/45 to-transparent',
   },
   {
     id: 2,
@@ -29,6 +35,9 @@ export const DEFAULT_SLIDES = [
     sub: 'Our most popular Tribal Cap',
     cta: { label: 'Shop Now', to: '/catalogue' },
     img: `${CDN}/2_4240e760-94b0-44bb-8213-0b752403e682.jpg?v=1715450720&width=1920`,
+    objectPosition: 'center 30%',
+    gradient: 'from-navy-dark/80 via-navy-dark/50 to-transparent',
+    layout: 'split',
   },
   {
     id: 3,
@@ -36,32 +45,52 @@ export const DEFAULT_SLIDES = [
     sub: 'Blue Camouflage Scrum Cap',
     cta: { label: 'Shop Now', to: '/catalogue' },
     img: `${CDN}/E3A94B05-ABD7-454F-B24A-B3E9FF34BAEA.jpg?v=1719767691&width=1920`,
+    objectPosition: 'center 35%',
+    gradient: 'from-navy-dark/80 via-navy-dark/45 to-transparent',
+    layout: 'split',
   },
 ]
 
+// 4 category tiles — 2×2 on mobile, 4-across on desktop
 const CATEGORY_TILES = [
-  { label: 'Scrum Caps', img: `${CDN}/ScrumCap-Black.jpg?v=1689015482&width=533`, to: '/catalogue?categories=scrum-caps' },
-  { label: 'Premium Caps', img: `${CDN}/52E885BC-C2E8-4007-8B49-04A5AC567F56.jpg?v=1750614416&width=533`, to: '/catalogue?categories=premium-caps' },
-  { label: 'Activewear', img: `${CDN}/SabreCompressionTop-Black.jpg?v=1689063664&width=533`, to: '/catalogue?categories=activewear' },
+  {
+    label: 'Scrum Caps',
+    img: `${CDN}/ScrumCap-Black.jpg?v=1689015482&width=533`,
+    to: '/catalogue?categories=scrum-caps',
+    objectPosition: 'center top',
+  },
+  {
+    label: 'Premium Caps',
+    img: `${CDN}/52E885BC-C2E8-4007-8B49-04A5AC567F56.jpg?v=1750614416&width=533`,
+    to: '/catalogue?categories=premium-caps',
+    objectPosition: 'center center',
+  },
+  {
+    label: 'Activewear',
+    img: `${CDN}/SabreCompressionTop-Black.jpg?v=1689063664&width=533`,
+    to: '/catalogue?categories=activewear',
+    objectPosition: 'center center',
+  },
+  {
+    label: 'New Arrivals',
+    img: `${CDN}/2_5983c119-b758-4faf-9162-85a5b20e170c.jpg?v=1779389799&width=533`,
+    to: '/catalogue?badge=New',
+    objectPosition: 'center center',
+  },
 ]
 
 const TRUST_SIGNALS = [
   { icon: 'shield', text: '5★ Rated on Takealot' },
-  { icon: 'truck', text: 'Free Delivery on R1000+' },
-  { icon: 'lock', text: 'Secure Checkout' },
-  { icon: 'refresh', text: '30-Day Returns' },
+  { icon: 'truck',  text: 'Free Delivery on R1 000+' },
+  { icon: 'lock',   text: 'Secure Checkout' },
+  { icon: 'refresh',text: '30-Day Returns' },
 ]
 
-const FEATURED_PRODUCTS = [
-  { name: 'Rugby Scrum Cap — Turquoise/White', price: 550, img: `${CDN}/ScrumCap-Turquoise_White.jpg?v=1689063382&width=533`, to: '/catalogue' },
-  { name: 'Rugby Scrum Cap — Navy/Gold', price: 550, img: `${CDN}/ScrumCap-Navy_Gold.jpg?v=1689063348&width=533`, to: '/catalogue' },
-  { name: 'Rugby Scrum Cap — Black/Grey', price: 550, img: `${CDN}/ScrumCap-Black_Grey.jpg?v=1689232549&width=533`, to: '/catalogue' },
-  { name: 'Rugby Scrum Cap — Black', price: 550, img: `${CDN}/ScrumCap-Black.jpg?v=1689015482&width=533`, to: '/catalogue' },
-  { name: 'White Tribal Rugby Scrum Cap', price: 550, img: `${CDN}/TribelLeft.jpg?v=1696703994&width=533`, to: '/catalogue' },
-  { name: 'Warrior Scrum Cap', price: 550, img: `${CDN}/Warrior_Scrum_Cap.jpg?v=1724349324&width=533`, to: '/catalogue' },
-  { name: 'Rugby Scrum Cap — Royal Blue/Black', price: 550, img: `${CDN}/ScrumCap-RoyalBlue_Black_1.jpg?v=1689015686&width=533`, to: '/catalogue' },
-  { name: 'Rugby Scrum Cap — Blue & White Camo', price: 550, img: `${CDN}/PHOTO-2023-09-22-12-03-492.jpg?v=1696703796&width=533`, to: '/catalogue' },
-]
+// Pull real product data so badges stay in sync with products.js
+const FEATURED_IDS = [14, 11, 20, 22, 23, 19, 1, 15]
+const FEATURED_PRODUCTS = FEATURED_IDS
+  .map(id => PRODUCTS.find(p => p.id === id))
+  .filter(Boolean)
 
 const FEATURES = [
   {
@@ -79,9 +108,9 @@ const FEATURES = [
 ]
 
 const TESTIMONIALS = [
-  { name: 'HE', text: 'Fits perfectly, looks great and serves its purpose well.' },
-  { name: 'Cristelle', text: 'Very happy with this product and sizing is good. Quality is great.' },
-  { name: 'Chad', text: 'Helping me so much from not getting another concussion.' },
+  { name: 'HE',       text: 'Fits perfectly, looks great and serves its purpose well.' },
+  { name: 'Cristelle',text: 'Very happy with this product and sizing is good. Quality is great.' },
+  { name: 'Chad',     text: 'Helping me so much from not getting another concussion.' },
 ]
 
 function ChevronLeft() {
@@ -110,18 +139,28 @@ function StarIcon() {
 
 function TrustIcon({ type }) {
   if (type === 'shield') return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+    </svg>
   )
   if (type === 'truck') return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+      <circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+    </svg>
   )
   if (type === 'lock') return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0110 0v4"/>
+    </svg>
   )
   return (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/></svg>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 11-2.12-9.36L23 10"/>
+    </svg>
   )
 }
+
 
 export default function Home({ slides = DEFAULT_SLIDES }) {
   const SLIDES = slides
@@ -165,49 +204,86 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
   return (
     <>
       {/* ── Hero Slideshow ── */}
-      <section className="relative h-[85vh] min-h-[500px] max-h-[800px] bg-navy-dark overflow-hidden">
+      <section className="relative h-screen min-h-[600px] bg-navy-dark overflow-hidden">
 
-        {/* Slide background image */}
+        {/* Slide background */}
         <AnimatePresence mode="sync">
           <motion.div
             key={`bg-${current}`}
             className="absolute inset-0"
-            initial={{ opacity: 0, scale: 1.05 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.8 }}
+            transition={{ duration: 0.7, ease: 'easeOut' }}
           >
-            <img
-              src={slide.img}
-              alt=""
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-            {/* Dark overlay for text readability */}
-            <div className="absolute inset-0 bg-gradient-to-r from-navy-dark/80 via-navy-dark/50 to-transparent" />
+            {slide.layout === 'split' ? (
+              /* ── Split layout: navy panel left + product fully visible right ── */
+              <div className="absolute inset-0 flex">
+                <div className="w-full lg:w-1/2 bg-navy-dark flex-shrink-0" />
+                {/* Desktop right panel: object-contain so cap is never cropped */}
+                <motion.div
+                  className="hidden lg:flex flex-1 items-center justify-center bg-navy relative overflow-hidden"
+                  initial={{ x: 40, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  transition={{ duration: 0.7, delay: 0.2, ease: 'easeOut' }}
+                >
+                  <img
+                    src={slide.img}
+                    alt={slide.heading}
+                    className="w-full h-full object-contain p-8"
+                    style={{ objectPosition: slide.objectPosition || 'center center' }}
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-navy/30 pointer-events-none" />
+                </motion.div>
+                {/* Mobile fallback: object-contain with dark bg so cap still shows in full */}
+                <div className="lg:hidden absolute inset-0 bg-navy-dark flex items-center justify-center">
+                  <img
+                    src={slide.img}
+                    alt={slide.heading}
+                    className="w-full h-full object-contain"
+                    style={{ objectPosition: slide.objectPosition || 'center center' }}
+                  />
+                  <div className="absolute inset-0 bg-navy-dark/60" />
+                </div>
+              </div>
+            ) : (
+              /* ── Full-bleed for wide banner images ── */
+              <>
+                <motion.img
+                  src={slide.img}
+                  alt=""
+                  className="absolute inset-0 w-full h-full object-cover"
+                  style={{ objectPosition: slide.objectPosition || 'center center' }}
+                  initial={{ scale: 1.04 }}
+                  animate={{ scale: 1 }}
+                  transition={{ duration: 6, ease: 'easeOut' }}
+                />
+                <div className={`absolute inset-0 bg-gradient-to-r ${slide.gradient || 'from-navy-dark/80 via-navy-dark/45 to-transparent'}`} />
+              </>
+            )}
+            {/* Bottom fade for dots readability */}
+            <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-navy-dark/70 to-transparent pointer-events-none" />
           </motion.div>
         </AnimatePresence>
 
-        {/* Slide content */}
+        {/* Slide text */}
         <div className="relative h-full flex items-center z-10">
           <motion.div
             key={current}
-            className="mx-auto max-w-[1440px] w-full px-6 lg:px-16"
+            className={`w-full px-6 lg:px-16 ${slide.layout === 'split' ? 'lg:max-w-[50%]' : 'mx-auto max-w-[1440px]'}`}
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.15 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
           >
             <h1 className="font-display font-extrabold text-[clamp(2rem,6vw,4.5rem)] leading-[1.05] text-white tracking-tight max-w-2xl mb-4">
               {slide.heading}
             </h1>
-
             {slide.sub && (
-              <p className="text-white/70 text-lg lg:text-xl max-w-lg leading-relaxed mb-8">
+              <p className="text-white/70 text-base lg:text-xl max-w-lg leading-relaxed mb-8">
                 {slide.sub}
               </p>
             )}
-
             {!slide.sub && <div className="mb-8" />}
-
             <Link
               to={slide.cta.to}
               className="inline-block bg-blue text-white font-semibold px-8 py-3.5 rounded-full hover:bg-blue-light transition-colors"
@@ -233,21 +309,23 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
           <ChevronRight />
         </button>
 
-        {/* Slide counter + dots */}
-        <div className="absolute bottom-6 left-0 right-0 px-6 lg:px-16 max-w-[1440px] mx-auto flex items-center justify-between z-20">
+        {/* Dots + counter — wrapped in larger touch targets for mobile */}
+        <div className="absolute bottom-8 left-0 right-0 px-6 lg:px-16 max-w-[1440px] mx-auto flex items-center justify-between z-20">
           <span className="font-mono text-white/40 text-sm tabular-nums select-none">
             {current + 1} / {SLIDES.length}
           </span>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             {SLIDES.map((_, i) => (
               <button
                 key={i}
                 onClick={() => goTo(i)}
                 aria-label={`Go to slide ${i + 1}`}
-                className={`h-[3px] rounded-full transition-all duration-300 ${
+                className="p-2 -m-2 flex items-center justify-center"
+              >
+                <span className={`block h-[3px] rounded-full transition-all duration-300 ${
                   i === current ? 'bg-blue w-8' : 'bg-white/30 w-4 hover:bg-white/50'
-                }`}
-              />
+                }`} />
+              </button>
             ))}
           </div>
         </div>
@@ -282,20 +360,47 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
         </div>
       </section>
 
+      {/* ── Trust Signals Strip — desktop row + mobile marquee ── */}
+      <div className="sticky top-14 z-30 bg-navy text-white border-b border-white/5 overflow-hidden">
+        <div className="hidden lg:flex mx-auto max-w-[1440px] px-12 py-2.5 items-center justify-center gap-12">
+          {TRUST_SIGNALS.map(({ icon, text }) => (
+            <div key={text} className="flex items-center gap-2">
+              <span className="text-green"><TrustIcon type={icon} /></span>
+              <span className="text-xs font-medium text-white/80 whitespace-nowrap">{text}</span>
+            </div>
+          ))}
+        </div>
+        <div className="lg:hidden py-2.5">
+          <div className="animate-marquee flex gap-10 whitespace-nowrap w-max">
+            {[...TRUST_SIGNALS, ...TRUST_SIGNALS].map(({ icon, text }, i) => (
+              <div key={i} className="flex items-center gap-2 flex-shrink-0">
+                <span className="text-green"><TrustIcon type={icon} /></span>
+                <span className="text-[11px] font-medium text-white/80">{text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
       {/* ── Category Tiles ── */}
       <section className="py-12 lg:py-16 bg-lavender">
         <div className="mx-auto max-w-[1440px] px-6 lg:px-12">
           <h2 className="font-display font-extrabold text-2xl lg:text-3xl text-navy tracking-tight mb-8 text-center">
             Shop by Category
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 lg:gap-6">
-            {CATEGORY_TILES.map(({ label, img, to }) => (
-              <Link key={label} to={to} className="group relative aspect-[4/3] rounded-2xl overflow-hidden">
-                <img src={img} alt={label} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
-                <div className="absolute inset-0 bg-gradient-to-t from-navy/70 via-navy/20 to-transparent" />
-                <div className="absolute bottom-0 left-0 right-0 p-6">
-                  <h3 className="font-display font-extrabold text-xl text-white">{label}</h3>
-                  <span className="text-white/70 text-sm font-medium group-hover:text-white transition-colors">Shop now →</span>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6">
+            {CATEGORY_TILES.map(({ label, img, to, objectPosition }) => (
+              <Link key={label} to={to} className="group relative aspect-square rounded-2xl overflow-hidden">
+                <img
+                  src={img}
+                  alt={label}
+                  className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  style={{ objectPosition: objectPosition || 'center center' }}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-navy/80 via-navy/20 to-transparent" />
+                <div className="absolute bottom-0 left-0 right-0 p-4 lg:p-5">
+                  <h3 className="font-display font-extrabold text-base lg:text-lg text-white leading-tight">{label}</h3>
+                  <span className="text-white/60 text-xs font-medium group-hover:text-white transition-colors">Shop now →</span>
                 </div>
               </Link>
             ))}
@@ -303,31 +408,35 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
         </div>
       </section>
 
-      {/* ── Featured Products ── */}
+      {/* ── Featured Products ──
+          Pulls from real product data so badges (New/Premium/Low Stock) display correctly.
+          Quick Shop overlay on hover/focus. 2-col mobile, 4-col desktop. ── */}
       <section className="py-16 lg:py-24 bg-white">
         <div className="mx-auto max-w-[1440px] px-6 lg:px-12">
-          <h2 className="font-display font-extrabold text-3xl lg:text-4xl text-navy tracking-tight mb-10 text-center">
-            Featured Scrum Caps
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 lg:gap-6">
-            {FEATURED_PRODUCTS.map((p) => (
-              <Link key={p.name} to={p.to} className="group">
-                <div className="aspect-square rounded-2xl overflow-hidden bg-lavender mb-3">
-                  <img
-                    src={p.img}
-                    alt={p.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  />
-                </div>
-                <h3 className="font-display font-semibold text-sm text-navy leading-snug mb-1">{p.name}</h3>
-                <p className="text-blue font-bold text-sm">R {p.price.toFixed(2)}</p>
-              </Link>
-            ))}
-          </div>
-          <div className="mt-10 text-center">
-            <Link to="/catalogue" className="inline-flex items-center gap-2 text-blue font-semibold hover:text-blue-light transition-colors">
-              View All Products →
+          <div className="flex items-end justify-between mb-8 lg:mb-10">
+            <h2 className="font-display font-extrabold text-2xl lg:text-4xl text-navy tracking-tight">
+              Featured Scrum Caps
+            </h2>
+            <Link to="/catalogue" className="text-sm text-blue font-semibold hover:text-blue-light transition-colors whitespace-nowrap ml-4">
+              View all →
             </Link>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 lg:gap-6">
+            {FEATURED_PRODUCTS.map((p, i) => (
+              <ProductCard
+                key={p.id}
+                image={p.image}
+                name={p.name}
+                price={p.price}
+                salePrice={p.salePrice}
+                inStock={p.stock > 0}
+                slug={String(p.id)}
+                badge={p.badge}
+                colours={p.colours}
+                category={p.category}
+                index={i}
+              />
+            ))}
           </div>
         </div>
       </section>
@@ -385,13 +494,10 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
 
       {/* ── Product Feature Strips ── */}
       <section className="bg-navy-dark overflow-hidden">
-        {/* Tribal Scrum Cap */}
         <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[400px]">
           <div className="flex items-center justify-center p-10 lg:p-16">
             <div>
-              <h2 className="font-display font-extrabold text-3xl lg:text-4xl text-white tracking-tight mb-4">
-                Tribal Scrum Cap
-              </h2>
+              <h2 className="font-display font-extrabold text-3xl lg:text-4xl text-white tracking-tight mb-4">Tribal Scrum Cap</h2>
               <p className="text-white/60 text-base max-w-md leading-relaxed mb-8">
                 Flexible as well as durable to sit comfortably on all head shapes. Our most popular cap — stand out on the field of play.
               </p>
@@ -401,28 +507,16 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
             </div>
           </div>
           <div className="bg-lavender">
-            <img
-              src={`${CDN}/TribelLeft.jpg?v=1696703994&width=800`}
-              alt="Tribal Scrum Cap"
-              className="w-full h-full object-cover min-h-[300px]"
-            />
+            <img src={`${CDN}/TribelLeft.jpg?v=1696703994&width=800`} alt="Tribal Scrum Cap" className="w-full h-full object-cover min-h-[300px]" />
           </div>
         </div>
-
-        {/* Compression Tops */}
         <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[400px]">
           <div className="bg-lavender order-2 lg:order-1">
-            <img
-              src={`${CDN}/SabreCompressionTop-Black.jpg?v=1689063664&width=800`}
-              alt="Compression Top — Black"
-              className="w-full h-full object-cover min-h-[300px]"
-            />
+            <img src={`${CDN}/SabreCompressionTop-Black.jpg?v=1689063664&width=800`} alt="Compression Top" className="w-full h-full object-cover min-h-[300px]" />
           </div>
           <div className="flex items-center justify-center p-10 lg:p-16 order-1 lg:order-2">
             <div>
-              <h2 className="font-display font-extrabold text-3xl lg:text-4xl text-white tracking-tight mb-4">
-                Compression Tops
-              </h2>
+              <h2 className="font-display font-extrabold text-3xl lg:text-4xl text-white tracking-tight mb-4">Compression Tops</h2>
               <p className="text-white/60 text-base max-w-md leading-relaxed mb-8">
                 Available in White and Black. Designed for comfort and performance during training and match day.
               </p>
@@ -432,14 +526,10 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
             </div>
           </div>
         </div>
-
-        {/* Warrior Scrum Cap */}
         <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[400px]">
           <div className="flex items-center justify-center p-10 lg:p-16">
             <div>
-              <h2 className="font-display font-extrabold text-3xl lg:text-4xl text-white tracking-tight mb-4">
-                Warrior Scrum Cap
-              </h2>
+              <h2 className="font-display font-extrabold text-3xl lg:text-4xl text-white tracking-tight mb-4">Warrior Scrum Cap</h2>
               <p className="text-white/60 text-base max-w-md leading-relaxed mb-8">
                 Score tries under the defence's radar in our warrior scrum cap. Built for players who give everything on the field.
               </p>
@@ -449,11 +539,7 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
             </div>
           </div>
           <div className="bg-lavender">
-            <img
-              src={`${CDN}/Warrior_Scrum_Cap.jpg?v=1724349324&width=800`}
-              alt="Warrior Scrum Cap"
-              className="w-full h-full object-cover min-h-[300px]"
-            />
+            <img src={`${CDN}/Warrior_Scrum_Cap.jpg?v=1724349324&width=800`} alt="Warrior Scrum Cap" className="w-full h-full object-cover min-h-[300px]" />
           </div>
         </div>
       </section>
@@ -492,8 +578,8 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
       {/* ── Press Wall ── */}
       <PressWall />
 
-      {/* ── CTA ── */}
-      <section className="bg-navy py-16 lg:py-24 relative overflow-hidden">
+      {/* ── CTA — pb-20 on mobile clears the fixed MobileBottomBar ── */}
+      <section className="bg-navy py-16 lg:py-24 relative overflow-hidden pb-20 lg:pb-24">
         <div className="absolute inset-0 diagonal-line opacity-30" />
         <div className="relative mx-auto max-w-[1440px] px-6 lg:px-12 text-center">
           <h2 className="font-display font-extrabold text-[clamp(2rem,6vw,4rem)] text-white tracking-tight leading-[1.05] mb-4">

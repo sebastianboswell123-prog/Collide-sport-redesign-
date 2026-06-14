@@ -12,13 +12,14 @@ import Join from './pages/Join'
 import Contact from './pages/Contact'
 import Profile from './pages/Profile'
 import Catalogue from './pages/Catalogue'
+import Cart from './pages/Cart'
+import Product from './pages/Product'
+import ProductDetail from './pages/ProductDetail'
 import FitFinder from './pages/FitFinder'
 import Compare from './pages/Compare'
 import TeamKit from './pages/TeamKit'
 import Ambassadors from './pages/Ambassadors'
 import Blog from './pages/Blog'
-import Product from './pages/Product'
-import Cart from './pages/Cart'
 import Checkout from './pages/Checkout'
 import OrderConfirmation from './pages/OrderConfirmation'
 import ReturnsPolicy from './pages/ReturnsPolicy'
@@ -46,6 +47,7 @@ export default function App() {
           <Route path="contact" element={<Contact />} />
           <Route path="catalogue" element={<Catalogue />} />
           <Route path="catalogue/:id" element={<Product />} />
+          <Route path="product/:slug" element={<ProductDetail />} />
           <Route path="cart" element={<Cart />} />
           <Route path="checkout" element={<Checkout />} />
           <Route path="order-confirmation" element={<OrderConfirmation />} />
