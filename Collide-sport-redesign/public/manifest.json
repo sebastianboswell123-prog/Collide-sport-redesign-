@@ -1,0 +1,16 @@
+{
+  "name": "Collide Sport",
+  "short_name": "Collide",
+  "description": "Premium rugby scrum caps and activewear",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#080f2e",
+  "theme_color": "#0e1b4d",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

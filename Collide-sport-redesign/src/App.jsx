@@ -12,6 +12,13 @@ import Join from './pages/Join'
 import Contact from './pages/Contact'
 import Profile from './pages/Profile'
 import Catalogue from './pages/Catalogue'
+import Cart from './pages/Cart'
+import ProductDetail from './pages/ProductDetail'
+import FitFinder from './pages/FitFinder'
+import Compare from './pages/Compare'
+import TeamKit from './pages/TeamKit'
+import Ambassadors from './pages/Ambassadors'
+import Blog from './pages/Blog'
 import NotFound from './pages/NotFound'
 
 export default function App() {
@@ -30,6 +37,13 @@ export default function App() {
           <Route path="join" element={<Join />} />
           <Route path="contact" element={<Contact />} />
           <Route path="catalogue" element={<Catalogue />} />
+          <Route path="cart" element={<Cart />} />
+          <Route path="product/:slug" element={<ProductDetail />} />
+          <Route path="fit-finder" element={<FitFinder />} />
+          <Route path="compare" element={<Compare />} />
+          <Route path="team-kit" element={<TeamKit />} />
+          <Route path="ambassadors" element={<Ambassadors />} />
+          <Route path="blog" element={<Blog />} />
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

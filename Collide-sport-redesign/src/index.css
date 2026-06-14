@@ -58,6 +58,7 @@ body {
 /* Utilities */
 .text-stroke-blue  { -webkit-text-stroke: 2px #4770db; color: transparent; }
 .text-stroke-navy  { -webkit-text-stroke: 2px #0e1b4d; color: transparent; }
+.text-stroke-green { -webkit-text-stroke: 2px #47db71; color: transparent; }
 
 .diagonal-line {
   background: repeating-linear-gradient(
@@ -87,3 +88,46 @@ body {
   50%       { box-shadow: 0 0 20px 5px rgba(71, 219, 113, 0.2); }
 }
 .animate-pulse-glow { animation: pulse-glow 3s ease-in-out infinite; }
+
+@keyframes skeleton {
+  0%, 100% { opacity: 0.4; }
+  50%      { opacity: 1; }
+}
+.animate-skeleton { animation: skeleton 1.5s ease-in-out infinite; }
+
+/* Custom cursor — subtle brand dot on desktop */
+@media (pointer: fine) {
+  * { cursor: none !important; }
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 8px; height: 8px;
+    background: #4770db;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99999;
+    transform: translate(var(--cx, -20px), var(--cy, -20px)) translate(-50%, -50%);
+    transition: width 0.15s, height 0.15s, background 0.15s;
+    mix-blend-mode: difference;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    top: 0; left: 0;
+    width: 32px; height: 32px;
+    border: 1.5px solid rgba(71, 112, 219, 0.3);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 99998;
+    transform: translate(var(--cx, -40px), var(--cy, -40px)) translate(-50%, -50%);
+    transition: width 0.25s ease, height 0.25s ease, border-color 0.2s;
+  }
+}
+
+/* Safe area for mobile bottom bar */
+.pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+/* Smooth page transitions */
+.page-enter { opacity: 0; transform: translateY(8px); }
+.page-enter-active { opacity: 1; transform: translateY(0); transition: opacity 0.3s ease, transform 0.3s ease; }
