@@ -13,6 +13,8 @@ import Contact from './pages/Contact'
 import Profile from './pages/Profile'
 import Catalogue from './pages/Catalogue'
 import Cart from './pages/Cart'
+import Checkout from './pages/Checkout'
+import OrderConfirmation from './pages/OrderConfirmation'
 import ProductDetail from './pages/ProductDetail'
 import FitFinder from './pages/FitFinder'
 import Compare from './pages/Compare'
@@ -38,6 +40,8 @@ export default function App() {
           <Route path="contact" element={<Contact />} />
           <Route path="catalogue" element={<Catalogue />} />
           <Route path="cart" element={<Cart />} />
+          <Route path="checkout" element={<Checkout />} />
+          <Route path="order-confirmation" element={<OrderConfirmation />} />
           <Route path="product/:slug" element={<ProductDetail />} />
           <Route path="fit-finder" element={<FitFinder />} />
           <Route path="compare" element={<Compare />} />

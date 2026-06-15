@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCart } from '../context/CartContext'
 
@@ -251,6 +251,7 @@ function EmptyCart() {
 
 // ── Main page ────────────────────────────────────────────────────────────────
 export default function Cart() {
+  const navigate = useNavigate()
   const { items, updateQty, removeFromCart, totalPrice, totalItems } = useCart()
   const [couponCode, setCouponCode] = useState(null)
 
@@ -395,6 +396,7 @@ export default function Cart() {
 
                 {/* Checkout CTA */}
                 <button
+                  onClick={() => navigate('/checkout')}
                   className="w-full py-4 rounded-2xl bg-green text-navy font-extrabold text-base tracking-wide hover:bg-green-dim active:scale-[0.98] transition-all shadow-lg shadow-green/20"
                 >
                   Proceed to Checkout
