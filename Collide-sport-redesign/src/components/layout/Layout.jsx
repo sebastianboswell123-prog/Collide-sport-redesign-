@@ -6,7 +6,6 @@ import MobileBottomBar from './MobileBottomBar'
 import WhatsAppButton from '../WhatsAppButton'
 import NewsletterPopup from '../NewsletterPopup'
 import CartFlyProvider from '../CartFlyAnimation'
-import MagneticCursor from '../MagneticCursor'
 import MatchDayBanner from '../MatchDayBanner'
 import EasterEgg from '../EasterEgg'
 
@@ -28,8 +27,7 @@ export default function Layout() {
         <WhatsAppButton />
         <MobileBottomBar />
         <NewsletterPopup />
-        <MagneticCursor />
-        <MatchDayBanner />
+<MatchDayBanner />
         <EasterEgg />
       </div>
     </CartFlyProvider>
