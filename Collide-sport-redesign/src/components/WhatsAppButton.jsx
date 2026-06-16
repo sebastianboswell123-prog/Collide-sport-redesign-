@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 
 const WHATSAPP_NUMBER = "27827804116";
-const PREFILLED_TEXT = "Hi! I'm interested in Collide Sport products.";
+const PREFILLED_TEXT = "Hi, I need help with my order.";
 
 const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(PREFILLED_TEXT)}`;
 
@@ -20,7 +20,7 @@ export default function WhatsAppButton() {
         boxShadow: "0 8px 24px rgba(37, 211, 102, 0.45)",
       }}
       whileTap={{ scale: 0.95 }}
-      className="fixed bottom-20 right-4 md:bottom-6 md:right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full shadow-lg cursor-pointer"
+      className="fixed bottom-24 right-4 md:bottom-6 md:right-6 z-40 flex h-14 w-14 items-center justify-center rounded-full shadow-lg cursor-pointer"
       style={{ backgroundColor: "#25D366" }}
     >
       <svg

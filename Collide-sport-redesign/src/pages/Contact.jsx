@@ -8,21 +8,42 @@ import { motion, AnimatePresence } from 'framer-motion'
 // If not set, the form falls back to a mailto: link.
 const FORMSPREE_ID = import.meta.env.VITE_FORMSPREE_ID
 
-// ─── Trading address ──────────────────────────────────────────────────────────
-// Update with your actual street address before going live.
-const ADDRESS = {
-  street: '1 Collide Street',
-  suburb: 'De Waterkant',
-  city: 'Cape Town',
-  province: 'Western Cape',
-  postal: '8001',
-  country: 'South Africa',
-  mapQuery: 'De+Waterkant+Cape+Town+South+Africa',
-}
-
 const WHATSAPP_NUMBER = '27827804116'
 const STORE_EMAIL     = 'info@collidesport.co.za'
-const STORE_PHONE     = '+27 82 780 4116'
+const STORE_PHONE     = '082 780 4116'
+const MAP_QUERY       = 'Cape+Town+Western+Cape+South+Africa'
+
+const SOCIALS = [
+  {
+    label: 'Facebook',
+    href: 'https://www.facebook.com/collide.sport.2023',
+    color: '#1877F2',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2">
+        <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.696 4.533-4.696 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/>
+      </svg>
+    ),
+  },
+  {
+    label: 'Instagram',
+    href: 'https://www.instagram.com/collide_sport/',
+    color: '#E1306C',
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="url(#ig-grad)">
+        <defs>
+          <linearGradient id="ig-grad" x1="0%" y1="100%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#f09433"/>
+            <stop offset="25%" stopColor="#e6683c"/>
+            <stop offset="50%" stopColor="#dc2743"/>
+            <stop offset="75%" stopColor="#cc2366"/>
+            <stop offset="100%" stopColor="#bc1888"/>
+          </linearGradient>
+        </defs>
+        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+      </svg>
+    ),
+  },
+]
 
 export default function Contact() {
   const [form, setForm]           = useState({ name:'', email:'', phone:'', subject:'', message:'' })
@@ -233,7 +254,7 @@ export default function Contact() {
               </div>
             </a>
 
-            {/* Trading address */}
+            {/* Location + map */}
             <div className="bg-white rounded-2xl p-5 shadow-sm">
               <div className="flex items-start gap-4 mb-4">
                 <div className="w-12 h-12 rounded-full bg-blue/10 flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -243,15 +264,12 @@ export default function Contact() {
                   </svg>
                 </div>
                 <div>
-                  <p className="font-display font-bold text-navy">Trading Address</p>
+                  <p className="font-display font-bold text-navy">Location</p>
                   <address className="text-sm text-navy/60 not-italic leading-relaxed mt-1">
-                    {ADDRESS.street}<br />
-                    {ADDRESS.suburb}<br />
-                    {ADDRESS.city}, {ADDRESS.province}<br />
-                    {ADDRESS.postal}, {ADDRESS.country}
+                    Cape Town, Western Cape<br />South Africa
                   </address>
                   <a
-                    href={`https://www.google.com/maps/search/?api=1&query=${ADDRESS.mapQuery}`}
+                    href={`https://www.google.com/maps/search/?api=1&query=${MAP_QUERY}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-xs text-blue font-semibold hover:text-blue-light transition-colors mt-2 inline-block"
@@ -260,19 +278,31 @@ export default function Contact() {
                   </a>
                 </div>
               </div>
-
-              {/* Google Maps embed */}
               <div className="rounded-xl overflow-hidden border border-navy/8">
                 <iframe
-                  title="Collide Sport Location"
+                  title="Collide Sport — Cape Town"
                   width="100%"
                   height="220"
-                  style={{ border: 0 }}
+                  className="border-0"
                   loading="lazy"
                   allowFullScreen
                   referrerPolicy="no-referrer-when-downgrade"
-                  src={`https://maps.google.com/maps?q=${ADDRESS.mapQuery}&output=embed&z=15`}
+                  src={`https://maps.google.com/maps?q=${MAP_QUERY}&output=embed&z=11`}
                 />
+              </div>
+            </div>
+
+            {/* Social media */}
+            <div className="bg-white rounded-2xl p-5 shadow-sm">
+              <p className="font-display font-bold text-navy mb-3">Follow Us</p>
+              <div className="flex gap-3">
+                {SOCIALS.map(({ label, href, icon }) => (
+                  <a key={label} href={href} target="_blank" rel="noopener noreferrer"
+                    className="flex items-center gap-2.5 flex-1 justify-center border border-navy/10 rounded-xl py-3 hover:bg-lavender transition-colors text-sm font-semibold text-navy">
+                    {icon}
+                    {label}
+                  </a>
+                ))}
               </div>
             </div>
 

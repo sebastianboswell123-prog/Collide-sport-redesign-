@@ -6,7 +6,7 @@ import { useLogoClick } from '../EasterEgg'
 import CurrencySelector from '../CurrencySelector'
 import useWishlist from '../../hooks/useWishlist'
 import { SearchIcon, HeartIcon, CartIcon, CloseIcon, MenuIcon } from './NavIcons'
-import AppImage from '../ui/AppImage'
+import CollideLogo from '../CollideLogo'
 import { DesktopSearchBar, MobileSearchBar } from './NavSearch'
 import NavMobileMenu from './NavMobileMenu'
 
@@ -61,13 +61,7 @@ export default function Navbar() {
 
           {/* Logo */}
           <Link to="/" onClick={logoClick} className="flex-shrink-0 z-10">
-            <AppImage
-              src="https://collidesport.co.za/cdn/shop/files/COLLIDE_TM_SPORT.png?v=1696518150&width=300"
-              alt="Collide Sport"
-              width={110}
-              height={40}
-              className="h-7 w-auto object-contain brightness-0 invert"
-            />
+            <CollideLogo size="sm" variant="light" />
           </Link>
 
           {/* Desktop centre: nav links ↔ search bar */}

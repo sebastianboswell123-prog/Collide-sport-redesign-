@@ -94,11 +94,11 @@ const FEATURED_PRODUCTS = FEATURED_IDS
   .filter(Boolean)
 
 const PHOTO_STRIP = [
-  { src: `${CDN}/Sabre_Sport_Scrum_Cap_1.jpg?v=1690355694&width=800`,  alt: 'Scrum Cap in play 1' },
-  { src: `${CDN}/Sabre_Sport_Scrum_Cap_3.jpg?v=1690355694&width=800`,  alt: 'Scrum Cap in play 2' },
-  { src: `${CDN}/Sabre_Sport_Scrum_Cap_2.jpg?v=1690355694&width=800`,  alt: 'Scrum Cap in play 3' },
-  { src: `${CDN}/Sabre_Sport_Scrum_Cap_5.jpg?v=1690355694&width=800`,  alt: 'Scrum Cap in play 4' },
-  { src: `${CDN}/Warrior_and_Tribal_Cap_2.jpg?v=1724350156&width=800`, alt: 'Warrior and Tribal Caps' },
+  { src: `${CDN}/Warrior_Cap_on_Bosch_1st_Team.jpg?v=1724350156&width=1200`,  alt: 'Bosch 1st Team in Warrior Caps', label: 'On the Field' },
+  { src: `${CDN}/DSC7768_1.png?v=1724350156&width=1200`,                       alt: 'Editorial rugby shot',            label: 'Editorial' },
+  { src: `${CDN}/Warrior_and_Tribal_Cap_2.jpg?v=1724350156&width=1200`,        alt: 'Warrior and Tribal Caps',        label: 'The Range' },
+  { src: `${CDN}/DSC3288_1__Original.jpg?v=1724350156&width=1200`,             alt: 'Collide Sport lifestyle shot',   label: 'Built for SA Rugby' },
+  { src: `${CDN}/Sabre_Sport_Scrum_Cap_2.jpg?v=1690355694&width=1200`,         alt: 'Sabre Scrum Cap',                label: 'Sabre Sport' },
 ]
 
 const FEATURES = [
@@ -467,16 +467,21 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
 
       {/* ── Photo Strip — scrolling lifestyle shots ── */}
       <div className="bg-navy-dark overflow-x-auto scrollbar-none">
-        <div className="flex gap-1 w-max">
-          {PHOTO_STRIP.map(({ src, alt }) => (
-            <div key={alt} className="w-56 sm:w-72 h-64 sm:h-80 flex-shrink-0 overflow-hidden">
+        <div className="flex gap-0.5 w-max">
+          {PHOTO_STRIP.map(({ src, alt, label }) => (
+            <div key={alt} className="relative w-72 sm:w-96 h-96 sm:h-[480px] flex-shrink-0 overflow-hidden group">
               <motion.div
-                whileHover={{ scale: 1.04 }}
-                transition={{ duration: 0.4 }}
+                whileHover={{ scale: 1.03 }}
+                transition={{ duration: 0.5 }}
                 className="w-full h-full"
               >
-                <AppImage src={src} alt={alt} className="w-full h-full object-cover" />
+                <AppImage src={src} alt={alt} className="w-full h-full object-cover object-center" />
               </motion.div>
+              {/* gradient + label */}
+              <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/70 via-transparent to-transparent pointer-events-none" />
+              <span className="absolute bottom-4 left-4 text-white text-xs font-black uppercase tracking-widest opacity-80 group-hover:opacity-100 transition-opacity">
+                {label}
+              </span>
             </div>
           ))}
         </div>
