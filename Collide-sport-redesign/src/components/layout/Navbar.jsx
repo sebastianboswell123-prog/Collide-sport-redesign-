@@ -60,14 +60,8 @@ export default function Navbar() {
         <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-12 h-14 flex items-center gap-4">
 
           {/* Logo */}
-          <Link to="/" onClick={logoClick} className="flex-shrink-0 z-10">
-            <AppImage
-              src="https://collidesport.co.za/cdn/shop/files/COLLIDE_TM_SPORT.png?v=1696518150&width=300"
-              alt="Collide Sport"
-              width={110}
-              height={40}
-              className="h-7 w-auto object-contain brightness-0 invert"
-            />
+          <Link to="/" onClick={logoClick} className="font-display font-black text-xl tracking-tighter uppercase text-white flex-shrink-0 z-10">
+            COLLIDE<span className="text-blue">.</span>
           </Link>
 
           {/* Desktop centre: nav links ↔ search bar */}
