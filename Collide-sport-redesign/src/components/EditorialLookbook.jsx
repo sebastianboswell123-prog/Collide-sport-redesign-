@@ -70,9 +70,9 @@ export default function EditorialLookbook() {
       <div ref={heroRef} className="relative h-[70vh] overflow-hidden">
         <motion.div className="absolute inset-0 scale-110" style={{ y: imgY }}>
           <AppImage
-            src={`${CDN}/Warrior_Cap_on_Bosch_1st_Team.jpg?v=1724349538&width=1920`}
-            alt="Warrior Cap worn by Bosch 1st Team"
-            className="w-full h-full object-cover"
+            src={`${CDN}/29544158-Large-Digital-Photo-Download-3428x2285.jpg?v=1744747280&width=2880`}
+            alt="Collide Sport player in action"
+            className="w-full h-full object-cover object-center"
           />
         </motion.div>
         <div className="absolute inset-0 bg-gradient-to-t from-[#080f2e]/80 via-[#080f2e]/30 to-transparent" />

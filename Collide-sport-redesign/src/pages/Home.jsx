@@ -618,9 +618,9 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
       {/* ── "Get Your Head in the Game" immersive banner ── */}
       <section className="relative h-[55vh] min-h-[380px] overflow-hidden">
         <AppImage
-          src={`${CDN}/Sabre_Sport_Banner_1.jpg?v=1689080131&width=1920`}
+          src={`${CDN}/Sabre_Sport_Banner_3_48fe279e-896b-4f4f-8ecc-42d42a6427a3.jpg?v=1689316782&width=2880`}
           alt="Get your head in the game"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-navy-dark/65" />
         <div className="relative flex items-center justify-center h-full text-center px-6">
