@@ -32,6 +32,10 @@ export default function ProductCard({
   salePrice,
   inStock,
   slug,
+  badge,
+  colours,
+  category,
+  stock,
   // Legacy object prop
   product,
   // Shared
@@ -50,12 +54,10 @@ export default function ProductCard({
   const _sale     = salePrice ?? product?.salePrice
   const _inStock  = inStock  !== undefined ? inStock : (product?.stock ?? 1) > 0
   const _slug     = slug     ?? product?.slug ?? String(product?.id ?? '')
-
-  // Extra fields only available from product object
-  const _colours  = product?.colours
-  const _category = product?.category
-  const _badge    = product?.badge
-  const _stock    = product?.stock
+  const _colours  = colours  ?? product?.colours
+  const _category = category ?? product?.category
+  const _badge    = badge    ?? product?.badge
+  const _stock    = stock    ?? product?.stock
 
   const outOfStock  = !_inStock
   const hasDiscount = _sale !== undefined && _sale !== null && _sale < _price
