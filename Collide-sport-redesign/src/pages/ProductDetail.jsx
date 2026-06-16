@@ -3,6 +3,7 @@ import { useParams, Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { PRODUCTS } from '../data/products'
 import { useCart } from '../context/CartContext'
+import AppImage from '../components/ui/AppImage'
 
 const fmt = new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', maximumFractionDigits: 0 })
 
@@ -95,7 +96,7 @@ export default function ProductDetail() {
             transition={{ duration: 0.45 }}
             className="relative aspect-square rounded-3xl overflow-hidden bg-lavender"
           >
-            <img
+            <AppImage
               src={product.image}
               alt={product.name}
               className={`w-full h-full object-cover ${outOfStock ? 'opacity-50 grayscale' : ''}`}

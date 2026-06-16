@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { useCart } from '../../context/CartContext'
+import AppImage from '../ui/AppImage'
 
 const fmt = (n) =>
   new Intl.NumberFormat('en-ZA', {
@@ -96,7 +97,7 @@ function CartItem({ item, onUpdateQty, onRemove }) {
     >
       {/* Product image */}
       <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-[#eff0f5]">
-        <img
+        <AppImage
           src={item.image}
           alt={item.name}
           className="w-full h-full object-cover"
@@ -294,16 +295,16 @@ export default function CartDrawer() {
                     All prices include 15% VAT
                   </p>
 
-                  {/* View full cart page */}
+                  {/* View Cart page */}
                   <Link
                     to="/cart"
                     onClick={close}
-                    className="block w-full py-3.5 rounded-full bg-[#47db71] text-[#0e1b4d]
-                               font-bold text-sm tracking-wide text-center
+                    className="w-full py-3.5 rounded-full bg-[#47db71] text-[#0e1b4d]
+                               font-bold text-sm tracking-wide text-center block
                                hover:bg-[#47db71]/90 active:scale-[0.98]
                                transition-all shadow-lg shadow-[#47db71]/25"
                   >
-                    View Cart & Checkout
+                    View Cart &amp; Checkout
                   </Link>
 
                   {/* Continue shopping */}

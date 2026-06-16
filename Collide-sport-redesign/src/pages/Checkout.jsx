@@ -1,17 +1,20 @@
-import { useState, useMemo, useEffect } from 'react'
-import { useNavigate, useSearchParams, Link } from 'react-router-dom'
+import { useState, useRef } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCart } from '../context/CartContext'
-import { generateOrderNumber, saveOrder } from '../lib/orders'
-import { redirectToPayfast, getPayfastConfig } from '../lib/payfast'
-import ReturnsPolicyModal from '../components/ReturnsPolicyModal'
+import { useCurrency } from '../context/CurrencyContext'
+import AppImage from '../components/ui/AppImage'
 
-// ── Constants ────────────────────────────────────────────────────────────────
-const SHIPPING_THRESHOLD = 1000
-const SHIPPING_RATE      = 99
-const VAT_RATE           = 0.15
+// ─── PayFast configuration ────────────────────────────────────────────────────
+// Sandbox in dev, live in prod. Replace env vars with real credentials before go-live.
+const IS_PROD = import.meta.env.PROD
+const PAYFAST_URL = IS_PROD
+  ? 'https://www.payfast.co.za/eng/process'
+  : 'https://sandbox.payfast.co.za/eng/process'
+const MERCHANT_ID  = import.meta.env.VITE_PAYFAST_MERCHANT_ID  || '10000100'
+const MERCHANT_KEY = import.meta.env.VITE_PAYFAST_MERCHANT_KEY || '46f0cd694581a'
 
-// All 9 South African provinces
+// ─── SA Provinces ─────────────────────────────────────────────────────────────
 const SA_PROVINCES = [
   'Eastern Cape',
   'Free State',
@@ -24,56 +27,49 @@ const SA_PROVINCES = [
   'Western Cape',
 ]
 
-const SHIPPING_METHODS = [
-  { id: 'standard', label: 'Standard Delivery', eta: '3–5 business days', rate: SHIPPING_RATE, freeOverThreshold: true },
-  { id: 'express',  label: 'Express Delivery',  eta: '1–2 business days', rate: 149, freeOverThreshold: false },
+// ─── Shipping options ─────────────────────────────────────────────────────────
+const SHIPPING_OPTIONS = [
+  {
+    id: 'standard',
+    label: 'Standard Delivery',
+    desc: '3–5 business days',
+    price: (subtotal) => subtotal >= 1000 ? 0 : 99,
+    carrier: 'Courier Guy / Fastway',
+  },
+  {
+    id: 'express',
+    label: 'Express Delivery',
+    desc: '1–2 business days',
+    price: () => 199,
+    carrier: 'DHL Express',
+  },
 ]
 
+// ─── Step indicator ───────────────────────────────────────────────────────────
 const STEPS = ['Delivery', 'Shipping', 'Payment']
 
-const fmt = (n) =>
-  new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n)
-
-const vatContent = (inclusive) => Math.round((inclusive * VAT_RATE) / (1 + VAT_RATE))
-
-// ── Form helpers ──────────────────────────────────────────────────────────────
-function inputClass(hasError) {
-  return `w-full bg-white border rounded-xl px-4 py-3.5 text-navy placeholder-navy/30 focus:outline-none transition-colors text-sm ${
-    hasError ? 'border-red-400 focus:border-red-400 ring-1 ring-red-200' : 'border-navy/10 focus:border-blue focus:ring-2 focus:ring-blue/10'
-  }`
-}
-
-function Field({ label, error, children }) {
+function StepIndicator({ current }) {
   return (
-    <div>
-      <label className="block text-[10px] font-mono tracking-widest text-navy/40 uppercase mb-1.5">{label}</label>
-      {children}
-      {error && <p className="text-xs text-red-400 mt-1">{error}</p>}
-    </div>
-  )
-}
-
-// ── Step indicator ──────────────────────────────────────────────────────────
-function StepBar({ step }) {
-  return (
-    <div className="flex items-center gap-2 sm:gap-3 mb-8">
+    <div className="flex items-center justify-center gap-0 mb-10">
       {STEPS.map((label, i) => {
-        const n = i + 1
-        const done = n < step
-        const active = n === step
+        const state = i < current ? 'done' : i === current ? 'active' : 'pending'
         return (
-          <div key={label} className="flex items-center gap-2 sm:gap-3 flex-1 last:flex-none">
-            <div className="flex items-center gap-2 min-w-0">
-              <div className={`w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 transition-colors ${
-                done ? 'bg-green text-navy' : active ? 'bg-blue text-white' : 'bg-navy/10 text-navy/40'
-              }`}>
-                {done ? (
-                  <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                ) : n}
+          <div key={label} className="flex items-center">
+            <div className="flex flex-col items-center">
+              <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold transition-colors ${
+                state === 'done' ? 'bg-green text-navy'
+                : state === 'active' ? 'bg-blue text-white'
+                : 'bg-lavender text-navy/30'}`}
+              >
+                {state === 'done' ? '✓' : i + 1}
               </div>
-              <span className={`text-sm font-semibold truncate ${active ? 'text-navy' : 'text-navy/40'}`}>{label}</span>
+              <span className={`text-[10px] font-mono mt-1.5 tracking-wider ${state === 'active' ? 'text-navy' : 'text-navy/40'}`}>
+                {label.toUpperCase()}
+              </span>
             </div>
-            {i < STEPS.length - 1 && <div className={`h-px flex-1 ${done ? 'bg-green' : 'bg-navy/10'}`} />}
+            {i < STEPS.length - 1 && (
+              <div className={`w-16 sm:w-24 h-px mx-2 mb-5 transition-colors ${i < current ? 'bg-green' : 'bg-navy/10'}`} />
+            )}
           </div>
         )
       })}
@@ -81,349 +77,410 @@ function StepBar({ step }) {
   )
 }
 
-// ── Main page ────────────────────────────────────────────────────────────────
-export default function Checkout() {
-  const navigate = useNavigate()
-  const [params] = useSearchParams()
-  const { items, totalPrice, totalItems, clearCart } = useCart()
+// ─── Validation ───────────────────────────────────────────────────────────────
+function validateStep1(d) {
+  const errors = {}
+  if (!d.firstName.trim()) errors.firstName = 'Required'
+  if (!d.lastName.trim()) errors.lastName = 'Required'
+  if (!d.email.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) errors.email = 'Valid email required'
+  if (!d.phone.trim() || !/^[\d\s+()-]{9,15}$/.test(d.phone)) errors.phone = 'Valid phone required'
+  if (!d.address.trim()) errors.address = 'Required'
+  if (!d.city.trim()) errors.city = 'Required'
+  if (!d.province) errors.province = 'Select a province'
+  if (!d.postalCode.trim() || !/^\d{4}$/.test(d.postalCode)) errors.postalCode = '4-digit postal code required'
+  return errors
+}
 
-  const [step, setStep] = useState(1)
-  const [delivery, setDelivery] = useState({
-    name: '', email: '', phone: '', address: '', city: '', province: '', postalCode: '',
-  })
-  const [errors, setErrors] = useState({})
-  const [shippingId, setShippingId] = useState('standard')
-  const [returnsAck, setReturnsAck] = useState(false)
-  const [returnsOpen, setReturnsOpen] = useState(false)
-  const [payError, setPayError] = useState('')
-  const [processing, setProcessing] = useState(false)
-
-  const cancelled = params.get('cancelled')
-  const pf = getPayfastConfig()
-
-  // Redirect to cart if there's nothing to check out (but not while redirecting to PayFast)
-  useEffect(() => {
-    if (items.length === 0 && !processing) navigate('/cart', { replace: true })
-  }, [items.length, processing, navigate])
-
-  const method = SHIPPING_METHODS.find(m => m.id === shippingId) || SHIPPING_METHODS[0]
-  const shippingCost = method.freeOverThreshold && totalPrice >= SHIPPING_THRESHOLD ? 0 : method.rate
-  const grandTotal = totalPrice + shippingCost
-  const vatAmount = vatContent(grandTotal)
-
-  const totals = useMemo(() => ({
-    subtotal: totalPrice, shipping: shippingCost, vat: vatAmount, total: grandTotal,
-  }), [totalPrice, shippingCost, vatAmount, grandTotal])
-
-  function setField(e) {
-    const { name, value } = e.target
-    setDelivery(prev => ({ ...prev, [name]: value }))
-    if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }))
-  }
-
-  function validateDelivery() {
-    const e = {}
-    if (!delivery.name.trim())   e.name = 'Full name is required'
-    if (!delivery.email.trim())  e.email = 'Email is required'
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(delivery.email)) e.email = 'Enter a valid email'
-    if (!delivery.phone.trim())  e.phone = 'Phone number is required'
-    else if (!/^[0-9+\s()-]{7,15}$/.test(delivery.phone)) e.phone = 'Enter a valid phone number'
-    if (!delivery.address.trim()) e.address = 'Street address is required'
-    if (!delivery.city.trim())    e.city = 'City / town is required'
-    if (!delivery.province)       e.province = 'Select a province'
-    if (!delivery.postalCode.trim()) e.postalCode = 'Postal code is required'
-    else if (!/^\d{4}$/.test(delivery.postalCode.trim())) e.postalCode = 'SA postal codes are 4 digits'
-    return e
-  }
-
-  function continueFromDelivery() {
-    const e = validateDelivery()
-    if (Object.keys(e).length) { setErrors(e); return }
-    setErrors({})
-    setStep(2)
-  }
-
-  function handlePay() {
-    if (!returnsAck) { setPayError('Please confirm you have read the returns policy.'); return }
-    setPayError('')
-    setProcessing(true)
-
-    const order = {
-      orderNumber: generateOrderNumber(),
-      createdAt: new Date().toISOString(),
-      status: 'pending',
-      customer: { ...delivery },
-      shipping: { method: method.id, label: method.label, eta: method.eta, cost: shippingCost },
-      items: items.map(i => ({ id: i.id, name: i.name, price: i.price, qty: i.qty, image: i.image })),
-      totals,
-      payment: { gateway: 'payfast', mode: pf.mode },
-    }
-
-    saveOrder(order)
-    // Cart is cleared on the confirmation page (after the PayFast round-trip),
-    // so a cancelled payment returns the buyer to a populated cart.
-    redirectToPayfast(order)
-  }
-
-  if (items.length === 0) return null
-
+// ─── Field component ──────────────────────────────────────────────────────────
+function Field({ label, error, required, children }) {
   return (
-    <div className="min-h-screen bg-lavender pt-14 pb-24 lg:pb-16">
-      <div className="mx-auto max-w-[1240px] px-4 sm:px-6 lg:px-12 py-8 lg:py-12">
+    <div>
+      <label className="block text-xs font-semibold text-navy/70 mb-1.5">
+        {label}{required && <span className="text-red-500 ml-0.5">*</span>}
+      </label>
+      {children}
+      {error && <p className="text-xs text-red-500 mt-1 flex items-center gap-1"><span>⚠</span>{error}</p>}
+    </div>
+  )
+}
 
-        <div className="flex items-baseline justify-between mb-8">
-          <h1 className="font-display font-extrabold text-3xl lg:text-4xl text-navy tracking-tight">Checkout</h1>
-          <Link to="/cart" className="text-sm text-blue font-semibold hover:text-blue-light transition-colors">← Back to cart</Link>
+const inputClass = (hasError) =>
+  `w-full border rounded-xl px-4 py-3 text-sm text-navy outline-none transition-colors bg-white ${
+    hasError ? 'border-red-400 focus:border-red-500' : 'border-navy/15 focus:border-blue'
+  }`
+
+// ─── Main component ───────────────────────────────────────────────────────────
+export default function Checkout() {
+  const { items, totalPrice, clearCart } = useCart()
+  const { formatPrice } = useCurrency()
+  const navigate = useNavigate()
+  const payfastFormRef = useRef(null)
+
+  const [step, setStep] = useState(0)
+  const [errors, setErrors] = useState({})
+
+  const [delivery, setDelivery] = useState({
+    firstName: '', lastName: '', email: '', phone: '',
+    address: '', address2: '', city: '', province: '', postalCode: '',
+    saveAddress: false,
+  })
+
+  const [shippingId, setShippingId] = useState('standard')
+  const [agreedCPA, setAgreedCPA] = useState(false)
+
+  const shippingOption = SHIPPING_OPTIONS.find(s => s.id === shippingId)
+  const shippingCost   = shippingOption?.price(totalPrice) ?? 99
+  const orderTotal     = totalPrice + shippingCost
+  const vatAmount      = Math.round(orderTotal - orderTotal / 1.15)
+
+  // Generate a stable order ID for this session
+  const orderId = useRef(`CS-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`).current
+
+  if (items.length === 0) {
+    return (
+      <div className="pt-14 min-h-screen bg-lavender flex items-center justify-center px-6">
+        <div className="text-center">
+          <h1 className="font-display font-extrabold text-2xl text-navy mb-3">Your cart is empty</h1>
+          <Link to="/catalogue" className="text-blue font-semibold hover:text-blue-light transition-colors">← Browse Products</Link>
         </div>
+      </div>
+    )
+  }
 
-        {/* Sandbox notice */}
-        {pf.mode === 'sandbox' && (
-          <div className="mb-5 flex items-center gap-2 bg-blue/8 border border-blue/20 rounded-xl px-4 py-2.5 text-xs text-navy/70">
-            <span className="font-mono font-bold text-blue uppercase tracking-wide">Sandbox</span>
-            <span>Test mode — no real payment will be taken. Live PayFast activates in production.</span>
-          </div>
-        )}
+  // ── Step 1: Submit ────────────────────────────────────────────────────────
+  function handleDeliveryNext(e) {
+    e.preventDefault()
+    const errs = validateStep1(delivery)
+    if (Object.keys(errs).length) { setErrors(errs); return }
+    setErrors({})
+    setStep(1)
+    window.scrollTo(0, 0)
+  }
 
-        {/* Cancelled banner */}
-        {cancelled && (
-          <div className="mb-5 flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-xl px-4 py-2.5 text-xs text-amber-800">
-            Payment was cancelled — your cart is still here. You can try again when ready.
-          </div>
-        )}
+  // ── Step 2: Submit ────────────────────────────────────────────────────────
+  function handleShippingNext(e) {
+    e.preventDefault()
+    setStep(2)
+    window.scrollTo(0, 0)
+  }
 
-        <div className="flex flex-col lg:flex-row gap-6 lg:gap-8 items-start">
+  // ── Step 3: Submit to PayFast ─────────────────────────────────────────────
+  function handlePayNow(e) {
+    e.preventDefault()
+    if (!agreedCPA) { alert('Please agree to the returns policy to proceed.'); return }
 
-          {/* ── LEFT — steps ── */}
-          <div className="flex-1 min-w-0 w-full">
-            <div className="bg-white rounded-2xl p-6 lg:p-8">
-              <StepBar step={step} />
+    // Store order in sessionStorage so confirmation page can read it
+    const order = {
+      orderId,
+      items,
+      delivery,
+      shippingOption: shippingOption?.label,
+      shippingCost,
+      orderTotal,
+      vatAmount,
+      placedAt: new Date().toISOString(),
+    }
+    sessionStorage.setItem('collide_pending_order', JSON.stringify(order))
 
-              <AnimatePresence mode="wait">
-                {/* STEP 1 — Delivery details */}
-                {step === 1 && (
-                  <motion.div key="s1" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.2 }}>
-                    <h2 className="font-display font-extrabold text-lg text-navy mb-5">Delivery details</h2>
-                    <div className="space-y-4">
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <Field label="Full name" error={errors.name}>
-                          <input name="name" value={delivery.name} onChange={setField} placeholder="Jane Doe" className={inputClass(errors.name)} autoComplete="name" />
-                        </Field>
-                        <Field label="Email" error={errors.email}>
-                          <input type="email" name="email" value={delivery.email} onChange={setField} placeholder="you@email.com" className={inputClass(errors.email)} autoComplete="email" />
-                        </Field>
-                      </div>
-                      <Field label="Phone" error={errors.phone}>
-                        <input name="phone" value={delivery.phone} onChange={setField} placeholder="082 123 4567" className={inputClass(errors.phone)} autoComplete="tel" />
+    // Trigger the hidden PayFast form
+    payfastFormRef.current?.submit()
+  }
+
+  const baseUrl = window.location.origin
+
+  // ── Render ────────────────────────────────────────────────────────────────
+  return (
+    <div className="pt-14 min-h-screen bg-lavender">
+
+      {/* Header */}
+      <div className="bg-navy-dark py-10 px-6 lg:px-12">
+        <div className="mx-auto max-w-[1440px]">
+          <p className="text-xs font-mono tracking-widest text-blue uppercase mb-1">Checkout</p>
+          <h1 className="font-display font-extrabold text-3xl lg:text-4xl text-white tracking-tight">Secure Checkout</h1>
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-[1200px] px-6 py-10">
+        <StepIndicator current={step} />
+
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-8 items-start">
+
+          {/* ── Left: Steps ── */}
+          <div>
+            <AnimatePresence mode="wait">
+
+              {/* STEP 1: Delivery details */}
+              {step === 0 && (
+                <motion.div key="step1" initial={{ opacity:0, x:20 }} animate={{ opacity:1, x:0 }} exit={{ opacity:0, x:-20 }} transition={{ duration:0.25 }}>
+                  <form onSubmit={handleDeliveryNext} className="bg-white rounded-2xl p-6 lg:p-8 space-y-5">
+                    <h2 className="font-display font-bold text-navy text-xl mb-2">Delivery Details</h2>
+
+                    {/* Name row */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <Field label="First Name" error={errors.firstName} required>
+                        <input value={delivery.firstName} onChange={e => setDelivery(p => ({...p, firstName: e.target.value}))} className={inputClass(errors.firstName)} placeholder="Marco" />
                       </Field>
-                      <Field label="Street address" error={errors.address}>
-                        <input name="address" value={delivery.address} onChange={setField} placeholder="12 Rugby Road, Bellville" className={inputClass(errors.address)} autoComplete="street-address" />
+                      <Field label="Last Name" error={errors.lastName} required>
+                        <input value={delivery.lastName} onChange={e => setDelivery(p => ({...p, lastName: e.target.value}))} className={inputClass(errors.lastName)} placeholder="Peters" />
                       </Field>
-                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                        <Field label="City / town" error={errors.city}>
-                          <input name="city" value={delivery.city} onChange={setField} placeholder="Cape Town" className={inputClass(errors.city)} autoComplete="address-level2" />
-                        </Field>
-                        <Field label="Province" error={errors.province}>
-                          <select name="province" value={delivery.province} onChange={setField} className={inputClass(errors.province)} autoComplete="address-level1">
-                            <option value="">Select province…</option>
-                            {SA_PROVINCES.map(p => <option key={p} value={p}>{p}</option>)}
-                          </select>
-                        </Field>
-                        <Field label="Postal code" error={errors.postalCode}>
-                          <input name="postalCode" value={delivery.postalCode} onChange={setField} placeholder="7530" inputMode="numeric" maxLength={4} className={inputClass(errors.postalCode)} autoComplete="postal-code" />
-                        </Field>
-                      </div>
                     </div>
 
-                    <button onClick={continueFromDelivery} className="mt-7 w-full sm:w-auto bg-blue text-white font-semibold px-8 py-3.5 rounded-full hover:bg-blue-light transition-colors active:scale-[0.98]">
-                      Continue to shipping
-                    </button>
-                  </motion.div>
-                )}
+                    {/* Contact row */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <Field label="Email Address" error={errors.email} required>
+                        <input type="email" value={delivery.email} onChange={e => setDelivery(p => ({...p, email: e.target.value}))} className={inputClass(errors.email)} placeholder="marco@example.co.za" />
+                      </Field>
+                      <Field label="Phone Number" error={errors.phone} required>
+                        <input type="tel" value={delivery.phone} onChange={e => setDelivery(p => ({...p, phone: e.target.value}))} className={inputClass(errors.phone)} placeholder="+27 82 000 0000" />
+                      </Field>
+                    </div>
 
-                {/* STEP 2 — Shipping method */}
-                {step === 2 && (
-                  <motion.div key="s2" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.2 }}>
-                    <h2 className="font-display font-extrabold text-lg text-navy mb-5">Shipping method</h2>
+                    {/* Address */}
+                    <Field label="Street Address" error={errors.address} required>
+                      <input value={delivery.address} onChange={e => setDelivery(p => ({...p, address: e.target.value}))} className={inputClass(errors.address)} placeholder="12 Main Road" />
+                    </Field>
+
+                    <Field label="Address Line 2" error={null}>
+                      <input value={delivery.address2} onChange={e => setDelivery(p => ({...p, address2: e.target.value}))} className={inputClass(false)} placeholder="Apartment, suite, unit (optional)" />
+                    </Field>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                      <Field label="City / Town" error={errors.city} required>
+                        <input value={delivery.city} onChange={e => setDelivery(p => ({...p, city: e.target.value}))} className={inputClass(errors.city)} placeholder="Cape Town" />
+                      </Field>
+
+                      {/* SA Provinces dropdown — all 9 */}
+                      <Field label="Province" error={errors.province} required>
+                        <select
+                          value={delivery.province}
+                          onChange={e => setDelivery(p => ({...p, province: e.target.value}))}
+                          className={inputClass(errors.province) + ' cursor-pointer'}
+                        >
+                          <option value="">Select province</option>
+                          {SA_PROVINCES.map(p => <option key={p} value={p}>{p}</option>)}
+                        </select>
+                      </Field>
+
+                      <Field label="Postal Code" error={errors.postalCode} required>
+                        <input value={delivery.postalCode} onChange={e => setDelivery(p => ({...p, postalCode: e.target.value}))} className={inputClass(errors.postalCode)} placeholder="8000" maxLength={4} />
+                      </Field>
+                    </div>
+
+                    {/* CPA compliance */}
+                    <div className="border-t border-navy/8 pt-5 space-y-3">
+                      <p className="text-xs text-navy/50 leading-relaxed">
+                        By continuing, you agree to our{' '}
+                        <Link to="/returns-policy" className="text-blue hover:text-blue-light underline">Returns Policy</Link>
+                        {' '}and{' '}
+                        <Link to="/contact" className="text-blue hover:text-blue-light underline">Terms of Service</Link>
+                        . Under the Consumer Protection Act (CPA), you have the right to return goods within 5 business days if they do not conform to the description.
+                      </p>
+                    </div>
+
+                    <button type="submit" className="w-full bg-blue text-white font-bold py-4 rounded-full hover:bg-blue-light transition-colors text-base mt-2">
+                      Continue to Shipping →
+                    </button>
+                  </form>
+                </motion.div>
+              )}
+
+              {/* STEP 2: Shipping method */}
+              {step === 1 && (
+                <motion.div key="step2" initial={{ opacity:0, x:20 }} animate={{ opacity:1, x:0 }} exit={{ opacity:0, x:-20 }} transition={{ duration:0.25 }}>
+                  <form onSubmit={handleShippingNext} className="bg-white rounded-2xl p-6 lg:p-8 space-y-5">
+                    <h2 className="font-display font-bold text-navy text-xl mb-2">Shipping Method</h2>
+
+                    <p className="text-sm text-navy/50">
+                      Delivering to <strong className="text-navy">{delivery.address}, {delivery.city}, {delivery.province} {delivery.postalCode}</strong>{' '}
+                      <button type="button" onClick={() => setStep(0)} className="text-blue text-xs hover:text-blue-light transition-colors ml-1">Edit</button>
+                    </p>
+
                     <div className="space-y-3">
-                      {SHIPPING_METHODS.map(m => {
-                        const free = m.freeOverThreshold && totalPrice >= SHIPPING_THRESHOLD
-                        const cost = free ? 0 : m.rate
-                        const selected = shippingId === m.id
+                      {SHIPPING_OPTIONS.map(opt => {
+                        const cost = opt.price(totalPrice)
+                        const selected = shippingId === opt.id
                         return (
-                          <button
-                            key={m.id}
-                            onClick={() => setShippingId(m.id)}
-                            className={`w-full text-left flex items-center gap-4 rounded-2xl border-2 px-5 py-4 transition-all ${
-                              selected ? 'border-blue bg-blue/5' : 'border-navy/10 hover:border-navy/25 bg-white'
-                            }`}
+                          <label
+                            key={opt.id}
+                            className={`flex items-center gap-4 p-4 rounded-xl border-2 cursor-pointer transition-all ${selected ? 'border-blue bg-blue/5' : 'border-navy/10 hover:border-navy/25'}`}
                           >
-                            <div className={`w-5 h-5 rounded-full border-2 flex-shrink-0 flex items-center justify-center ${selected ? 'border-blue' : 'border-navy/25'}`}>
+                            <input
+                              type="radio"
+                              name="shipping"
+                              value={opt.id}
+                              checked={selected}
+                              onChange={() => setShippingId(opt.id)}
+                              className="sr-only"
+                            />
+                            <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${selected ? 'border-blue' : 'border-navy/20'}`}>
                               {selected && <div className="w-2.5 h-2.5 rounded-full bg-blue" />}
                             </div>
-                            <div className="flex-1 min-w-0">
-                              <p className="font-display font-bold text-navy text-sm">{m.label}</p>
-                              <p className="text-xs text-navy/50 mt-0.5">{m.eta}</p>
+                            <div className="flex-1">
+                              <p className="font-display font-bold text-navy">{opt.label}</p>
+                              <p className="text-xs text-navy/50 mt-0.5">{opt.desc} via {opt.carrier}</p>
                             </div>
-                            <div className="text-right flex-shrink-0">
-                              {cost === 0
-                                ? <span className="font-bold text-green text-sm">Free</span>
-                                : <span className="font-bold text-navy text-sm">{fmt(cost)}</span>}
-                              {free && <p className="text-[10px] text-navy/35">over {fmt(SHIPPING_THRESHOLD)}</p>}
-                            </div>
-                          </button>
+                            <span className={`font-bold text-sm flex-shrink-0 ${cost === 0 ? 'text-green-700' : 'text-navy'}`}>
+                              {cost === 0 ? 'FREE' : formatPrice(cost)}
+                            </span>
+                          </label>
                         )
                       })}
                     </div>
 
-                    <div className="mt-7 flex items-center gap-3">
-                      <button onClick={() => setStep(1)} className="text-sm text-navy/50 font-semibold hover:text-navy transition-colors px-4 py-3.5">← Back</button>
-                      <button onClick={() => setStep(3)} className="flex-1 sm:flex-none bg-blue text-white font-semibold px-8 py-3.5 rounded-full hover:bg-blue-light transition-colors active:scale-[0.98]">
-                        Continue to payment
+                    {shippingId === 'standard' && totalPrice < 1000 && (
+                      <p className="text-xs text-navy/40 bg-lavender rounded-lg px-4 py-3">
+                        Spend {formatPrice(1000 - totalPrice)} more to qualify for free standard shipping
+                      </p>
+                    )}
+
+                    <div className="flex gap-3 pt-2">
+                      <button type="button" onClick={() => { setStep(0); window.scrollTo(0,0) }} className="flex-1 border-2 border-navy/15 text-navy/60 font-semibold py-3.5 rounded-full hover:border-navy/30 transition-colors">
+                        ← Back
+                      </button>
+                      <button type="submit" className="flex-[2] bg-blue text-white font-bold py-3.5 rounded-full hover:bg-blue-light transition-colors">
+                        Continue to Payment →
                       </button>
                     </div>
-                  </motion.div>
-                )}
+                  </form>
+                </motion.div>
+              )}
 
-                {/* STEP 3 — Payment */}
-                {step === 3 && (
-                  <motion.div key="s3" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.2 }}>
-                    <h2 className="font-display font-extrabold text-lg text-navy mb-5">Payment</h2>
-
-                    {/* Delivery recap */}
-                    <div className="rounded-2xl bg-lavender p-5 mb-4 text-sm">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-[10px] font-mono tracking-widest text-navy/40 uppercase">Delivering to</span>
-                        <button onClick={() => setStep(1)} className="text-xs text-blue font-semibold hover:text-blue-light">Edit</button>
-                      </div>
-                      <p className="font-semibold text-navy">{delivery.name}</p>
-                      <p className="text-navy/60">{delivery.address}</p>
-                      <p className="text-navy/60">{delivery.city}, {delivery.province}, {delivery.postalCode}</p>
-                      <p className="text-navy/60 mt-1">{delivery.phone} · {delivery.email}</p>
-                      <div className="flex items-center justify-between mt-3 pt-3 border-t border-navy/8">
-                        <span className="text-navy/60">{method.label} <span className="text-navy/35">({method.eta})</span></span>
-                        <span className="font-semibold text-navy">{shippingCost === 0 ? 'Free' : fmt(shippingCost)}</span>
-                      </div>
-                    </div>
-
-                    {/* PayFast card */}
-                    <div className="rounded-2xl border-2 border-blue bg-blue/5 p-5 flex items-center gap-4">
-                      <div className="flex items-center flex-shrink-0">
-                        <span style={{ fontFamily: '"Arial Black", Arial, sans-serif', fontWeight: 800, fontSize: 18, color: '#0066CC' }}>Pay</span>
-                        <span style={{ fontFamily: '"Arial Black", Arial, sans-serif', fontWeight: 800, fontSize: 18, color: '#FF6600' }}>Fast</span>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-display font-bold text-navy text-sm">Pay securely with PayFast</p>
-                        <p className="text-xs text-navy/50 mt-0.5">Card, Instant EFT, Apple Pay, SnapScan & more. You'll be redirected to PayFast to complete payment.</p>
-                      </div>
-                    </div>
-
-                    {/* CPA — returns policy acknowledgement */}
-                    <label className="flex items-start gap-3 mt-5 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={returnsAck}
-                        onChange={e => { setReturnsAck(e.target.checked); if (payError) setPayError('') }}
-                        className="mt-0.5 w-4 h-4 accent-blue flex-shrink-0"
-                      />
-                      <span className="text-xs text-navy/60 leading-relaxed">
-                        I have read and accept the{' '}
-                        <button type="button" onClick={(e) => { e.preventDefault(); setReturnsOpen(true) }} className="text-blue font-semibold underline hover:text-blue-light">
-                          Returns Policy
-                        </button>{' '}
-                        and understand my rights under the Consumer Protection Act.
+              {/* STEP 3: Payment */}
+              {step === 2 && (
+                <motion.div key="step3" initial={{ opacity:0, x:20 }} animate={{ opacity:1, x:0 }} exit={{ opacity:0, x:-20 }} transition={{ duration:0.25 }}>
+                  <form onSubmit={handlePayNow} className="bg-white rounded-2xl p-6 lg:p-8 space-y-6">
+                    <div className="flex items-center gap-3">
+                      <h2 className="font-display font-bold text-navy text-xl">Payment</h2>
+                      <span className="flex items-center gap-1.5 text-xs text-green-700 bg-green/10 px-3 py-1 rounded-full font-medium">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+                        Secured by PayFast
                       </span>
-                    </label>
+                      {!IS_PROD && <span className="text-[10px] bg-orange-100 text-orange-600 px-2 py-0.5 rounded font-mono">SANDBOX</span>}
+                    </div>
 
-                    {payError && <p className="text-sm text-red-500 bg-red-50 border border-red-200 rounded-xl px-4 py-3 mt-4">{payError}</p>}
+                    {/* Delivery summary */}
+                    <div className="bg-lavender rounded-xl p-4 text-sm space-y-1">
+                      <div className="flex justify-between text-navy/60"><span>Delivering to</span><span className="text-navy font-medium text-right max-w-[200px] truncate">{delivery.firstName} {delivery.lastName}, {delivery.city}</span></div>
+                      <div className="flex justify-between text-navy/60"><span>Shipping</span><span className="text-navy font-medium">{shippingOption?.label}</span></div>
+                    </div>
 
-                    <div className="mt-6 flex items-center gap-3">
-                      <button onClick={() => setStep(2)} disabled={processing} className="text-sm text-navy/50 font-semibold hover:text-navy transition-colors px-4 py-4 disabled:opacity-40">← Back</button>
+                    {/* PayFast redirect notice */}
+                    <div className="border border-blue/20 bg-blue/5 rounded-xl p-4">
+                      <div className="flex items-start gap-3">
+                        <AppImage src="https://www.payfast.co.za/assets/images/PayFast_Logo_Large.png" alt="PayFast" className="h-6 mt-0.5 object-contain" onError={e => { e.currentTarget.hidden = true }} />
+                        <div>
+                          <p className="text-sm font-semibold text-navy">Pay securely via PayFast</p>
+                          <p className="text-xs text-navy/50 mt-1">You'll be redirected to PayFast to complete payment. Accepts credit/debit cards, EFT, and Instant EFT.</p>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* CPA returns policy — must be agreed to */}
+                    <div className="border-t border-navy/8 pt-4 space-y-3">
+                      <label className="flex items-start gap-3 cursor-pointer group">
+                        <div
+                          onClick={() => setAgreedCPA(v => !v)}
+                          className={`w-5 h-5 rounded border-2 flex-shrink-0 mt-0.5 flex items-center justify-center transition-colors ${agreedCPA ? 'bg-blue border-blue' : 'border-navy/25 group-hover:border-blue/50'}`}
+                        >
+                          {agreedCPA && <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3"><polyline points="20 6 9 17 4 12"/></svg>}
+                        </div>
+                        <p className="text-xs text-navy/60 leading-relaxed">
+                          I have read and agree to the{' '}
+                          <Link to="/returns-policy" target="_blank" className="text-blue hover:text-blue-light underline">Returns &amp; Refund Policy</Link>
+                          {' '}and{' '}
+                          <Link to="/contact" className="text-blue hover:text-blue-light underline">Terms of Service</Link>.
+                          Under the Consumer Protection Act (CPA No. 68 of 2008), you may return goods within 5 business days if they do not conform to the product description.
+                        </p>
+                      </label>
+                    </div>
+
+                    <div className="flex gap-3">
+                      <button type="button" onClick={() => { setStep(1); window.scrollTo(0,0) }} className="flex-1 border-2 border-navy/15 text-navy/60 font-semibold py-3.5 rounded-full hover:border-navy/30 transition-colors">
+                        ← Back
+                      </button>
                       <button
-                        onClick={handlePay}
-                        disabled={processing}
-                        className="flex-1 py-4 rounded-2xl bg-green text-navy font-extrabold text-base tracking-wide hover:bg-green-dim active:scale-[0.98] transition-all shadow-lg shadow-green/20 disabled:opacity-60 disabled:cursor-wait flex items-center justify-center gap-2"
+                        type="submit"
+                        disabled={!agreedCPA}
+                        className={`flex-[2] font-bold py-3.5 rounded-full transition-all ${agreedCPA ? 'bg-green text-navy hover:bg-green-dim shadow-lg shadow-green/20' : 'bg-lavender text-navy/30 cursor-not-allowed'}`}
                       >
-                        {processing ? (
-                          <>
-                            <svg className="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
-                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8H4z"/>
-                            </svg>
-                            Redirecting to PayFast…
-                          </>
-                        ) : `Pay ${fmt(grandTotal)} with PayFast`}
+                        Pay {formatPrice(orderTotal)} via PayFast →
                       </button>
                     </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+                  </form>
 
-            {/* Trust row */}
-            <div className="flex items-center justify-center gap-5 mt-5 text-[11px] text-navy/40 font-medium">
-              <span className="flex items-center gap-1.5">🔒 Secure checkout</span>
-              <span className="flex items-center gap-1.5">↩️ 14-day returns</span>
-              <span className="flex items-center gap-1.5">🇿🇦 South African brand</span>
-            </div>
+                  {/* Hidden PayFast form — submitted programmatically */}
+                  <form ref={payfastFormRef} action={PAYFAST_URL} method="POST" className="hidden">
+                    <input type="hidden" name="merchant_id"    value={MERCHANT_ID} />
+                    <input type="hidden" name="merchant_key"   value={MERCHANT_KEY} />
+                    <input type="hidden" name="return_url"     value={`${baseUrl}/order-confirmation`} />
+                    <input type="hidden" name="cancel_url"     value={`${baseUrl}/checkout`} />
+                    <input type="hidden" name="notify_url"     value={`${baseUrl}/api/payfast-notify`} />
+                    <input type="hidden" name="name_first"     value={delivery.firstName} />
+                    <input type="hidden" name="name_last"      value={delivery.lastName} />
+                    <input type="hidden" name="email_address"  value={delivery.email} />
+                    <input type="hidden" name="cell_number"    value={delivery.phone.replace(/\D/g,'')} />
+                    <input type="hidden" name="m_payment_id"   value={orderId} />
+                    <input type="hidden" name="amount"         value={(orderTotal).toFixed(2)} />
+                    <input type="hidden" name="item_name"      value={`Collide Sport Order ${orderId}`} />
+                    <input type="hidden" name="item_description" value={items.slice(0,3).map(i=>`${i.name} x${i.qty}`).join(', ')} />
+                    <input type="hidden" name="custom_str1"    value={JSON.stringify({ address: `${delivery.address}, ${delivery.city}, ${delivery.province} ${delivery.postalCode}`, shipping: shippingOption?.label })} />
+                  </form>
+                </motion.div>
+              )}
+
+            </AnimatePresence>
           </div>
 
-          {/* ── RIGHT — order summary ── */}
-          <div className="w-full lg:w-[360px] flex-shrink-0 lg:sticky lg:top-[6.5rem]">
-            <div className="bg-white rounded-2xl p-6 space-y-5">
-              <h2 className="font-display font-extrabold text-lg text-navy">Order Summary</h2>
+          {/* ── Right: Order summary ── */}
+          <div className="space-y-4 lg:sticky lg:top-20">
+            <div className="bg-white rounded-2xl p-6">
+              <h3 className="font-display font-bold text-navy mb-4">Order Summary</h3>
 
-              {/* Items */}
-              <div className="space-y-3 max-h-64 overflow-y-auto -mr-2 pr-2">
+              <div className="space-y-3 mb-5">
                 {items.map(item => (
-                  <div key={item.id} className="flex gap-3">
-                    <div className="relative flex-shrink-0 w-14 h-14 rounded-lg overflow-hidden bg-lavender">
-                      <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                      <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-navy text-white text-[10px] font-bold flex items-center justify-center">{item.qty}</span>
+                  <div key={item.id} className="flex gap-3 items-center">
+                    <div className="w-12 h-12 rounded-lg overflow-hidden bg-lavender flex-shrink-0 relative">
+                      <AppImage src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                      <span className="absolute -top-1 -right-1 w-4.5 h-4.5 bg-navy text-white text-[8px] font-bold rounded-full flex items-center justify-center leading-none w-5 h-5">
+                        {item.qty}
+                      </span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-semibold text-navy line-clamp-2 leading-snug">{item.name}</p>
-                      <p className="text-xs text-navy/45 mt-0.5">{fmt(item.price)}</p>
+                      <p className="text-xs font-semibold text-navy truncate">{item.name}</p>
+                      <p className="text-xs text-navy/40">{formatPrice(item.price)} each</p>
                     </div>
-                    <p className="text-xs font-bold text-navy whitespace-nowrap">{fmt(item.price * item.qty)}</p>
+                    <p className="text-xs font-bold text-navy flex-shrink-0">{formatPrice(item.price * item.qty)}</p>
                   </div>
                 ))}
               </div>
 
-              <div className="border-t border-navy/6" />
-
-              <div className="space-y-2.5 text-sm">
-                <div className="flex justify-between text-navy/60">
-                  <span>Subtotal ({totalItems} {totalItems === 1 ? 'item' : 'items'})</span>
-                  <span className="font-semibold text-navy">{fmt(totalPrice)}</span>
+              <div className="border-t border-navy/8 pt-4 space-y-2 text-sm">
+                <div className="flex justify-between text-navy/60"><span>Subtotal</span><span>{formatPrice(totalPrice)}</span></div>
+                <div className="flex justify-between text-navy/60"><span>Shipping</span><span className={shippingCost === 0 ? 'text-green-700 font-semibold' : ''}>{shippingCost === 0 ? 'FREE' : formatPrice(shippingCost)}</span></div>
+                <div className="flex justify-between text-xs text-navy/40 font-mono border-t border-navy/8 pt-2">
+                  <span>VAT (15%)</span><span>{formatPrice(vatAmount)}</span>
                 </div>
-                <div className="flex justify-between text-navy/60">
-                  <span>Shipping {step >= 2 && <span className="text-navy/35">· {method.label}</span>}</span>
-                  {shippingCost === 0 ? <span className="font-semibold text-green">Free</span> : <span className="font-semibold text-navy">{fmt(shippingCost)}</span>}
+                <div className="flex justify-between font-display font-extrabold text-navy text-lg pt-1">
+                  <span>Total</span><span>{formatPrice(orderTotal)}</span>
                 </div>
               </div>
+            </div>
 
-              <div className="border-t border-navy/6" />
-
-              <div>
-                <div className="flex justify-between items-baseline">
-                  <span className="font-display font-extrabold text-base text-navy">Total</span>
-                  <motion.span key={grandTotal} initial={{ opacity: 0.5, y: -4 }} animate={{ opacity: 1, y: 0 }} className="font-display font-extrabold text-2xl text-navy">
-                    {fmt(grandTotal)}
-                  </motion.span>
+            {/* Security badges */}
+            <div className="bg-white rounded-2xl p-5 space-y-3">
+              {[
+                { icon:'🔒', text:'256-bit SSL encryption' },
+                { icon:'🛡️', text:'PayFast secure payments' },
+                { icon:'↩️', text:'CPA-compliant returns' },
+              ].map(({ icon, text }) => (
+                <div key={text} className="flex items-center gap-3 text-xs text-navy/50">
+                  <span>{icon}</span><span>{text}</span>
                 </div>
-                <p className="text-[11px] text-navy/40 text-right mt-0.5">Includes {fmt(vatAmount)} VAT (15%)</p>
-              </div>
-
-              {/* CPA link always available at checkout */}
-              <button onClick={() => setReturnsOpen(true)} className="w-full text-center text-xs text-navy/40 hover:text-blue transition-colors pt-1">
-                Returns Policy & your CPA rights
-              </button>
+              ))}
             </div>
           </div>
         </div>
       </div>
-
-      {returnsOpen && <ReturnsPolicyModal onClose={() => setReturnsOpen(false)} />}
     </div>
   )
 }

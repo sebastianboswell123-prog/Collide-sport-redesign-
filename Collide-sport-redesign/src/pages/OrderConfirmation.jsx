@@ -1,173 +1,259 @@
-import { useEffect, useRef, useState } from 'react'
-import { Link, useSearchParams } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useCart } from '../context/CartContext'
-import { getOrder, markOrderPaid, sendConfirmationEmail } from '../lib/orders'
-import ReturnsPolicyModal from '../components/ReturnsPolicyModal'
+import { useCurrency } from '../context/CurrencyContext'
+import AppImage from '../components/ui/AppImage'
 
-const fmt = (n) =>
-  new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n)
+// ── Attempt to send a confirmation email via EmailJS REST API ─────────────────
+// Configure these in .env: VITE_EMAILJS_SERVICE_ID, VITE_EMAILJS_TEMPLATE_ID, VITE_EMAILJS_PUBLIC_KEY
+async function sendConfirmationEmail(order) {
+  const serviceId  = import.meta.env.VITE_EMAILJS_SERVICE_ID
+  const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID
+  const publicKey  = import.meta.env.VITE_EMAILJS_PUBLIC_KEY
 
-export default function OrderConfirmation() {
-  const [params] = useSearchParams()
-  const orderNumber = params.get('order')
-  const { clearCart } = useCart()
-
-  const [order, setOrder] = useState(() => getOrder(orderNumber))
-  const [emailState, setEmailState] = useState('idle') // idle | sending | sent | skipped
-  const [returnsOpen, setReturnsOpen] = useState(false)
-  const ran = useRef(false)
-
-  useEffect(() => {
-    if (ran.current) return
-    ran.current = true
-
-    // Buyer returned from PayFast → treat the order as paid, clear the cart,
-    // and send the confirmation email (once).
-    const paid = markOrderPaid(orderNumber)
-    if (paid) setOrder(paid)
-    clearCart()
-
-    if (paid) {
-      setEmailState('sending')
-      sendConfirmationEmail(paid).then(ok => setEmailState(ok ? 'sent' : 'skipped'))
-    }
-  }, [orderNumber, clearCart])
-
-  // ── Order not found (direct visit / cleared storage) ──
-  if (!order) {
-    return (
-      <div className="min-h-screen bg-lavender pt-14 flex items-center justify-center px-6">
-        <div className="text-center py-24">
-          <h1 className="font-display font-extrabold text-2xl text-navy mb-2">Order not found</h1>
-          <p className="text-navy/50 text-sm mb-8 max-w-sm">
-            {orderNumber
-              ? <>We couldn't find order <span className="font-mono font-semibold text-navy">{orderNumber}</span> on this device.</>
-              : 'No order reference was provided.'}
-          </p>
-          <Link to="/catalogue" className="inline-block bg-blue text-white font-semibold px-8 py-3.5 rounded-full hover:bg-blue-light transition-colors">
-            Back to shop
-          </Link>
-        </div>
-      </div>
-    )
+  if (!serviceId || !templateId || !publicKey) {
+    console.info('[Collide] EmailJS not configured — skipping confirmation email.')
+    return false
   }
 
-  const c = order.customer
+  try {
+    const res = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        service_id:  serviceId,
+        template_id: templateId,
+        user_id:     publicKey,
+        template_params: {
+          to_email:    order.delivery.email,
+          to_name:     `${order.delivery.firstName} ${order.delivery.lastName}`,
+          order_id:    order.orderId,
+          order_total: `R ${Math.round(order.orderTotal).toLocaleString()}`,
+          order_items: order.items.map(i => `${i.name} × ${i.qty}`).join(', '),
+          shipping:    order.shippingOption,
+          address:     `${order.delivery.address}, ${order.delivery.city}, ${order.delivery.province} ${order.delivery.postalCode}`,
+        },
+      }),
+    })
+    return res.ok
+  } catch {
+    return false
+  }
+}
+
+export default function OrderConfirmation() {
+  const { clearCart } = useCart()
+  const { formatPrice } = useCurrency()
+  const [order, setOrder] = useState(null)
+  const [emailSent, setEmailSent] = useState(null)
+
+  useEffect(() => {
+    const raw = sessionStorage.getItem('collide_pending_order')
+    if (!raw) return
+
+    const parsed = JSON.parse(raw)
+    setOrder(parsed)
+
+    // Clear cart and pending order
+    clearCart()
+    sessionStorage.removeItem('collide_pending_order')
+
+    // Attempt email
+    sendConfirmationEmail(parsed).then(sent => setEmailSent(sent))
+  }, [clearCart])
+
+  // Demo order shown when arriving directly at this URL (e.g. PayFast sandbox redirect)
+  const demo = !order ? {
+    orderId: 'CS-DEMO-001',
+    delivery: { firstName: 'Marco', lastName: 'P.', email: 'marco@example.co.za', address: '12 Main Road', city: 'Cape Town', province: 'Western Cape', postalCode: '8001' },
+    items: [],
+    shippingOption: 'Standard Delivery (3–5 business days)',
+    orderTotal: 0,
+    vatAmount: 0,
+    placedAt: new Date().toISOString(),
+  } : null
+
+  const o = order || demo
+
+  const placedDate = o?.placedAt ? new Date(o.placedAt) : new Date()
+  const estDelivery = (() => {
+    const d = new Date(placedDate)
+    let added = 0
+    const days = o?.shippingOption?.toLowerCase().includes('express') ? 2 : 5
+    while (added < days) {
+      d.setDate(d.getDate() + 1)
+      if (d.getDay() !== 0 && d.getDay() !== 6) added++
+    }
+    return d.toLocaleDateString('en-ZA', { weekday:'long', year:'numeric', month:'long', day:'numeric' })
+  })()
 
   return (
-    <div className="min-h-screen bg-lavender pt-14 pb-24 lg:pb-16">
-      <div className="mx-auto max-w-[760px] px-4 sm:px-6 py-10 lg:py-14">
+    <div className="pt-14 min-h-screen bg-lavender">
+      <div className="mx-auto max-w-[680px] px-6 py-16">
 
-        {/* Success header */}
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-8">
-          <motion.div
-            initial={{ scale: 0 }} animate={{ scale: 1 }} transition={{ type: 'spring', damping: 14, stiffness: 220, delay: 0.1 }}
-            className="w-20 h-20 rounded-full bg-green/15 flex items-center justify-center mx-auto mb-5"
-          >
-            <svg className="w-10 h-10 text-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="20 6 9 17 4 12" />
+        {/* Success badge */}
+        <motion.div
+          initial={{ scale: 0.5, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ type: 'spring', damping: 14, stiffness: 200 }}
+          className="flex justify-center mb-8"
+        >
+          <div className="w-20 h-20 rounded-full bg-green flex items-center justify-center shadow-xl shadow-green/30">
+            <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#0e1b4d" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
             </svg>
-          </motion.div>
-          <h1 className="font-display font-extrabold text-3xl lg:text-4xl text-navy tracking-tight mb-2">Thank you{c.name ? `, ${c.name.split(' ')[0]}` : ''}!</h1>
-          <p className="text-navy/55">Your order has been placed successfully.</p>
+          </div>
         </motion.div>
 
-        {/* Order number */}
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.15 }}
-          className="bg-navy-dark rounded-2xl px-6 py-5 text-center mb-5">
-          <p className="text-[10px] font-mono tracking-widest text-white/40 uppercase mb-1">Order Number</p>
-          <p className="font-display font-extrabold text-2xl lg:text-3xl text-white tracking-wide">{order.orderNumber}</p>
-          {order.payment?.mode === 'sandbox' && (
-            <p className="text-[10px] font-mono text-blue mt-1.5 uppercase tracking-widest">Sandbox test order</p>
-          )}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="text-center mb-8"
+        >
+          <h1 className="font-display font-extrabold text-3xl lg:text-4xl text-navy tracking-tight mb-2">
+            Order Confirmed! 🏉
+          </h1>
+          <p className="text-navy/50 text-base">
+            Thank you{o?.delivery?.firstName ? `, ${o.delivery.firstName}` : ''}. Your order is on its way.
+          </p>
         </motion.div>
 
-        {/* Email status */}
-        <div className="mb-5 flex items-center justify-center gap-2 text-sm">
-          {emailState === 'sending' && <span className="text-navy/50">Sending confirmation to {c.email}…</span>}
-          {emailState === 'sent' && (
-            <span className="text-navy/60 flex items-center gap-1.5">
-              <svg className="w-4 h-4 text-green" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-              Confirmation email sent to <span className="font-semibold text-navy">{c.email}</span>
-            </span>
-          )}
-          {emailState === 'skipped' && (
-            <span className="text-navy/45 text-center">A confirmation for <span className="font-semibold text-navy">{c.email}</span> will follow shortly.</span>
-          )}
-        </div>
+        {/* Order number card */}
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+          className="bg-navy text-white rounded-2xl p-6 text-center mb-6"
+        >
+          <p className="text-white/50 text-xs font-mono tracking-widest uppercase mb-2">Order Number</p>
+          <p className="font-display font-extrabold text-3xl tracking-widest text-green">{o?.orderId}</p>
+          <p className="text-white/40 text-xs mt-2 font-mono">Save this number for your records</p>
+        </motion.div>
 
-        {/* Order details card */}
-        <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-          className="bg-white rounded-2xl p-6 lg:p-8">
+        {/* Email confirmation banner */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className={`rounded-xl p-4 mb-6 flex items-start gap-3 ${emailSent === true ? 'bg-green/10 border border-green/20' : emailSent === false ? 'bg-lavender border border-navy/10' : 'bg-lavender border border-navy/10'}`}
+        >
+          <span className="text-xl flex-shrink-0">
+            {emailSent === true ? '📧' : '📬'}
+          </span>
+          <div>
+            {emailSent === true ? (
+              <>
+                <p className="text-sm font-semibold text-green-700">Confirmation email sent!</p>
+                <p className="text-xs text-navy/50 mt-0.5">Check your inbox at <strong>{o?.delivery?.email}</strong></p>
+              </>
+            ) : emailSent === false ? (
+              <>
+                <p className="text-sm font-semibold text-navy">Email not configured</p>
+                <p className="text-xs text-navy/50 mt-0.5">
+                  Save your order number above. To enable automated emails, add <span className="font-mono text-navy/70">VITE_EMAILJS_*</span> to your <span className="font-mono text-navy/70">.env</span> file.
+                </p>
+              </>
+            ) : (
+              <>
+                <p className="text-sm font-semibold text-navy">Sending confirmation to {o?.delivery?.email || 'your email'}…</p>
+                <p className="text-xs text-navy/50 mt-0.5">You'll receive a confirmation email shortly.</p>
+              </>
+            )}
+          </div>
+        </motion.div>
+
+        {/* Order details */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.45 }}
+          className="bg-white rounded-2xl p-6 mb-6 space-y-4"
+        >
+          <h2 className="font-display font-bold text-navy text-lg">Order Details</h2>
 
           {/* Items */}
-          <h2 className="font-display font-extrabold text-base text-navy mb-4">Order details</h2>
-          <div className="space-y-3">
-            {order.items.map(item => (
-              <div key={item.id} className="flex gap-3 items-center">
-                <div className="relative flex-shrink-0 w-14 h-14 rounded-lg overflow-hidden bg-lavender">
-                  <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
-                  <span className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-navy text-white text-[10px] font-bold flex items-center justify-center">{item.qty}</span>
+          {o?.items?.length > 0 && (
+            <div className="space-y-3 border-b border-navy/8 pb-4">
+              {o.items.map((item, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-lg overflow-hidden bg-lavender flex-shrink-0">
+                    <AppImage src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-xs font-semibold text-navy truncate">{item.name}</p>
+                    <p className="text-xs text-navy/40">Qty: {item.qty}</p>
+                  </div>
+                  <p className="text-xs font-bold text-navy">{formatPrice(item.price * item.qty)}</p>
                 </div>
-                <p className="flex-1 min-w-0 text-sm font-semibold text-navy line-clamp-2">{item.name}</p>
-                <p className="text-sm font-bold text-navy whitespace-nowrap">{fmt(item.price * item.qty)}</p>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
 
-          <div className="border-t border-navy/8 my-5" />
-
-          {/* Totals */}
+          {/* Summary rows */}
           <div className="space-y-2 text-sm">
-            <div className="flex justify-between text-navy/60"><span>Subtotal</span><span className="font-semibold text-navy">{fmt(order.totals.subtotal)}</span></div>
-            <div className="flex justify-between text-navy/60">
-              <span>Shipping · {order.shipping.label}</span>
-              {order.totals.shipping === 0 ? <span className="font-semibold text-green">Free</span> : <span className="font-semibold text-navy">{fmt(order.totals.shipping)}</span>}
-            </div>
-            <div className="flex justify-between items-baseline pt-2 border-t border-navy/8">
-              <span className="font-display font-extrabold text-navy">Total</span>
-              <span className="font-display font-extrabold text-xl text-navy">{fmt(order.totals.total)}</span>
-            </div>
-            <p className="text-[11px] text-navy/40 text-right">Includes {fmt(order.totals.vat)} VAT (15%)</p>
+            {o?.orderTotal > 0 && (
+              <div className="flex justify-between font-display font-extrabold text-navy text-base">
+                <span>Total Paid</span>
+                <span>{formatPrice(o.orderTotal)}</span>
+              </div>
+            )}
+            {o?.vatAmount > 0 && (
+              <div className="flex justify-between text-xs text-navy/40 font-mono">
+                <span>Includes VAT (15%)</span>
+                <span>{formatPrice(o.vatAmount)}</span>
+              </div>
+            )}
           </div>
 
-          <div className="border-t border-navy/8 my-5" />
-
-          {/* Delivery + shipping */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 text-sm">
-            <div>
-              <p className="text-[10px] font-mono tracking-widest text-navy/40 uppercase mb-1.5">Delivery address</p>
-              <p className="font-semibold text-navy">{c.name}</p>
-              <p className="text-navy/60">{c.address}</p>
-              <p className="text-navy/60">{c.city}, {c.province}, {c.postalCode}</p>
-              <p className="text-navy/60 mt-1">{c.phone}</p>
+          {/* Delivery info */}
+          <div className="border-t border-navy/8 pt-4 space-y-2 text-sm">
+            <div className="flex justify-between">
+              <span className="text-navy/50">Deliver to</span>
+              <span className="text-navy font-medium text-right">
+                {o?.delivery?.address}, {o?.delivery?.city}, {o?.delivery?.province}
+              </span>
             </div>
-            <div>
-              <p className="text-[10px] font-mono tracking-widest text-navy/40 uppercase mb-1.5">Shipping method</p>
-              <p className="font-semibold text-navy">{order.shipping.label}</p>
-              <p className="text-navy/60">{order.shipping.eta}</p>
+            <div className="flex justify-between">
+              <span className="text-navy/50">Shipping</span>
+              <span className="text-navy font-medium">{o?.shippingOption}</span>
+            </div>
+            <div className="flex justify-between">
+              <span className="text-navy/50">Estimated delivery</span>
+              <span className="text-green-700 font-semibold">{estDelivery}</span>
             </div>
           </div>
         </motion.div>
 
-        {/* Footer actions */}
-        <div className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-4">
-          <Link to="/catalogue" className="w-full sm:w-auto text-center bg-blue text-white font-semibold px-8 py-3.5 rounded-full hover:bg-blue-light transition-colors">
-            Continue shopping
+        {/* CPA returns notice */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.55 }}
+          className="bg-lavender rounded-xl p-4 mb-8 text-xs text-navy/50 leading-relaxed"
+        >
+          <strong className="text-navy/70">Returns &amp; CPA Rights:</strong> Under the Consumer Protection Act (CPA No. 68 of 2008), you have the right to return this product within <strong>5 business days</strong> if it does not conform to the product description, is defective, or was not delivered as described. Visit our{' '}
+          <Link to="/returns-policy" className="text-blue hover:text-blue-light underline">Returns Policy</Link> or{' '}
+          <Link to="/contact" className="text-blue hover:text-blue-light underline">contact us</Link> for assistance.
+        </motion.div>
+
+        {/* CTAs */}
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="flex flex-col sm:flex-row gap-3"
+        >
+          <Link to="/catalogue" className="flex-1 bg-blue text-white font-bold py-4 rounded-full hover:bg-blue-light transition-colors text-center">
+            Continue Shopping
           </Link>
-          <button onClick={() => setReturnsOpen(true)} className="text-sm text-navy/50 font-semibold hover:text-blue transition-colors">
-            Returns Policy
-          </button>
-        </div>
+          <Link to="/contact" className="flex-1 border-2 border-navy/15 text-navy/60 font-semibold py-4 rounded-full hover:border-navy/30 transition-colors text-center text-sm">
+            Need Help?
+          </Link>
+        </motion.div>
 
-        <p className="text-center text-xs text-navy/35 mt-6 leading-relaxed">
-          A copy of this confirmation has been emailed to you. Questions about your order?{' '}
-          <Link to="/contact" className="text-blue font-semibold">Contact us</Link>.
-        </p>
       </div>
-
-      {returnsOpen && <ReturnsPolicyModal onClose={() => setReturnsOpen(false)} />}
     </div>
   )
 }

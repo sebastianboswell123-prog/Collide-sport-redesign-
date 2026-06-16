@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import { PRODUCTS, CATEGORIES } from "../data/products";
+import AppImage from "./ui/AppImage";
 
 const categoryLabel = (value) => {
   const cat = CATEGORIES.find((c) => c.value === value);
@@ -87,7 +88,7 @@ function SearchOverlay({ open, onClose }) {
                             onClick={handleSelect}
                             className="flex w-full items-center gap-4 px-5 py-3 text-left transition-colors hover:bg-lavender/30"
                           >
-                            <img
+                            <AppImage
                               src={product.image}
                               alt={product.name}
                               className="h-10 w-10 rounded object-cover"

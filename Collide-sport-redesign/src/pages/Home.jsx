@@ -1,8 +1,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import EditorialLookbook from '../components/EditorialLookbook'
+import AthleteSpotlight from '../components/AthleteSpotlight'
+import PressWall from '../components/PressWall'
 import { PRODUCTS } from '../data/products'
 import ProductCard from '../components/catalogue/ProductCard'
+import AppImage from '../components/ui/AppImage'
 
 const INTERVAL = 5000
 const CDN = 'https://collidesport.co.za/cdn/shop/files'
@@ -88,6 +92,14 @@ const FEATURED_IDS = [14, 11, 20, 22, 23, 19, 1, 15]
 const FEATURED_PRODUCTS = FEATURED_IDS
   .map(id => PRODUCTS.find(p => p.id === id))
   .filter(Boolean)
+
+const PHOTO_STRIP = [
+  { src: `${CDN}/Warrior_Cap_on_Bosch_1st_Team.jpg?v=1724350156&width=1200`,  alt: 'Bosch 1st Team in Warrior Caps', label: 'On the Field' },
+  { src: `${CDN}/DSC7768_1.png?v=1724350156&width=1200`,                       alt: 'Editorial rugby shot',            label: 'Editorial' },
+  { src: `${CDN}/Warrior_and_Tribal_Cap_2.jpg?v=1724350156&width=1200`,        alt: 'Warrior and Tribal Caps',        label: 'The Range' },
+  { src: `${CDN}/DSC3288_1__Original.jpg?v=1724350156&width=1200`,             alt: 'Collide Sport lifestyle shot',   label: 'Built for SA Rugby' },
+  { src: `${CDN}/Sabre_Sport_Scrum_Cap_2.jpg?v=1690355694&width=1200`,         alt: 'Sabre Scrum Cap',                label: 'Sabre Sport' },
+]
 
 const FEATURES = [
   {
@@ -224,7 +236,7 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
                   animate={{ x: 0, opacity: 1 }}
                   transition={{ duration: 0.7, delay: 0.2, ease: 'easeOut' }}
                 >
-                  <img
+                  <AppImage
                     src={slide.img}
                     alt={slide.heading}
                     className="w-full h-full object-contain p-8"
@@ -234,7 +246,7 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
                 </motion.div>
                 {/* Mobile fallback: object-contain with dark bg so cap still shows in full */}
                 <div className="lg:hidden absolute inset-0 bg-navy-dark flex items-center justify-center">
-                  <img
+                  <AppImage
                     src={slide.img}
                     alt={slide.heading}
                     className="w-full h-full object-contain"
@@ -249,6 +261,8 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
                 <motion.img
                   src={slide.img}
                   alt=""
+                  loading="lazy"
+                  decoding="async"
                   className="absolute inset-0 w-full h-full object-cover"
                   style={{ objectPosition: slide.objectPosition || 'center center' }}
                   initial={{ scale: 1.04 }}
@@ -272,7 +286,7 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
           >
-            <h1 className="font-display font-extrabold text-[clamp(2rem,6vw,4.5rem)] leading-[1.05] text-white tracking-tight max-w-2xl mb-4">
+            <h1 className="font-display font-black text-[clamp(2.2rem,6vw,5rem)] leading-[0.95] text-white tracking-tighter uppercase max-w-2xl mb-4">
               {slide.heading}
             </h1>
             {slide.sub && (
@@ -283,10 +297,23 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
             {!slide.sub && <div className="mb-8" />}
             <Link
               to={slide.cta.to}
-              className="inline-block bg-blue text-white font-semibold px-8 py-3.5 rounded-full hover:bg-blue-light transition-colors"
+              className="inline-block bg-gold text-navy-dark font-black uppercase tracking-widest text-xs px-8 py-3.5 hover:bg-gold-dim transition-colors"
             >
-              {slide.cta.label}
+              {slide.cta.label} →
             </Link>
+
+            {/* Centred page nav — visible on all sizes */}
+            <div className="flex items-center gap-8 mt-10">
+              {[{ label: 'Shop', to: '/catalogue' }, { label: 'About', to: '/about' }, { label: 'Contact', to: '/contact' }].map(({ label, to }) => (
+                <Link
+                  key={to}
+                  to={to}
+                  className="text-white/70 hover:text-white font-black uppercase tracking-widest text-xs border-b border-white/20 hover:border-white pb-0.5 transition-colors"
+                >
+                  {label}
+                </Link>
+              ))}
+            </div>
           </motion.div>
         </div>
 
@@ -327,6 +354,24 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
           </div>
         </div>
 
+        {/* ── Floating Trust Signals Strip ── */}
+        <div className="absolute bottom-10 left-0 right-0 z-20 flex justify-center px-4">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="flex items-center gap-4 lg:gap-8 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl px-6 py-3 shadow-xl overflow-x-auto max-w-full"
+          >
+            {TRUST_SIGNALS.map(({ icon, text }, i) => (
+              <div key={text} className="flex items-center gap-2 flex-shrink-0">
+                {i > 0 && <span className="hidden sm:block w-px h-4 bg-white/20 mr-2" />}
+                <span className="text-green"><TrustIcon type={icon} /></span>
+                <span className="text-[11px] lg:text-xs font-semibold text-white whitespace-nowrap">{text}</span>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+
         {/* Progress bar */}
         <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-white/10 z-20">
           <motion.div
@@ -339,11 +384,8 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
         </div>
       </section>
 
-      {/* ── Trust Signals Strip ──
-          Desktop: 4 signals in a row.
-          Mobile: auto-scrolling marquee — no horizontal scroll required. ── */}
+      {/* ── Trust Signals Strip — desktop row + mobile marquee ── */}
       <div className="sticky top-14 z-30 bg-navy text-white border-b border-white/5 overflow-hidden">
-        {/* Desktop */}
         <div className="hidden lg:flex mx-auto max-w-[1440px] px-12 py-2.5 items-center justify-center gap-12">
           {TRUST_SIGNALS.map(({ icon, text }) => (
             <div key={text} className="flex items-center gap-2">
@@ -352,7 +394,6 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
             </div>
           ))}
         </div>
-        {/* Mobile marquee */}
         <div className="lg:hidden py-2.5">
           <div className="animate-marquee flex gap-10 whitespace-nowrap w-max">
             {[...TRUST_SIGNALS, ...TRUST_SIGNALS].map(({ icon, text }, i) => (
@@ -365,18 +406,16 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
         </div>
       </div>
 
-      {/* ── Category Tiles ──
-          4 tiles. Mobile: 2×2 grid. Desktop: 4 across.
-          Square aspect keeps tiles compact on all screens. ── */}
+      {/* ── Category Tiles ── */}
       <section className="py-12 lg:py-16 bg-lavender">
         <div className="mx-auto max-w-[1440px] px-6 lg:px-12">
-          <h2 className="font-display font-extrabold text-2xl lg:text-3xl text-navy tracking-tight mb-8 text-center">
+          <h2 className="font-display font-black text-2xl lg:text-3xl text-navy tracking-tighter uppercase mb-8 text-center">
             Shop by Category
           </h2>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6">
             {CATEGORY_TILES.map(({ label, img, to, objectPosition }) => (
               <Link key={label} to={to} className="group relative aspect-square rounded-2xl overflow-hidden">
-                <img
+                <AppImage
                   src={img}
                   alt={label}
                   className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
@@ -399,7 +438,7 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
       <section className="py-16 lg:py-24 bg-white">
         <div className="mx-auto max-w-[1440px] px-6 lg:px-12">
           <div className="flex items-end justify-between mb-8 lg:mb-10">
-            <h2 className="font-display font-extrabold text-2xl lg:text-4xl text-navy tracking-tight">
+            <h2 className="font-display font-black text-2xl lg:text-4xl text-navy tracking-tighter uppercase">
               Featured Scrum Caps
             </h2>
             <Link to="/catalogue" className="text-sm text-blue font-semibold hover:text-blue-light transition-colors whitespace-nowrap ml-4">
@@ -426,10 +465,32 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
         </div>
       </section>
 
+      {/* ── Photo Strip — scrolling lifestyle shots ── */}
+      <div className="bg-navy-dark overflow-x-auto scrollbar-none">
+        <div className="flex gap-0.5 w-max">
+          {PHOTO_STRIP.map(({ src, alt, label }) => (
+            <div key={alt} className="relative w-72 sm:w-96 h-96 sm:h-[480px] flex-shrink-0 overflow-hidden group">
+              <motion.div
+                whileHover={{ scale: 1.03 }}
+                transition={{ duration: 0.5 }}
+                className="w-full h-full"
+              >
+                <AppImage src={src} alt={alt} className="w-full h-full object-cover object-center" />
+              </motion.div>
+              {/* gradient + label */}
+              <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/70 via-transparent to-transparent pointer-events-none" />
+              <span className="absolute bottom-4 left-4 text-white text-xs font-black uppercase tracking-widest opacity-80 group-hover:opacity-100 transition-opacity">
+                {label}
+              </span>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* ── Up Your Game ── */}
       <section className="py-16 lg:py-24 bg-lavender">
         <div className="mx-auto max-w-[1440px] px-6 lg:px-12 text-center">
-          <h2 className="font-display font-extrabold text-3xl lg:text-4xl text-navy tracking-tight mb-4">
+          <h2 className="font-display font-black text-3xl lg:text-4xl text-navy tracking-tighter uppercase mb-4">
             Up your game
           </h2>
           <p className="text-navy/60 text-lg max-w-2xl mx-auto leading-relaxed mb-10">
@@ -438,7 +499,7 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
           <div className="flex flex-wrap justify-center gap-4">
             <Link
               to="/catalogue?categories=scrum-caps"
-              className="bg-blue text-white font-semibold px-8 py-3.5 rounded-full hover:bg-blue-light transition-colors"
+              className="bg-blue text-white font-black uppercase tracking-widest text-xs px-8 py-3.5 hover:bg-blue-light transition-colors"
             >
               Explore Scrum Caps
             </Link>
@@ -457,7 +518,7 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
         <div className="mx-auto max-w-[1440px] px-6 lg:px-12">
           <div className="text-center mb-14">
             <p className="text-xs font-mono tracking-widest text-blue uppercase mb-3">Protection</p>
-            <h2 className="font-display font-extrabold text-3xl lg:text-4xl text-navy tracking-tight">
+            <h2 className="font-display font-black text-3xl lg:text-4xl text-navy tracking-tighter uppercase">
               Scrum Caps to Keep You Safe
             </h2>
           </div>
@@ -482,30 +543,30 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
         <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[400px]">
           <div className="flex items-center justify-center p-10 lg:p-16">
             <div>
-              <h2 className="font-display font-extrabold text-3xl lg:text-4xl text-white tracking-tight mb-4">Tribal Scrum Cap</h2>
+              <h2 className="font-display font-black text-3xl lg:text-4xl text-white tracking-tighter uppercase mb-4">Tribal Scrum Cap</h2>
               <p className="text-white/60 text-base max-w-md leading-relaxed mb-8">
                 Flexible as well as durable to sit comfortably on all head shapes. Our most popular cap — stand out on the field of play.
               </p>
-              <Link to="/catalogue" className="inline-block bg-blue text-white font-semibold px-8 py-3.5 rounded-full hover:bg-blue-light transition-colors">
+              <Link to="/catalogue" className="inline-block bg-gold text-navy-dark font-black uppercase tracking-widest text-xs px-8 py-3.5 hover:bg-gold-dim transition-colors">
                 Shop Now
               </Link>
             </div>
           </div>
           <div className="bg-lavender">
-            <img src={`${CDN}/TribelLeft.jpg?v=1696703994&width=800`} alt="Tribal Scrum Cap" className="w-full h-full object-cover min-h-[300px]" />
+            <AppImage src={`${CDN}/TribelLeft.jpg?v=1696703994&width=800`} alt="Tribal Scrum Cap" className="w-full h-full object-cover min-h-[300px]" />
           </div>
         </div>
         <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[400px]">
           <div className="bg-lavender order-2 lg:order-1">
-            <img src={`${CDN}/SabreCompressionTop-Black.jpg?v=1689063664&width=800`} alt="Compression Top" className="w-full h-full object-cover min-h-[300px]" />
+            <AppImage src={`${CDN}/SabreCompressionTop-Black.jpg?v=1689063664&width=800`} alt="Compression Top" className="w-full h-full object-cover min-h-[300px]" />
           </div>
           <div className="flex items-center justify-center p-10 lg:p-16 order-1 lg:order-2">
             <div>
-              <h2 className="font-display font-extrabold text-3xl lg:text-4xl text-white tracking-tight mb-4">Compression Tops</h2>
+              <h2 className="font-display font-black text-3xl lg:text-4xl text-white tracking-tighter uppercase mb-4">Compression Tops</h2>
               <p className="text-white/60 text-base max-w-md leading-relaxed mb-8">
                 Available in White and Black. Designed for comfort and performance during training and match day.
               </p>
-              <Link to="/catalogue" className="inline-block bg-blue text-white font-semibold px-8 py-3.5 rounded-full hover:bg-blue-light transition-colors">
+              <Link to="/catalogue" className="inline-block bg-gold text-navy-dark font-black uppercase tracking-widest text-xs px-8 py-3.5 hover:bg-gold-dim transition-colors">
                 Shop Now
               </Link>
             </div>
@@ -514,17 +575,17 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
         <div className="grid grid-cols-1 lg:grid-cols-2 min-h-[400px]">
           <div className="flex items-center justify-center p-10 lg:p-16">
             <div>
-              <h2 className="font-display font-extrabold text-3xl lg:text-4xl text-white tracking-tight mb-4">Warrior Scrum Cap</h2>
+              <h2 className="font-display font-black text-3xl lg:text-4xl text-white tracking-tighter uppercase mb-4">Warrior Scrum Cap</h2>
               <p className="text-white/60 text-base max-w-md leading-relaxed mb-8">
                 Score tries under the defence's radar in our warrior scrum cap. Built for players who give everything on the field.
               </p>
-              <Link to="/catalogue" className="inline-block bg-blue text-white font-semibold px-8 py-3.5 rounded-full hover:bg-blue-light transition-colors">
+              <Link to="/catalogue" className="inline-block bg-gold text-navy-dark font-black uppercase tracking-widest text-xs px-8 py-3.5 hover:bg-gold-dim transition-colors">
                 Shop Now
               </Link>
             </div>
           </div>
           <div className="bg-lavender">
-            <img src={`${CDN}/Warrior_Scrum_Cap.jpg?v=1724349324&width=800`} alt="Warrior Scrum Cap" className="w-full h-full object-cover min-h-[300px]" />
+            <AppImage src={`${CDN}/Warrior_Scrum_Cap.jpg?v=1724349324&width=800`} alt="Warrior Scrum Cap" className="w-full h-full object-cover min-h-[300px]" />
           </div>
         </div>
       </section>
@@ -536,7 +597,7 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
             <div className="flex items-center justify-center gap-1 mb-3">
               {[...Array(5)].map((_, i) => <StarIcon key={i} />)}
             </div>
-            <h2 className="font-display font-extrabold text-3xl lg:text-4xl text-navy tracking-tight">
+            <h2 className="font-display font-black text-3xl lg:text-4xl text-navy tracking-tighter uppercase">
               5-Star Rated on Takealot
             </h2>
           </div>
@@ -554,11 +615,49 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
         </div>
       </section>
 
+      {/* ── "Get Your Head in the Game" immersive banner ── */}
+      <section className="relative h-[55vh] min-h-[380px] overflow-hidden">
+        <AppImage
+          src={`${CDN}/Sabre_Sport_Banner_1.jpg?v=1689080131&width=1920`}
+          alt="Get your head in the game"
+          className="absolute inset-0 w-full h-full object-cover"
+        />
+        <div className="absolute inset-0 bg-navy-dark/65" />
+        <div className="relative flex items-center justify-center h-full text-center px-6">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+          >
+            <p className="font-mono text-xs text-gold uppercase tracking-widest mb-4">Trusted by Players Across SA</p>
+            <h2 className="font-display font-black text-[clamp(2rem,6vw,4.5rem)] text-white tracking-tighter uppercase leading-[0.95] mb-8">
+              Get Your Head<br />in the Game
+            </h2>
+            <Link
+              to="/catalogue"
+              className="inline-block bg-gold text-navy-dark font-black uppercase tracking-widest text-xs px-8 py-3.5 hover:bg-gold-dim transition-colors"
+            >
+              Shop Now →
+            </Link>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* ── Editorial Lookbook ── */}
+      <EditorialLookbook />
+
+      {/* ── Athlete Spotlight ── */}
+      <AthleteSpotlight />
+
+      {/* ── Press Wall ── */}
+      <PressWall />
+
       {/* ── CTA — pb-20 on mobile clears the fixed MobileBottomBar ── */}
       <section className="bg-navy py-16 lg:py-24 relative overflow-hidden pb-20 lg:pb-24">
         <div className="absolute inset-0 diagonal-line opacity-30" />
         <div className="relative mx-auto max-w-[1440px] px-6 lg:px-12 text-center">
-          <h2 className="font-display font-extrabold text-[clamp(2rem,6vw,4rem)] text-white tracking-tight leading-[1.05] mb-4">
+          <h2 className="font-display font-black text-[clamp(2.5rem,7vw,5rem)] text-white tracking-tighter leading-[0.95] uppercase mb-4">
             Gear Up with Collide Sport
           </h2>
           <p className="text-white/50 text-lg max-w-md mx-auto mb-10">
@@ -566,9 +665,9 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
           </p>
           <Link
             to="/catalogue"
-            className="inline-block bg-green text-navy font-extrabold px-10 py-4 rounded-full hover:bg-green-dim transition-colors"
+            className="inline-block bg-gold text-navy-dark font-black uppercase tracking-widest text-sm px-10 py-4 hover:bg-gold-dim transition-colors"
           >
-            Shop Now
+            Shop Now →
           </Link>
         </div>
       </section>
