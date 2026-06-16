@@ -6,7 +6,7 @@ import { useLogoClick } from '../EasterEgg'
 import CurrencySelector from '../CurrencySelector'
 import useWishlist from '../../hooks/useWishlist'
 import { SearchIcon, HeartIcon, CartIcon, CloseIcon, MenuIcon } from './NavIcons'
-import AppImage from '../ui/AppImage'
+import CollideLogo from '../CollideLogo'
 import { DesktopSearchBar, MobileSearchBar } from './NavSearch'
 import NavMobileMenu from './NavMobileMenu'
 
@@ -60,8 +60,8 @@ export default function Navbar() {
         <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-12 h-14 flex items-center gap-4">
 
           {/* Logo */}
-          <Link to="/" onClick={logoClick} className="font-display font-black text-xl tracking-tighter uppercase text-white flex-shrink-0 z-10">
-            COLLIDE<span className="text-blue">.</span>
+          <Link to="/" onClick={logoClick} className="flex-shrink-0 z-10">
+            <CollideLogo size="sm" variant="light" />
           </Link>
 
           {/* Desktop centre: nav links ↔ search bar */}
