@@ -62,7 +62,8 @@ const MOSAIC = [
 export default function EditorialLookbook() {
   const heroRef = useRef(null)
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
-  const imgY = useTransform(scrollYProgress, [0, 1], ['0%', '-20%'])
+  // Gentle parallax — kept small so the scrum cap stays framed throughout the scroll
+  const imgY = useTransform(scrollYProgress, [0, 1], ['0%', '-8%'])
 
   return (
     <section className="overflow-hidden">
@@ -70,9 +71,10 @@ export default function EditorialLookbook() {
       <div ref={heroRef} className="relative h-[70vh] overflow-hidden">
         <motion.div className="absolute inset-0 scale-110" style={{ y: imgY }}>
           <AppImage
-            src={`${CDN}/29544158-Large-Digital-Photo-Download-3428x2285.jpg?v=1744747280&width=2880`}
-            alt="Collide Sport player in action"
-            className="w-full h-full object-cover object-center"
+            src={`${CDN}/29544063-Large-Digital-Photo-Download-2810x1873.jpg?v=1744747333&width=1920`}
+            alt="Player carrying the ball in a Collide Sport scrum cap"
+            className="w-full h-full object-cover"
+            style={{ objectPosition: 'center 16%' }}
           />
         </motion.div>
         <div className="absolute inset-0 bg-gradient-to-t from-[#080f2e]/80 via-[#080f2e]/30 to-transparent" />
