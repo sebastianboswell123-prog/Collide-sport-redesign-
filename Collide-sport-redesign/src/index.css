@@ -1,15 +1,17 @@
 @import "tailwindcss";
 
 @theme {
-  /* Brand colors */
-  --color-navy: #0e1b4d;
-  --color-navy-dark: #080f2e;
-  --color-blue: #4770db;
-  --color-blue-light: #5a82e8;
+  /* Brand colors — deepened for premium athletic feel */
+  --color-navy: #0a1230;
+  --color-navy-dark: #050916;
+  --color-blue: #3d6be8;
+  --color-blue-light: #5a82ee;
   --color-green: #47db71;
   --color-green-dim: #3bc260;
-  --color-lavender: #eff0f5;
-  --color-lavender-dark: #dfe0e8;
+  --color-gold: #f5c518;
+  --color-gold-dim: #d9ad10;
+  --color-lavender: #eef0f7;
+  --color-lavender-dark: #dcdfe9;
 
   /* Fonts */
   --font-display: "Plus Jakarta Sans", "Outfit", sans-serif;

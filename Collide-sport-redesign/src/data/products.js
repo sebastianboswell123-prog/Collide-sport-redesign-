@@ -28,8 +28,8 @@ export const PRODUCTS = [
   { id: 14, name: 'Warrior Scrum Cap',                          category: 'scrum-caps', price: 550, stock: 13, colours: ['Black','Grey'],        badge: null,      image: `${CDN}/Warrior_Scrum_Cap.jpg?v=1724349324&width=533` },
   { id: 15, name: 'Tribal Scrum Cap — Black Border',            category: 'scrum-caps', price: 550, stock: 16, colours: ['White','Black'],       badge: null,      image: `${CDN}/Tribal_Scrum_Cap_with_Black_Border.jpg?v=1722097747&width=533` },
   { id: 16, name: 'Rugby Scrum Cap — Navy & White',             category: 'scrum-caps', price: 550, stock:  8, colours: ['Navy','White'],        badge: null,      image: `${CDN}/PHOTO-2024-07-24-16-31-06.jpg?v=1722103434&width=533` },
-  { id: 17, name: 'Rugby Scrum Cap — Green & Black',            category: 'scrum-caps', price: 450, stock: 20, colours: ['Green','Black'],       badge: null,      image: `${CDN}/1_165a1aff-9c87-41b8-b1c2-d8304dff7ab1.jpg?v=1722102398&width=533` },
-  { id: 18, name: 'Rugby Scrum Cap — Graffiti',                 category: 'scrum-caps', price: 450, stock: 18, colours: ['White','Black'],       badge: null,      image: `${CDN}/2_edc879f4-ec89-432d-abdb-fa6a49b88508.jpg?v=1722102793&width=533` },
+  { id: 17, name: 'Rugby Scrum Cap — Green & Black',            category: 'scrum-caps', price: 550, salePrice: 450, stock: 20, colours: ['Green','Black'],       badge: null,      image: `${CDN}/1_165a1aff-9c87-41b8-b1c2-d8304dff7ab1.jpg?v=1722102398&width=533` },
+  { id: 18, name: 'Rugby Scrum Cap — Graffiti',                 category: 'scrum-caps', price: 550, salePrice: 450, stock:  0, colours: ['White','Black'],       badge: null,      image: `${CDN}/2_edc879f4-ec89-432d-abdb-fa6a49b88508.jpg?v=1722102793&width=533` },
   { id: 19, name: 'Blue & White Camo — Black Border',           category: 'scrum-caps', price: 550, stock:  6, colours: ['Blue','White','Camo','Black'], badge: 'New', image: `${CDN}/2_5983c119-b758-4faf-9162-85a5b20e170c.jpg?v=1779389799&width=533` },
 
   // ── Premium Caps ────────────────────────────────────────────────────────
