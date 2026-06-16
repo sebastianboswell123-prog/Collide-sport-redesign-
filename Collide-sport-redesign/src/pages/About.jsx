@@ -10,8 +10,8 @@ const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xpwzgkje'
 
 const STORE_EMAIL     = 'info@collidesport.co.za'
 const WHATSAPP_NUMBER = '27827804116'
-const STORE_ADDRESS   = 'De Waterkant, Cape Town, 8001, Western Cape, South Africa'
-const MAPS_QUERY      = 'De+Waterkant,+Cape+Town,+South+Africa'
+const STORE_ADDRESS   = 'Cape Town, Western Cape, South Africa'
+const MAPS_QUERY      = 'Cape+Town,+Western+Cape,+South+Africa'
 
 const TIMELINE = [
   { year: '2023', title: 'Founded in Cape Town', desc: 'A Cape Town rugby mom frustrated by the lack of quality, affordable headgear on SA shelves decided to do something about it. Collide Sport was born.' },
@@ -307,7 +307,7 @@ export default function About() {
                 </svg>
               </div>
               <div className="text-center">
-                <p className="font-display font-bold text-navy mb-1">Trading Address</p>
+                <p className="font-display font-bold text-navy mb-1">Location</p>
                 <p className="text-sm text-navy/50 leading-snug">{STORE_ADDRESS}</p>
                 <p className="text-xs text-blue font-semibold mt-2">View on Google Maps →</p>
               </div>
