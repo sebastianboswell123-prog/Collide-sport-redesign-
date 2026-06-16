@@ -148,17 +148,17 @@ export default function OrderConfirmation() {
                 <p className="text-sm font-semibold text-green-700">Confirmation email sent!</p>
                 <p className="text-xs text-navy/50 mt-0.5">Check your inbox at <strong>{o?.delivery?.email}</strong></p>
               </>
+            ) : emailSent === false ? (
+              <>
+                <p className="text-sm font-semibold text-navy">Email not configured</p>
+                <p className="text-xs text-navy/50 mt-0.5">
+                  Save your order number above. To enable automated emails, add <span className="font-mono text-navy/70">VITE_EMAILJS_*</span> to your <span className="font-mono text-navy/70">.env</span> file.
+                </p>
+              </>
             ) : (
               <>
-                <p className="text-sm font-semibold text-navy">Confirmation sent to {o?.delivery?.email || 'your email'}</p>
-                <p className="text-xs text-navy/50 mt-0.5">
-                  You'll receive a confirmation email shortly.{' '}
-                  {emailSent === false && (
-                    <span className="text-navy/40">
-                      (Configure <span className="font-mono">VITE_EMAILJS_*</span> env vars for automated emails.)
-                    </span>
-                  )}
-                </p>
+                <p className="text-sm font-semibold text-navy">Sending confirmation to {o?.delivery?.email || 'your email'}…</p>
+                <p className="text-xs text-navy/50 mt-0.5">You'll receive a confirmation email shortly.</p>
               </>
             )}
           </div>
