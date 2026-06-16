@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import CollideLogo from './CollideLogo'
 
 export default function CurtainReveal() {
   const [visible, setVisible] = useState(false)
@@ -21,16 +22,20 @@ export default function CurtainReveal() {
     <AnimatePresence onExitComplete={() => setShown(true)}>
       {visible && (
         <>
-          {/* Logo */}
+          {/* Logo — same Collide Sport brand mark used across the site */}
           <motion.div
             className="fixed inset-0 z-[9001] flex items-center justify-center pointer-events-none"
             initial={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4, delay: 0.6 }}
           >
-            <span className="font-display font-extrabold text-2xl text-white tracking-tight select-none">
-              COLLIDE<span className="text-[#4770db]">.</span>
-            </span>
+            <motion.div
+              initial={{ scale: 0.85, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+            >
+              <CollideLogo size="xl" variant="light" />
+            </motion.div>
           </motion.div>
 
           {/* Left panel */}
