@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import AppImage from '../components/ui/AppImage'
 
 const CDN = 'https://collidesport.co.za/cdn/shop/files'
 
@@ -69,7 +70,7 @@ export default function Lookbook() {
             transition={{ delay: i * 0.03 }}
             className="break-inside-avoid mb-3 rounded-xl overflow-hidden relative group cursor-pointer"
           >
-            <img
+            <AppImage
               src={item.img}
               alt={item.tag}
               className="w-full object-cover"

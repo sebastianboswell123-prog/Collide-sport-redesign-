@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '../../context/CartContext';
+import AppImage from '../ui/AppImage';
 
 const COLOUR_MAP = {
   Black: '#1a1a1a',
@@ -82,7 +83,7 @@ export default function QuickView({ product, onClose }) {
             <div className="grid grid-cols-1 md:grid-cols-2">
               {/* Left -- Image */}
               <div className="relative h-64 md:h-full min-h-[280px]">
-                <img
+                <AppImage
                   src={product.image}
                   alt={product.name}
                   className="w-full h-full object-cover"

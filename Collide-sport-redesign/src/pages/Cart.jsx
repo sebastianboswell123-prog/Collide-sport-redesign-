@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCart } from '../context/CartContext'
 import { useCurrency } from '../context/CurrencyContext'
+import AppImage from '../components/ui/AppImage'
 
 // ─── Coupon codes (client can expand this list) ───────────────────────────────
 const VALID_COUPONS = {
@@ -60,7 +61,7 @@ function CartItemRow({ item }) {
       {/* Image */}
       <Link to={`/catalogue/${item.id}`} className="flex-shrink-0">
         <div className="w-20 h-20 rounded-xl overflow-hidden bg-lavender">
-          <img src={item.image} alt={item.name} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+          <AppImage src={item.image} alt={item.name} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
         </div>
       </Link>
 

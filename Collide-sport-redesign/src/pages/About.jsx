@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
+import AppImage from '../components/ui/AppImage'
 
 const CDN = 'https://collidesport.co.za/cdn/shop/files'
 
@@ -71,10 +72,10 @@ export default function About() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="aspect-[3/4] rounded-2xl overflow-hidden">
-                <img src={`${CDN}/Sabre_Sport_Banner_2_02d6cd8e-fd57-410e-baac-c9e18c9daaa4.jpg?v=1689090191&width=600`} alt="Rugby action" className="w-full h-full object-cover" />
+                <AppImage src={`${CDN}/Sabre_Sport_Banner_2_02d6cd8e-fd57-410e-baac-c9e18c9daaa4.jpg?v=1689090191&width=600`} alt="Rugby action" className="w-full h-full object-cover" />
               </div>
               <div className="aspect-[3/4] rounded-2xl overflow-hidden mt-8">
-                <img src={`${CDN}/2_4240e760-94b0-44bb-8213-0b752403e682.jpg?v=1715450720&width=600`} alt="Tribal cap on field" className="w-full h-full object-cover" />
+                <AppImage src={`${CDN}/2_4240e760-94b0-44bb-8213-0b752403e682.jpg?v=1715450720&width=600`} alt="Tribal cap on field" className="w-full h-full object-cover" />
               </div>
             </div>
           </div>

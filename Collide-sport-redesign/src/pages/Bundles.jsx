@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCart } from '../context/CartContext'
+import AppImage from '../components/ui/AppImage'
 
 const CDN = 'https://collidesport.co.za/cdn/shop/files'
 
@@ -96,7 +97,7 @@ export default function Bundles() {
             className="bg-white rounded-2xl overflow-hidden shadow-sm"
           >
             <div className="aspect-[3/2] overflow-hidden bg-lavender">
-              <img src={b.image} alt={b.name} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+              <AppImage src={b.image} alt={b.name} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
             </div>
             <div className="p-6">
               {b.badge && <span className="inline-block bg-green/20 text-green-700 text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-3">{b.badge}</span>}
@@ -106,7 +107,7 @@ export default function Bundles() {
               {/* Item thumbnails */}
               <div className="flex gap-2 mb-3">
                 {b.items.map(item => (
-                  <img key={item.id} src={item.img} alt={item.name} className="w-10 h-10 rounded-lg object-cover border border-navy/10" />
+                  <AppImage key={item.id} src={item.img} alt={item.name} className="w-10 h-10 rounded-lg object-cover border border-navy/10" />
                 ))}
               </div>
               <ul className="text-xs text-navy/50 space-y-0.5 mb-4">

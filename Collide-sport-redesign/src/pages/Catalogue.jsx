@@ -5,6 +5,7 @@ import { PRODUCTS, CATEGORIES, COLOURS, PRICE_MIN, PRICE_MAX } from '../data/pro
 import ProductCard from '../components/catalogue/ProductCard'
 import CartDrawer from '../components/catalogue/CartDrawer'
 import QuickView from '../components/catalogue/QuickView'
+import AppImage from '../components/ui/AppImage'
 
 const PAGE_SIZE = 12
 
@@ -148,7 +149,7 @@ function Lightbox({ photos, index, onClose, onPrev, onNext }) {
           onPointerUp={onPointerUp}
           onPointerLeave={onPointerUp}
         >
-          <img
+          <AppImage
             src={lbSrc}
             alt={photo.alt}
             draggable={false}
@@ -252,12 +253,10 @@ function ActionGallery({ selectedCats }) {
               }`}
               style={{ height: photo.tall ? 350 : 270 }}
             >
-              <img
+              <AppImage
                 src={`${photo.src}&width=700`}
                 alt={photo.alt}
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                loading="lazy"
-                decoding="async"
               />
 
               {/* Hover overlay with expand icon */}
@@ -548,7 +547,7 @@ export default function Catalogue() {
               {recentlyViewed.map(p => (
                 <Link key={p.id} to="/catalogue" onClick={() => trackView(p)} className="flex-shrink-0 w-36 snap-start">
                   <div className="aspect-square rounded-xl overflow-hidden bg-lavender mb-2">
-                    <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
+                    <AppImage src={p.image} alt={p.name} className="w-full h-full object-cover" />
                   </div>
                   <p className="text-xs font-semibold text-navy truncate">{p.name}</p>
                   <p className="text-xs text-blue font-bold">R {p.price}</p>

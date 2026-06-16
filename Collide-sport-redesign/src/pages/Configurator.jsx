@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { useCart } from '../context/CartContext'
+import AppImage from '../components/ui/AppImage'
 
 const CDN = 'https://collidesport.co.za/cdn/shop/files'
 
@@ -68,7 +69,7 @@ export default function Configurator() {
           <h2 className="font-display font-bold text-navy text-lg mb-6">Your Custom Cap</h2>
 
           <div className="relative w-64 h-64 mx-auto rounded-2xl overflow-hidden bg-lavender">
-            <img src={BASE_CAPS[baseCap].img} alt="base cap" className="w-full h-full object-cover" />
+            <AppImage src={BASE_CAPS[baseCap].img} alt="base cap" className="w-full h-full object-cover" />
             <div className="absolute inset-0 rounded-2xl" style={{ background: shellHex, opacity: 0.45, mixBlendMode: 'color' }} />
             {nameText.trim() && (
               <div className="absolute bottom-3 left-0 right-0 text-center text-xs font-bold text-white tracking-widest uppercase" style={{ textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}>
@@ -149,7 +150,7 @@ export default function Configurator() {
                   onClick={() => setBaseCap(i)}
                   className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition-all ${baseCap === i ? 'border-blue scale-105' : 'border-transparent hover:border-navy/20'}`}
                 >
-                  <img src={cap.img} alt={cap.label} className="w-full h-full object-cover" />
+                  <AppImage src={cap.img} alt={cap.label} className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>

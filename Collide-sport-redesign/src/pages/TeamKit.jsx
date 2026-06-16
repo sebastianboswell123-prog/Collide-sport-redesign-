@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { PRODUCTS } from '../data/products'
+import AppImage from '../components/ui/AppImage'
 
 /* ── helpers ─────────────────────────────────────────────── */
 
@@ -215,7 +216,7 @@ export default function TeamKit() {
                   }}
                 >
                   <div style={{ aspectRatio: '1', overflow: 'hidden', background: '#f3f4f8' }}>
-                    <img
+                    <AppImage
                       src={product.image}
                       alt={product.name}
                       loading="lazy"

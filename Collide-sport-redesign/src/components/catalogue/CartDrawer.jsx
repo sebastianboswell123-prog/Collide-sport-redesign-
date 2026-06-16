@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 import { useCart } from '../../context/CartContext'
+import AppImage from '../ui/AppImage'
 
 const fmt = (n) =>
   new Intl.NumberFormat('en-ZA', {
@@ -96,7 +97,7 @@ function CartItem({ item, onUpdateQty, onRemove }) {
     >
       {/* Product image */}
       <div className="w-20 h-20 rounded-xl overflow-hidden flex-shrink-0 bg-[#eff0f5]">
-        <img
+        <AppImage
           src={item.image}
           alt={item.name}
           className="w-full h-full object-cover"

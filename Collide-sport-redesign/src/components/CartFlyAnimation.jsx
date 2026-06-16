@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useRef, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import AppImage from './ui/AppImage'
 
 const CartFlyContext = createContext(null)
 
@@ -42,7 +43,7 @@ export default function CartFlyProvider({ children }) {
             transition={{ duration: 0.65, ease: [0.25, 0.46, 0.45, 0.94] }}
             onAnimationComplete={() => removeFly(id)}
           >
-            {img && <img src={img} alt="" className="w-full h-full object-cover" />}
+            {img && <AppImage src={img} alt="" className="w-full h-full object-cover" />}
           </motion.div>
         ))}
       </AnimatePresence>

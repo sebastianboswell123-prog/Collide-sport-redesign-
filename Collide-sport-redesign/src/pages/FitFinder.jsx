@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { PRODUCTS } from '../data/products'
 import { useCart } from '../context/CartContext'
+import AppImage from '../components/ui/AppImage'
 
 /* ── Quiz questions ─────────────────────────────────────────────────────── */
 
@@ -343,7 +344,7 @@ export default function FitFinder() {
                     >
                       {/* Image */}
                       <div className="relative aspect-square overflow-hidden bg-[#0b1537]">
-                        <img
+                        <AppImage
                           src={product.image}
                           alt={product.name}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"

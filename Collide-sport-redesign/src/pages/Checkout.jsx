@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCart } from '../context/CartContext'
 import { useCurrency } from '../context/CurrencyContext'
+import AppImage from '../components/ui/AppImage'
 
 // ─── PayFast configuration ────────────────────────────────────────────────────
 // Sandbox in dev, live in prod. Replace env vars with real credentials before go-live.
@@ -366,7 +367,7 @@ export default function Checkout() {
                     {/* PayFast redirect notice */}
                     <div className="border border-blue/20 bg-blue/5 rounded-xl p-4">
                       <div className="flex items-start gap-3">
-                        <img src="https://www.payfast.co.za/assets/images/PayFast_Logo_Large.png" alt="PayFast" className="h-6 mt-0.5 object-contain" onError={e => e.target.style.display='none'} />
+                        <AppImage src="https://www.payfast.co.za/assets/images/PayFast_Logo_Large.png" alt="PayFast" className="h-6 mt-0.5 object-contain" onError={e => { e.currentTarget.hidden = true }} />
                         <div>
                           <p className="text-sm font-semibold text-navy">Pay securely via PayFast</p>
                           <p className="text-xs text-navy/50 mt-1">You'll be redirected to PayFast to complete payment. Accepts credit/debit cards, EFT, and Instant EFT.</p>
@@ -439,7 +440,7 @@ export default function Checkout() {
                 {items.map(item => (
                   <div key={item.id} className="flex gap-3 items-center">
                     <div className="w-12 h-12 rounded-lg overflow-hidden bg-lavender flex-shrink-0 relative">
-                      <img src={item.image} alt={item.name} className="w-full h-full object-cover" />
+                      <AppImage src={item.image} alt={item.name} className="w-full h-full object-cover" />
                       <span className="absolute -top-1 -right-1 w-4.5 h-4.5 bg-navy text-white text-[8px] font-bold rounded-full flex items-center justify-center leading-none w-5 h-5">
                         {item.qty}
                       </span>

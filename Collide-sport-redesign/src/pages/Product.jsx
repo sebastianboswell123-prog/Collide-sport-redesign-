@@ -6,6 +6,7 @@ import { useCart } from '../context/CartContext'
 import { useCurrency } from '../context/CurrencyContext'
 import { useCartFly } from '../components/CartFlyAnimation'
 import ProductCard from '../components/catalogue/ProductCard'
+import AppImage from '../components/ui/AppImage'
 
 const CDN = 'https://collidesport.co.za/cdn/shop/files'
 
@@ -206,6 +207,8 @@ export default function Product() {
                   key={activeImg}
                   src={gallery[activeImg]}
                   alt={product.name}
+                  loading="lazy"
+                  decoding="async"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
@@ -245,7 +248,7 @@ export default function Product() {
                   onClick={() => setActiveImg(i)}
                   className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all flex-shrink-0 ${activeImg === i ? 'border-blue scale-105' : 'border-transparent hover:border-navy/20'}`}
                 >
-                  <img src={img} alt={`View ${i + 1}`} className="w-full h-full object-cover" />
+                  <AppImage src={img} alt={`View ${i + 1}`} className="w-full h-full object-cover" />
                 </button>
               ))}
             </div>
