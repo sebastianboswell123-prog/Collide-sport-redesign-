@@ -47,3 +47,64 @@ export const PRODUCTS = [
 
 export const PRICE_MIN = Math.min(...PRODUCTS.map(p => p.price))
 export const PRICE_MAX = Math.max(...PRODUCTS.map(p => p.price))
+
+// ── Product image galleries ───────────────────────────────────────────────────
+// Restores the old site's feature: each cap's product page shows real-life
+// photos of players wearing the cap + live-match shots as extra slides,
+// alongside the studio image. Gallery images are served larger (width=800).
+
+// Upgrade a CDN url to a gallery-appropriate width.
+const gw = (url) => url.replace(/width=\d+/, 'width=800')
+
+// Shared "In Action / Live Matches" set — used for caps without their own shoot.
+const LIVE_ACTION = [
+  { src: `${CDN}/Warrior_Cap_on_Bosch_1st_Team.jpg?v=1724349538&width=800`, alt: 'Players wearing Collide Sport scrum caps in a match',  caption: 'On the field' },
+  { src: `${CDN}/DSC3288_1__Original.jpg?v=1734264287&width=800`,           alt: 'Rugby player in a Collide Sport scrum cap during play', caption: 'Live match' },
+  { src: `${CDN}/29544063-Large-Digital-Photo-Download-2810x1873.jpg?v=1744747333&width=800`, alt: 'Match action in a Collide Sport scrum cap', caption: 'Live match' },
+]
+
+// Cap-specific action photos (override the shared set for these product ids).
+const ACTION_BY_ID = {
+  // Warrior Scrum Cap
+  14: [
+    { src: `${CDN}/Warrior_Scrum_Cap_on_Rondebosch_Boy.jpg?v=1724349409&width=800`, alt: 'Player wearing the Warrior Scrum Cap', caption: 'Worn on the field' },
+    { src: `${CDN}/Warrior_Cap_on_Bosch_1st_Team.jpg?v=1724349538&width=800`,        alt: 'Rondebosch 1st XV in Warrior Scrum Caps', caption: 'On the field' },
+    { src: `${CDN}/Warrior_and_Tribal_Cap_2.jpg?v=1724350156&width=800`,             alt: 'Warrior and Tribal caps in a match', caption: 'Live match' },
+  ],
+  // Predator — Navy & Gold
+  20: [
+    { src: `${CDN}/29544158-Large-Digital-Photo-Download-3428x2285.jpg?v=1744747280&width=800`, alt: 'Player scoring a try in a Predator Scrum Cap', caption: 'Live match' },
+    { src: `${CDN}/29544063-Large-Digital-Photo-Download-2810x1873.jpg?v=1744747333&width=800`, alt: 'Player carrying the ball in a Predator Scrum Cap', caption: 'On the field' },
+  ],
+  // Predator — Maroon & Gold (same shoot)
+  21: [
+    { src: `${CDN}/29544063-Large-Digital-Photo-Download-2810x1873.jpg?v=1744747333&width=800`, alt: 'Match action in a Predator Scrum Cap', caption: 'Live match' },
+    { src: `${CDN}/29544158-Large-Digital-Photo-Download-3428x2285.jpg?v=1744747280&width=800`, alt: 'Player in a Predator Scrum Cap', caption: 'On the field' },
+  ],
+  // White Tribal
+  11: [
+    { src: `${CDN}/Warrior_and_Tribal_Cap_2.jpg?v=1724350156&width=800`, alt: 'Tribal cap worn in a match', caption: 'Live match' },
+    { src: `${CDN}/DSC3288_1__Original.jpg?v=1734264287&width=800`,       alt: 'Collide Sport scrum cap on the field', caption: 'On the field' },
+  ],
+  // Tribal — Black Border
+  15: [
+    { src: `${CDN}/Warrior_and_Tribal_Cap_2.jpg?v=1724350156&width=800`, alt: 'Tribal cap worn in a match', caption: 'Live match' },
+    { src: `${CDN}/DSC3288_1__Original.jpg?v=1734264287&width=800`,       alt: 'Collide Sport scrum cap on the field', caption: 'On the field' },
+  ],
+  // White & Red Tribal
+  22: [
+    { src: `${CDN}/Warrior_and_Tribal_Cap_2.jpg?v=1724350156&width=800`, alt: 'Tribal cap worn in a match', caption: 'Live match' },
+  ],
+}
+
+/**
+ * Full image gallery for a product: studio shot first, then real-life player /
+ * live-match slides. Action slides are only added for scrum-cap categories.
+ */
+export function getProductGallery(product) {
+  const studio = { src: gw(product.image), alt: product.name, caption: null }
+  const isCap = product.category === 'scrum-caps' || product.category === 'premium-caps'
+  if (!isCap) return [studio]
+  const action = (ACTION_BY_ID[product.id] || LIVE_ACTION)
+  return [studio, ...action]
+}
