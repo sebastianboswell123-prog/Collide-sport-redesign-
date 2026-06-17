@@ -53,6 +53,14 @@ body {
   background-color: #4770db;
 }
 
+/* Visible keyboard focus for accessibility. Mouse clicks don't trigger
+   :focus-visible, so this only shows for keyboard/AT users. */
+:focus-visible {
+  outline: 2px solid #4770db;
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: #eff0f5; }
 ::-webkit-scrollbar-thumb { background: #4770db; border-radius: 3px; }
