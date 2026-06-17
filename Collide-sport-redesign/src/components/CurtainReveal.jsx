@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import CollideLogo from './CollideLogo'
 
 export default function CurtainReveal() {
   const [visible, setVisible] = useState(false)
@@ -28,9 +29,7 @@ export default function CurtainReveal() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.4, delay: 0.6 }}
           >
-            <span className="font-display font-extrabold text-2xl text-white tracking-tight select-none">
-              COLLIDE<span className="text-[#4770db]">.</span>
-            </span>
+            <CollideLogo size="xl" variant="light" />
           </motion.div>
 
           {/* Left panel */}
