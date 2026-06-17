@@ -53,8 +53,8 @@ const MOSAIC = [
     label: 'Camo Range',
   },
   {
-    src: `${CDN}/Sabre_Sport_Scrum_Cap_2.jpg?v=1690355694&width=800`,
-    alt: 'Scrum Cap Detail',
+    src: `${CDN}/29544063-Large-Digital-Photo-Download-2810x1873.jpg?v=1744747333&width=800`,
+    alt: 'Player wearing the premium Predator scrum cap in a match',
     label: 'Premium Build',
   },
 ]
@@ -153,9 +153,9 @@ export default function EditorialLookbook() {
               alt={alt}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/70 via-transparent to-transparent" />
-            <div className="absolute bottom-5 left-5">
-              <span className="font-mono text-[10px] tracking-widest uppercase text-gold">{label}</span>
+            <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/90 via-navy-dark/20 to-transparent" />
+            <div className="absolute bottom-5 left-5 right-5">
+              <span className="font-mono text-xs font-semibold tracking-widest uppercase text-gold drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">{label}</span>
             </div>
           </motion.div>
         ))}
