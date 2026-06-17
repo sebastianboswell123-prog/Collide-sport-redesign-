@@ -8,7 +8,8 @@ import ReturnsPolicyModal from './ReturnsPolicyModal'
 const STORE_EMAIL     = 'info@collidesport.co.za'
 const WHATSAPP_NUMBER = '27827804116'
 const VAT_NUMBER      = '4950265141'
-const STORE_ADDRESS   = '1 Collide Street, De Waterkant, Cape Town, 8001'
+const STORE_ADDRESS   = '40 Kenilworth Rd, Kenilworth, Cape Town, 7708'
+const STORE_MAPS_URL  = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(STORE_ADDRESS)}`
 const WA_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hi, I need help with my Collide Sport order.')}`
 
 const QUICK_LINKS = [
@@ -89,14 +90,23 @@ export default function Footer() {
                   </span>
                   <span className="text-sm text-white/50 group-hover:text-white transition-colors">{STORE_EMAIL}</span>
                 </a>
-                <div className="flex items-start gap-2.5">
-                  <span className="w-7 h-7 rounded-full bg-white/8 flex items-center justify-center flex-shrink-0 mt-0.5">
+                <a
+                  href={STORE_MAPS_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-start gap-2.5 group"
+                  aria-label={`Open ${STORE_ADDRESS} in Google Maps for directions`}
+                >
+                  <span className="w-7 h-7 rounded-full bg-white/8 flex items-center justify-center flex-shrink-0 mt-0.5 group-hover:bg-white/15 transition-colors">
                     <svg className="w-3.5 h-3.5 text-white/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/>
                     </svg>
                   </span>
-                  <span className="text-sm text-white/50 leading-relaxed">{STORE_ADDRESS}</span>
-                </div>
+                  <span className="text-sm text-white/50 leading-relaxed group-hover:text-white transition-colors">
+                    {STORE_ADDRESS}
+                    <span className="block text-xs text-blue mt-0.5">Get directions →</span>
+                  </span>
+                </a>
               </div>
             </div>
 
