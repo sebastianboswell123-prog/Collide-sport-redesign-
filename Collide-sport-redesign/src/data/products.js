@@ -49,62 +49,40 @@ export const PRICE_MIN = Math.min(...PRODUCTS.map(p => p.price))
 export const PRICE_MAX = Math.max(...PRODUCTS.map(p => p.price))
 
 // ── Product image galleries ───────────────────────────────────────────────────
-// Restores the old site's feature: each cap's product page shows real-life
-// photos of players wearing the cap + live-match shots as extra slides,
-// alongside the studio image. Gallery images are served larger (width=800).
+// Restores the old site's feature: a product's page shows the real photos that
+// were used on collidesport.co.za for that exact cap — including real-life shots
+// of players wearing it. Only products that genuinely had these extra photos on
+// the old site get a gallery; every other product keeps its single studio image.
+// Galleries below mirror the old product pages exactly (served larger, width=800).
 
-// Upgrade a CDN url to a gallery-appropriate width.
 const gw = (url) => url.replace(/width=\d+/, 'width=800')
 
-// Shared "In Action / Live Matches" set — used for caps without their own shoot.
-const LIVE_ACTION = [
-  { src: `${CDN}/Warrior_Cap_on_Bosch_1st_Team.jpg?v=1724349538&width=800`, alt: 'Players wearing Collide Sport scrum caps in a match',  caption: 'On the field' },
-  { src: `${CDN}/DSC3288_1__Original.jpg?v=1734264287&width=800`,           alt: 'Rugby player in a Collide Sport scrum cap during play', caption: 'Live match' },
-  { src: `${CDN}/29544063-Large-Digital-Photo-Download-2810x1873.jpg?v=1744747333&width=800`, alt: 'Match action in a Collide Sport scrum cap', caption: 'Live match' },
-]
-
-// Cap-specific action photos (override the shared set for these product ids).
-const ACTION_BY_ID = {
-  // Warrior Scrum Cap
-  14: [
-    { src: `${CDN}/Warrior_Scrum_Cap_on_Rondebosch_Boy.jpg?v=1724349409&width=800`, alt: 'Player wearing the Warrior Scrum Cap', caption: 'Worn on the field' },
-    { src: `${CDN}/Warrior_Cap_on_Bosch_1st_Team.jpg?v=1724349538&width=800`,        alt: 'Rondebosch 1st XV in Warrior Scrum Caps', caption: 'On the field' },
-    { src: `${CDN}/Warrior_and_Tribal_Cap_2.jpg?v=1724350156&width=800`,             alt: 'Warrior and Tribal caps in a match', caption: 'Live match' },
+const GALLERY_BY_ID = {
+  // Rugby Scrum Cap — Turquoise/White (old-site gallery: studio + real-life player shots)
+  1: [
+    { src: `${CDN}/ScrumCap-Turquoise_White.jpg?v=1689063382&width=800`,                     alt: 'Rugby Scrum Cap — Turquoise/White', caption: null },
+    { src: `${CDN}/14_d26a6051-8be3-4c53-a8b0-2329811c7d34.jpg?v=1728305634&width=800`,       alt: 'Player wearing the Turquoise/White scrum cap (front)', caption: 'On a player' },
+    { src: `${CDN}/15.jpg?v=1728305633&width=800`,                                            alt: 'Player wearing the Turquoise/White scrum cap (side)',  caption: 'On a player' },
+    { src: `${CDN}/16.jpg?v=1728305634&width=800`,                                            alt: 'Player wearing the Turquoise/White scrum cap',         caption: 'On a player' },
+    { src: `${CDN}/13_99aeeea7-c0ee-4e03-8006-67823fbd61c0.jpg?v=1728305634&width=800`,       alt: 'Player wearing the Turquoise/White scrum cap',         caption: 'On a player' },
+    { src: `${CDN}/17_9a163d61-b6d6-4118-829b-ef2f8e47ca19.jpg?v=1728305634&width=800`,       alt: 'Player wearing the Turquoise/White scrum cap',         caption: 'On a player' },
   ],
-  // Predator — Navy & Gold
+  // Predator Scrum Cap — Navy & Gold (old-site gallery: studio + live-match shots)
   20: [
-    { src: `${CDN}/29544158-Large-Digital-Photo-Download-3428x2285.jpg?v=1744747280&width=800`, alt: 'Player scoring a try in a Predator Scrum Cap', caption: 'Live match' },
-    { src: `${CDN}/29544063-Large-Digital-Photo-Download-2810x1873.jpg?v=1744747333&width=800`, alt: 'Player carrying the ball in a Predator Scrum Cap', caption: 'On the field' },
-  ],
-  // Predator — Maroon & Gold (same shoot)
-  21: [
-    { src: `${CDN}/29544063-Large-Digital-Photo-Download-2810x1873.jpg?v=1744747333&width=800`, alt: 'Match action in a Predator Scrum Cap', caption: 'Live match' },
-    { src: `${CDN}/29544158-Large-Digital-Photo-Download-3428x2285.jpg?v=1744747280&width=800`, alt: 'Player in a Predator Scrum Cap', caption: 'On the field' },
-  ],
-  // White Tribal
-  11: [
-    { src: `${CDN}/Warrior_and_Tribal_Cap_2.jpg?v=1724350156&width=800`, alt: 'Tribal cap worn in a match', caption: 'Live match' },
-    { src: `${CDN}/DSC3288_1__Original.jpg?v=1734264287&width=800`,       alt: 'Collide Sport scrum cap on the field', caption: 'On the field' },
-  ],
-  // Tribal — Black Border
-  15: [
-    { src: `${CDN}/Warrior_and_Tribal_Cap_2.jpg?v=1724350156&width=800`, alt: 'Tribal cap worn in a match', caption: 'Live match' },
-    { src: `${CDN}/DSC3288_1__Original.jpg?v=1734264287&width=800`,       alt: 'Collide Sport scrum cap on the field', caption: 'On the field' },
-  ],
-  // White & Red Tribal
-  22: [
-    { src: `${CDN}/Warrior_and_Tribal_Cap_2.jpg?v=1724350156&width=800`, alt: 'Tribal cap worn in a match', caption: 'Live match' },
+    { src: `${CDN}/52E885BC-C2E8-4007-8B49-04A5AC567F56.jpg?v=1750614416&width=800`,          alt: 'Predator Scrum Cap — Navy & Gold', caption: null },
+    { src: `${CDN}/B1312125-7503-4483-A08E-2A8DE92545E8.jpg?v=1744644600&width=800`,          alt: 'Predator Scrum Cap — Navy & Gold (alternate view)', caption: null },
+    { src: `${CDN}/B56A8E00-266A-4270-A497-81E78BADDB10.jpg?v=1744644600&width=800`,          alt: 'Predator Scrum Cap — Navy & Gold (alternate view)', caption: null },
+    { src: `${CDN}/29544158-Large-Digital-Photo-Download-3428x2285.jpg?v=1744747280&width=800`, alt: 'Player scoring a try in the Predator Scrum Cap', caption: 'Live match' },
+    { src: `${CDN}/29544063-Large-Digital-Photo-Download-2810x1873.jpg?v=1744747333&width=800`, alt: 'Player carrying the ball in the Predator Scrum Cap', caption: 'Live match' },
   ],
 }
 
 /**
- * Full image gallery for a product: studio shot first, then real-life player /
- * live-match slides. Action slides are only added for scrum-cap categories.
+ * Image gallery for a product. Products with a real old-site gallery
+ * (GALLERY_BY_ID) return those exact photos; everything else returns just its
+ * single studio image (so the product page shows no extra slides).
  */
 export function getProductGallery(product) {
-  const studio = { src: gw(product.image), alt: product.name, caption: null }
-  const isCap = product.category === 'scrum-caps' || product.category === 'premium-caps'
-  if (!isCap) return [studio]
-  const action = (ACTION_BY_ID[product.id] || LIVE_ACTION)
-  return [studio, ...action]
+  if (GALLERY_BY_ID[product.id]) return GALLERY_BY_ID[product.id]
+  return [{ src: gw(product.image), alt: product.name, caption: null }]
 }
