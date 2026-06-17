@@ -8,7 +8,7 @@ const CDN = 'https://collidesport.co.za/cdn/shop/files'
 // ── Replace with your Formspree form ID from https://formspree.io ──────────
 const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xpwzgkje'
 
-const STORE_EMAIL     = 'info@collidesport.co.za'
+const STORE_EMAIL     = 'collide.sabre@gmail.com'
 const WHATSAPP_NUMBER = '27827804116'
 const STORE_ADDRESS   = '40 Kenilworth Rd, Kenilworth, Cape Town, 7708'
 const MAPS_QUERY      = '40+Kenilworth+Rd,+Kenilworth,+Cape+Town,+7708'
@@ -292,7 +292,7 @@ export default function About() {
               </div>
               <div className="text-center">
                 <p className="font-display font-bold text-navy mb-1">Email</p>
-                <p className="text-sm text-navy/50">info@collidesport.co.za</p>
+                <p className="text-sm text-navy/50">collide.sabre@gmail.com</p>
                 <p className="text-xs text-blue font-semibold mt-2">Send us an email →</p>
               </div>
             </a>

@@ -9,7 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 const FORMSPREE_ID = import.meta.env.VITE_FORMSPREE_ID
 
 const WHATSAPP_NUMBER = '27827804116'
-const STORE_EMAIL     = 'info@collidesport.co.za'
+const STORE_EMAIL     = 'collide.sabre@gmail.com'
 const STORE_PHONE     = '082 780 4116'
 const STORE_ADDRESS   = '40 Kenilworth Rd, Kenilworth, Cape Town, 7708'
 const MAP_QUERY       = '40+Kenilworth+Rd+Kenilworth+Cape+Town+7708'
