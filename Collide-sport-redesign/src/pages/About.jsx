@@ -10,8 +10,8 @@ const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xpwzgkje'
 
 const STORE_EMAIL     = 'info@collidesport.co.za'
 const WHATSAPP_NUMBER = '27827804116'
-const STORE_ADDRESS   = 'Cape Town, Western Cape, South Africa'
-const MAPS_QUERY      = 'Cape+Town,+Western+Cape,+South+Africa'
+const STORE_ADDRESS   = '40 Kenilworth Rd, Kenilworth, Cape Town, 7708'
+const MAPS_QUERY      = '40+Kenilworth+Rd,+Kenilworth,+Cape+Town,+7708'
 
 const TIMELINE = [
   { year: '2023', title: 'Founded in Cape Town', desc: 'A Cape Town rugby mom frustrated by the lack of quality, affordable headgear on SA shelves decided to do something about it. Collide Sport was born.' },
