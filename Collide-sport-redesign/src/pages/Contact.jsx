@@ -3,11 +3,14 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 
 // ── Store contact details — update these when confirmed ──────────────────────
-const STORE_EMAIL     = 'hello@collidesport.co.za'
-const WHATSAPP_NUMBER = '27000000000'           // digits only, no +
+const STORE_EMAIL     = 'info@collidesport.co.za'
+const STORE_PHONE     = '082 780 4116'
+const WHATSAPP_NUMBER = '27827804116'           // digits only, no +
 const WHATSAPP_MSG    = 'Hi, I need help with my order.'
-const STORE_ADDRESS   = null                    // set to string when confirmed, e.g. '12 Rugby Rd, Bellville, Cape Town, 7530'
+const STORE_ADDRESS   = null                    // set to string when confirmed
 const MAPS_EMBED_URL  = null                    // paste your Google Maps embed src here
+const FACEBOOK_URL    = 'https://www.facebook.com/collide.sport.2023'
+const INSTAGRAM_URL   = 'https://www.instagram.com/collide_sport/'
 
 const WA_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MSG)}`
 
@@ -264,21 +267,21 @@ export default function Contact() {
               </div>
             </a>
 
-            {/* Location */}
-            <div className="flex items-center gap-4 rounded-2xl px-5 py-4 border border-navy/8">
+            {/* Phone */}
+            <a
+              href={`tel:${STORE_PHONE.replace(/\s/g, '')}`}
+              className="flex items-center gap-4 rounded-2xl px-5 py-4 border border-navy/8 hover:border-navy/20 hover:shadow-md transition-all group"
+            >
               <div className="w-11 h-11 rounded-full bg-navy/5 flex items-center justify-center flex-shrink-0">
-                <svg className="w-5 h-5 text-navy/40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/>
-                  <circle cx="12" cy="10" r="3"/>
+                <svg className="w-5 h-5 text-navy/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81 19.79 19.79 0 01.1 1.18 2 2 0 012.09 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.17 7.84a16 16 0 006.02 6.02l1.21-1.21a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
                 </svg>
               </div>
               <div>
-                <p className="font-display font-bold text-navy text-sm">Location</p>
-                <p className="text-navy/45 text-xs">
-                  {STORE_ADDRESS ?? 'Online — ships across SA'}
-                </p>
+                <p className="font-display font-bold text-navy text-sm">Phone</p>
+                <p className="text-navy/45 text-xs font-mono">{STORE_PHONE}</p>
               </div>
-            </div>
+            </a>
           </div>
         </div>
       </section>
@@ -363,6 +366,39 @@ export default function Contact() {
                     </a>
                   </div>
                 )}
+              </div>
+
+              {/* Social media */}
+              <div className="bg-white rounded-2xl p-6 border border-navy/6">
+                <h3 className="font-display font-bold text-navy text-sm mb-4">Follow us</h3>
+                <div className="flex flex-col gap-3">
+                  <a
+                    href={INSTAGRAM_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 text-sm text-navy/70 hover:text-navy transition-colors group"
+                  >
+                    <span className="w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0" style={{ background: 'radial-gradient(circle at 30% 110%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%)' }}>
+                      <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>
+                      </svg>
+                    </span>
+                    <span>@collide_sport</span>
+                  </a>
+                  <a
+                    href={FACEBOOK_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 text-sm text-navy/70 hover:text-navy transition-colors group"
+                  >
+                    <span className="w-8 h-8 rounded-full bg-[#1877F2] flex items-center justify-center flex-shrink-0">
+                      <svg className="w-4 h-4 text-white" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+                      </svg>
+                    </span>
+                    <span>collide.sport.2023</span>
+                  </a>
+                </div>
               </div>
 
               {/* WhatsApp CTA */}

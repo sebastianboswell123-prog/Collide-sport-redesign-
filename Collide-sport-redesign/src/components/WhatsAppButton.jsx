@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 // ── Replace with the store owner's real WhatsApp number (digits only, intl format, no +) ──
-const WHATSAPP_NUMBER = '27000000000'
+const WHATSAPP_NUMBER = '27827804116'
 const PREFILLED_TEXT  = 'Hi, I need help with my order.'
 
 const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(PREFILLED_TEXT)}`

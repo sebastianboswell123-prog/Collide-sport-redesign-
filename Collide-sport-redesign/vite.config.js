@@ -8,6 +8,13 @@ export default defineConfig({
     tailwindcss(),
   ],
 
+  server: {
+    proxy: {
+      '/api': 'http://localhost:3000',
+      '/health': 'http://localhost:3000',
+    },
+  },
+
   build: {
     // Raise the chunk size warning threshold to 600 kB
     chunkSizeWarningLimit: 600,

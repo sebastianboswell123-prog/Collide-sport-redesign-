@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCart } from '../context/CartContext'
+import { api } from '../api'
 
 // ── Constants ────────────────────────────────────────────────────────────────
 const SHIPPING_THRESHOLD = 1000
@@ -141,24 +142,37 @@ function CartRow({ item, onUpdateQty, onRemove }) {
 }
 
 // ── Coupon field ─────────────────────────────────────────────────────────────
-function CouponField({ onApply }) {
-  const [value, setValue]   = useState('')
-  const [state, setState]   = useState(null) // null | 'applied' | 'invalid'
+function CouponField({ subtotal, onApply }) {
+  const [value, setValue]     = useState('')
+  const [state, setState]     = useState(null) // null | 'loading' | 'applied' | 'invalid'
   const [applied, setApplied] = useState('')
+  const [errorMsg, setErrorMsg] = useState('')
+  const [savingMsg, setSavingMsg] = useState('')
 
-  function handleApply(e) {
+  async function handleApply(e) {
     e.preventDefault()
     const code = value.trim().toUpperCase()
     if (!code) return
-    // Validation TBD by client — accept any non-empty code for now
-    setApplied(code)
-    setState('applied')
-    onApply(code)
+    setState('loading')
+    setErrorMsg('')
+    try {
+      const res = await api.validateDiscount(code, subtotal)
+      setApplied(code)
+      setSavingMsg(res.message || `${res.discount_percent}% off applied`)
+      setState('applied')
+      onApply({ code, savingRands: res.saving / 100 })
+    } catch (err) {
+      setErrorMsg(err.data?.error || 'Invalid or expired code')
+      setState('invalid')
+      onApply(null)
+    }
   }
 
   function handleRemove() {
     setValue('')
     setApplied('')
+    setErrorMsg('')
+    setSavingMsg('')
     setState(null)
     onApply(null)
   }
@@ -194,25 +208,32 @@ function CouponField({ onApply }) {
           <input
             type="text"
             value={value}
-            onChange={e => { setValue(e.target.value); setState(null) }}
+            onChange={e => { setValue(e.target.value); setState(null); setErrorMsg('') }}
             placeholder="Enter code"
-            className="flex-1 px-4 py-2.5 rounded-xl border border-navy/12 text-sm text-navy placeholder-navy/30 bg-white focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/10 transition font-mono tracking-wider uppercase"
+            className={`flex-1 px-4 py-2.5 rounded-xl border text-sm text-navy placeholder-navy/30 bg-white focus:outline-none focus:ring-2 transition font-mono tracking-wider uppercase ${
+              state === 'invalid'
+                ? 'border-red-400 focus:border-red-400 focus:ring-red-100'
+                : 'border-navy/12 focus:border-blue focus:ring-blue/10'
+            }`}
             autoComplete="off"
             spellCheck="false"
           />
           <button
             type="submit"
-            disabled={!value.trim()}
+            disabled={!value.trim() || state === 'loading'}
             className="px-4 py-2.5 rounded-xl bg-navy text-white text-sm font-semibold hover:bg-navy/80 disabled:opacity-30 disabled:cursor-not-allowed transition-all whitespace-nowrap"
           >
-            Apply
+            {state === 'loading' ? '…' : 'Apply'}
           </button>
         </form>
       )}
 
-      <p className="text-[11px] text-navy/35 mt-1.5">
-        Discount calculated at checkout. Validation pending client configuration.
-      </p>
+      {state === 'invalid' && (
+        <p className="text-[11px] text-red-500 mt-1.5">{errorMsg}</p>
+      )}
+      {state === 'applied' && savingMsg && (
+        <p className="text-[11px] text-green font-semibold mt-1.5">{savingMsg}</p>
+      )}
     </div>
   )
 }
@@ -252,12 +273,14 @@ function EmptyCart() {
 // ── Main page ────────────────────────────────────────────────────────────────
 export default function Cart() {
   const { items, updateQty, removeFromCart, totalPrice, totalItems } = useCart()
-  const [couponCode, setCouponCode] = useState(null)
+  const [discount, setDiscount] = useState(null) // { code, savingRands } | null
 
-  const shipping   = totalPrice >= SHIPPING_THRESHOLD ? 0 : SHIPPING_RATE
-  const grandTotal = totalPrice + shipping
+  const discountAmount = discount ? discount.savingRands : 0
+  const discountedSubtotal = Math.max(0, totalPrice - discountAmount)
+  const shipping   = discountedSubtotal >= SHIPPING_THRESHOLD ? 0 : SHIPPING_RATE
+  const grandTotal = discountedSubtotal + shipping
   const vatAmount  = vatContent(grandTotal)
-  const toFreeShip = Math.max(0, SHIPPING_THRESHOLD - totalPrice)
+  const toFreeShip = Math.max(0, SHIPPING_THRESHOLD - discountedSubtotal)
 
   return (
     <div className="min-h-screen bg-lavender pt-14 pb-24 lg:pb-16">
@@ -370,8 +393,22 @@ export default function Cart() {
 
                 <div className="border-t border-navy/6" />
 
+                {/* Discount line — shown once a code is applied */}
+                {discount && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    className="flex justify-between text-sm"
+                  >
+                    <span className="text-green font-semibold flex items-center gap-1">
+                      <TagIcon /> {discount.code}
+                    </span>
+                    <span className="font-semibold text-green">−{fmt(discount.savingRands)}</span>
+                  </motion.div>
+                )}
+
                 {/* Coupon */}
-                <CouponField onApply={setCouponCode} />
+                <CouponField subtotal={totalPrice} onApply={setDiscount} />
 
                 <div className="border-t border-navy/6" />
 

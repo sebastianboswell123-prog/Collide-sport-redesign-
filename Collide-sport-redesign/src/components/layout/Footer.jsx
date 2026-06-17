@@ -4,8 +4,8 @@ import { AnimatePresence, motion } from 'framer-motion'
 import CollideLogo from '../CollideLogo'
 
 // ── Store details — update these when confirmed ───────────────────────────────
-const STORE_EMAIL     = 'hello@collidesport.co.za'
-const WHATSAPP_NUMBER = '27000000000'
+const STORE_EMAIL     = 'info@collidesport.co.za'
+const WHATSAPP_NUMBER = '27827804116'
 const WHATSAPP_MSG    = 'Hi, I need help with my order.'
 const VAT_NUMBER      = '4XXXXXXXXX'           // replace with real VAT registration number
 const STORE_ADDRESS   = null                   // e.g. '12 Rugby Rd, Bellville, Cape Town, 7530'
