@@ -53,8 +53,8 @@ const MOSAIC = [
     label: 'Camo Range',
   },
   {
-    src: `${CDN}/Sabre_Sport_Scrum_Cap_2.jpg?v=1690355694&width=800`,
-    alt: 'Scrum Cap Detail',
+    src: `${CDN}/29544063-Large-Digital-Photo-Download-2810x1873.jpg?v=1744747333&width=800`,
+    alt: 'Player wearing the premium Predator scrum cap in a match',
     label: 'Premium Build',
   },
 ]
@@ -62,7 +62,8 @@ const MOSAIC = [
 export default function EditorialLookbook() {
   const heroRef = useRef(null)
   const { scrollYProgress } = useScroll({ target: heroRef, offset: ['start start', 'end start'] })
-  const imgY = useTransform(scrollYProgress, [0, 1], ['0%', '-20%'])
+  // Gentle parallax — kept small so the scrum cap stays framed throughout the scroll
+  const imgY = useTransform(scrollYProgress, [0, 1], ['0%', '-8%'])
 
   return (
     <section className="overflow-hidden">
@@ -70,9 +71,10 @@ export default function EditorialLookbook() {
       <div ref={heroRef} className="relative h-[70vh] overflow-hidden">
         <motion.div className="absolute inset-0 scale-110" style={{ y: imgY }}>
           <AppImage
-            src={`${CDN}/Warrior_Cap_on_Bosch_1st_Team.jpg?v=1724349538&width=1920`}
-            alt="Warrior Cap worn by Bosch 1st Team"
+            src={`${CDN}/29544063-Large-Digital-Photo-Download-2810x1873.jpg?v=1744747333&width=1920`}
+            alt="Player carrying the ball in a Collide Sport scrum cap"
             className="w-full h-full object-cover"
+            style={{ objectPosition: 'center 16%' }}
           />
         </motion.div>
         <div className="absolute inset-0 bg-gradient-to-t from-[#080f2e]/80 via-[#080f2e]/30 to-transparent" />
@@ -151,9 +153,9 @@ export default function EditorialLookbook() {
               alt={alt}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/70 via-transparent to-transparent" />
-            <div className="absolute bottom-5 left-5">
-              <span className="font-mono text-[10px] tracking-widest uppercase text-gold">{label}</span>
+            <div className="absolute inset-0 bg-gradient-to-t from-navy-dark/90 via-navy-dark/20 to-transparent" />
+            <div className="absolute bottom-5 left-5 right-5">
+              <span className="font-mono text-xs font-semibold tracking-widest uppercase text-gold drop-shadow-[0_1px_3px_rgba(0,0,0,0.8)]">{label}</span>
             </div>
           </motion.div>
         ))}

@@ -25,13 +25,14 @@ function saveToStorage(key, value) {
 function reducer(state, action) {
   switch (action.type) {
     case 'ADD': {
+      const addQty = action.qty > 0 ? action.qty : 1
       const index = state.findIndex(item => item.id === action.product.id)
       if (index > -1) {
         return state.map((item, j) =>
-          j === index ? { ...item, qty: item.qty + 1 } : item
+          j === index ? { ...item, qty: item.qty + addQty } : item
         )
       }
-      return [...state, { ...action.product, qty: 1 }]
+      return [...state, { ...action.product, qty: addQty }]
     }
     case 'REMOVE':
       return state.filter(item => item.id !== action.id)
@@ -62,8 +63,8 @@ export function CartProvider({ children }) {
     saveToStorage(RECENT_KEY, recentlyViewed)
   }, [recentlyViewed])
 
-  const addToCart = useCallback((product) => {
-    dispatch({ type: 'ADD', product })
+  const addToCart = useCallback((product, qty = 1) => {
+    dispatch({ type: 'ADD', product, qty })
     setOpen(true)
   }, [])
 
