@@ -9,9 +9,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 const FORMSPREE_ID = import.meta.env.VITE_FORMSPREE_ID
 
 const WHATSAPP_NUMBER = '27827804116'
-const STORE_EMAIL     = 'info@collidesport.co.za'
+const STORE_EMAIL     = 'collide.sabre@gmail.com'
 const STORE_PHONE     = '082 780 4116'
-const MAP_QUERY       = 'Cape+Town+Western+Cape+South+Africa'
+const STORE_ADDRESS   = '40 Kenilworth Rd, Kenilworth, Cape Town, 7708'
+const MAP_QUERY       = '40+Kenilworth+Rd+Kenilworth+Cape+Town+7708'
 
 const SOCIALS = [
   {
@@ -266,7 +267,7 @@ export default function Contact() {
                 <div>
                   <p className="font-display font-bold text-navy">Location</p>
                   <address className="text-sm text-navy/60 not-italic leading-relaxed mt-1">
-                    Cape Town, Western Cape<br />South Africa
+                    40 Kenilworth Rd, Kenilworth<br />Cape Town, 7708
                   </address>
                   <a
                     href={`https://www.google.com/maps/search/?api=1&query=${MAP_QUERY}`}
@@ -280,7 +281,7 @@ export default function Contact() {
               </div>
               <div className="rounded-xl overflow-hidden border border-navy/8">
                 <iframe
-                  title="Collide Sport — Cape Town"
+                  title="Collide Sport — 40 Kenilworth Rd, Kenilworth, Cape Town"
                   width="100%"
                   height="220"
                   className="border-0"

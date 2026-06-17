@@ -6,7 +6,7 @@ import AthleteSpotlight from '../components/AthleteSpotlight'
 import PressWall from '../components/PressWall'
 import { PRODUCTS } from '../data/products'
 import ProductCard from '../components/catalogue/ProductCard'
-import AppImage from '../components/ui/AppImage'
+import AppImage, { cdnSrcSet } from '../components/ui/AppImage'
 
 const INTERVAL = 5000
 const CDN = 'https://collidesport.co.za/cdn/shop/files'
@@ -260,8 +260,10 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
               <>
                 <motion.img
                   src={slide.img}
+                  srcSet={cdnSrcSet(slide.img)}
+                  sizes="100vw"
                   alt=""
-                  loading="lazy"
+                  fetchpriority="high"
                   decoding="async"
                   className="absolute inset-0 w-full h-full object-cover"
                   style={{ objectPosition: slide.objectPosition || 'center center' }}
@@ -618,9 +620,9 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
       {/* ── "Get Your Head in the Game" immersive banner ── */}
       <section className="relative h-[55vh] min-h-[380px] overflow-hidden">
         <AppImage
-          src={`${CDN}/Sabre_Sport_Banner_1.jpg?v=1689080131&width=1920`}
+          src={`${CDN}/Sabre_Sport_Banner_3_48fe279e-896b-4f4f-8ecc-42d42a6427a3.jpg?v=1689316782&width=2880`}
           alt="Get your head in the game"
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover object-center"
         />
         <div className="absolute inset-0 bg-navy-dark/65" />
         <div className="relative flex items-center justify-center h-full text-center px-6">
