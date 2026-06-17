@@ -6,7 +6,7 @@ import AthleteSpotlight from '../components/AthleteSpotlight'
 import PressWall from '../components/PressWall'
 import { PRODUCTS } from '../data/products'
 import ProductCard from '../components/catalogue/ProductCard'
-import AppImage from '../components/ui/AppImage'
+import AppImage, { cdnSrcSet } from '../components/ui/AppImage'
 
 const INTERVAL = 5000
 const CDN = 'https://collidesport.co.za/cdn/shop/files'
@@ -260,8 +260,10 @@ export default function Home({ slides = DEFAULT_SLIDES }) {
               <>
                 <motion.img
                   src={slide.img}
+                  srcSet={cdnSrcSet(slide.img)}
+                  sizes="100vw"
                   alt=""
-                  loading="lazy"
+                  fetchpriority="high"
                   decoding="async"
                   className="absolute inset-0 w-full h-full object-cover"
                   style={{ objectPosition: slide.objectPosition || 'center center' }}
