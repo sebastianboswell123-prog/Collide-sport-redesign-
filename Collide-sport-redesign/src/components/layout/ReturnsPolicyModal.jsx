@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion'
 
-const STORE_EMAIL = 'collide.sabre@gmail.com'
+const STORE_EMAIL = 'info@collidesport.co.za'
 const WA_URL = 'https://wa.me/27827804116?text=' + encodeURIComponent('Hi, I need help with my Collide Sport order.')
 
 const SECTIONS = [

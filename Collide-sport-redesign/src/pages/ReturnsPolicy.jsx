@@ -12,7 +12,7 @@ const SECTIONS = [
   },
   {
     title: '3. How to Return',
-    body: 'Contact us at collide.sabre@gmail.com or via WhatsApp with your order number and reason for return. We will arrange collection or provide a return address. You will receive a full refund or exchange once the item is received and inspected (typically 3–5 business days).',
+    body: 'Contact us at info@collidesport.co.za or via WhatsApp with your order number and reason for return. We will arrange collection or provide a return address. You will receive a full refund or exchange once the item is received and inspected (typically 3–5 business days).',
   },
   {
     title: '4. Defective or Incorrect Items',
@@ -28,7 +28,7 @@ const SECTIONS = [
   },
   {
     title: '7. Contact',
-    body: 'For all returns and refund enquiries: collide.sabre@gmail.com | WhatsApp: +27 82 780 4116 | Or use our contact form.',
+    body: 'For all returns and refund enquiries: info@collidesport.co.za | WhatsApp: +27 82 780 4116 | Or use our contact form.',
   },
 ]
 

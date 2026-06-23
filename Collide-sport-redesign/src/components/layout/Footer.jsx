@@ -5,7 +5,7 @@ import CollideLogo from '../CollideLogo'
 import { VisaBadge, MastercardBadge, PayFastBadge } from './PaymentBadges'
 import ReturnsPolicyModal from './ReturnsPolicyModal'
 
-const STORE_EMAIL     = 'collide.sabre@gmail.com'
+const STORE_EMAIL     = 'info@collidesport.co.za'
 const WHATSAPP_NUMBER = '27827804116'
 const VAT_NUMBER      = '4950265141'
 const STORE_ADDRESS   = '40 Kenilworth Rd, Kenilworth, Cape Town, 7708'
