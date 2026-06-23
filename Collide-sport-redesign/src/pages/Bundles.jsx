@@ -54,7 +54,7 @@ const BUNDLES = [
 const FAQS = [
   { q:'Can I mix colours in a bundle?', a:'Yes! Contact us after placing your order and we\'ll swap the cap to your preferred colourway at no extra cost.' },
   { q:'Do bundle items ship together?', a:'Yes, all items in a bundle are packed and shipped together in one parcel.' },
-  { q:'Are there additional school discounts?', a:'The Schoolboy Starter is already 33% off. For group orders of 10+ kits, email collide.sabre@gmail.com for further discounts.' },
+  { q:'Are there additional school discounts?', a:'The Schoolboy Starter is already 33% off. For group orders of 10+ kits, email info@collidesport.co.za for further discounts.' },
 ]
 
 const fmt = n => `R ${n.toLocaleString()}`

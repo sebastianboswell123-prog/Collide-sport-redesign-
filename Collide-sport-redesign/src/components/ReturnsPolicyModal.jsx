@@ -1,7 +1,7 @@
 import { AnimatePresence, motion } from 'framer-motion'
 
 // ── Store contact (kept here so the modal is self-contained) ──────────────────
-const STORE_EMAIL     = 'collide.sabre@gmail.com'
+const STORE_EMAIL     = 'info@collidesport.co.za'
 const WHATSAPP_NUMBER = '27000000000'
 const WHATSAPP_MSG    = 'Hi, I have a question about returns.'
 const WA_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(WHATSAPP_MSG)}`
