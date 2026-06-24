@@ -1,18 +1,16 @@
-import { useState, useRef } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCart } from '../context/CartContext'
 import { useCurrency } from '../context/CurrencyContext'
 import AppImage from '../components/ui/AppImage'
 
 // ─── PayFast configuration ────────────────────────────────────────────────────
-// Sandbox in dev, live in prod. Replace env vars with real credentials before go-live.
-const IS_PROD = import.meta.env.PROD
-const PAYFAST_URL = IS_PROD
-  ? 'https://www.payfast.co.za/eng/process'
-  : 'https://sandbox.payfast.co.za/eng/process'
-const MERCHANT_ID  = import.meta.env.VITE_PAYFAST_MERCHANT_ID  || '10000100'
-const MERCHANT_KEY = import.meta.env.VITE_PAYFAST_MERCHANT_KEY || '46f0cd694581a'
+// The signed payment request is built server-side (api/checkout/create) so the
+// merchant passphrase is never exposed in the browser. Here we only flag sandbox
+// mode for the UI badge.
+const IS_SANDBOX =
+  (import.meta.env.VITE_PAYFAST_MODE || (import.meta.env.PROD ? 'live' : 'sandbox')) !== 'live'
 
 // ─── SA Provinces ─────────────────────────────────────────────────────────────
 const SA_PROVINCES = [
@@ -113,11 +111,10 @@ const inputClass = (hasError) =>
 export default function Checkout() {
   const { items, totalPrice, clearCart } = useCart()
   const { formatPrice } = useCurrency()
-  const navigate = useNavigate()
-  const payfastFormRef = useRef(null)
-
   const [step, setStep] = useState(0)
   const [errors, setErrors] = useState({})
+  const [submitting, setSubmitting] = useState(false)
+  const [payError, setPayError] = useState('')
 
   const [delivery, setDelivery] = useState({
     firstName: '', lastName: '', email: '', phone: '',
@@ -132,9 +129,6 @@ export default function Checkout() {
   const shippingCost   = shippingOption?.price(totalPrice) ?? 99
   const orderTotal     = totalPrice + shippingCost
   const vatAmount      = Math.round(orderTotal - orderTotal / 1.15)
-
-  // Generate a stable order ID for this session
-  const orderId = useRef(`CS-${Date.now().toString(36).toUpperCase()}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`).current
 
   if (items.length === 0) {
     return (
@@ -164,29 +158,67 @@ export default function Checkout() {
     window.scrollTo(0, 0)
   }
 
-  // ── Step 3: Submit to PayFast ─────────────────────────────────────────────
-  function handlePayNow(e) {
+  // ── Step 3: Submit to PayFast (server-signed) ─────────────────────────────
+  async function handlePayNow(e) {
     e.preventDefault()
     if (!agreedCPA) { alert('Please agree to the returns policy to proceed.'); return }
 
-    // Store order in sessionStorage so confirmation page can read it
-    const order = {
-      orderId,
-      items,
-      delivery,
-      shippingOption: shippingOption?.label,
-      shippingCost,
-      orderTotal,
-      vatAmount,
-      placedAt: new Date().toISOString(),
+    setPayError('')
+    setSubmitting(true)
+    try {
+      const res = await fetch('/api/checkout/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          items: items.map(i => ({ id: i.id, name: i.name, qty: i.qty, price: i.price })),
+          shippingId,
+          amount: orderTotal,
+          customer: {
+            firstName: delivery.firstName,
+            lastName: delivery.lastName,
+            email: delivery.email,
+            phone: delivery.phone,
+            address: `${delivery.address}, ${delivery.city}, ${delivery.province} ${delivery.postalCode}`,
+          },
+        }),
+      })
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}))
+        throw new Error(data.error || 'Could not start payment. Please try again.')
+      }
+      const { process_url, fields, orderNumber } = await res.json()
+
+      // Persist order for the confirmation page (UX continuity across the redirect).
+      sessionStorage.setItem('collide_pending_order', JSON.stringify({
+        orderId: orderNumber,
+        items,
+        delivery,
+        shippingOption: shippingOption?.label,
+        shippingCost,
+        orderTotal,
+        vatAmount,
+        placedAt: new Date().toISOString(),
+      }))
+
+      // Build + submit a hidden form to PayFast with the server-signed fields.
+      const form = document.createElement('form')
+      form.method = 'POST'
+      form.action = process_url
+      form.style.display = 'none'
+      Object.entries(fields).forEach(([name, value]) => {
+        const input = document.createElement('input')
+        input.type = 'hidden'
+        input.name = name
+        input.value = String(value)
+        form.appendChild(input)
+      })
+      document.body.appendChild(form)
+      form.submit()
+    } catch (err) {
+      setPayError(err.message)
+      setSubmitting(false)
     }
-    sessionStorage.setItem('collide_pending_order', JSON.stringify(order))
-
-    // Trigger the hidden PayFast form
-    payfastFormRef.current?.submit()
   }
-
-  const baseUrl = window.location.origin
 
   // ── Render ────────────────────────────────────────────────────────────────
   return (
@@ -355,7 +387,7 @@ export default function Checkout() {
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
                         Secured by PayFast
                       </span>
-                      {!IS_PROD && <span className="text-[10px] bg-orange-100 text-orange-600 px-2 py-0.5 rounded font-mono">SANDBOX</span>}
+                      {IS_SANDBOX && <span className="text-[10px] bg-orange-100 text-orange-600 px-2 py-0.5 rounded font-mono">SANDBOX</span>}
                     </div>
 
                     {/* Delivery summary */}
@@ -394,36 +426,22 @@ export default function Checkout() {
                       </label>
                     </div>
 
+                    {payError && (
+                      <p className="text-sm text-red-500 text-center">{payError}</p>
+                    )}
+
                     <div className="flex gap-3">
-                      <button type="button" onClick={() => { setStep(1); window.scrollTo(0,0) }} className="flex-1 border-2 border-navy/15 text-navy/60 font-semibold py-3.5 rounded-full hover:border-navy/30 transition-colors">
+                      <button type="button" onClick={() => { setStep(1); window.scrollTo(0,0) }} disabled={submitting} className="flex-1 border-2 border-navy/15 text-navy/60 font-semibold py-3.5 rounded-full hover:border-navy/30 transition-colors disabled:opacity-50">
                         ← Back
                       </button>
                       <button
                         type="submit"
-                        disabled={!agreedCPA}
-                        className={`flex-[2] font-bold py-3.5 rounded-full transition-all ${agreedCPA ? 'bg-green text-navy hover:bg-green-dim shadow-lg shadow-green/20' : 'bg-lavender text-navy/30 cursor-not-allowed'}`}
+                        disabled={!agreedCPA || submitting}
+                        className={`flex-[2] font-bold py-3.5 rounded-full transition-all ${agreedCPA && !submitting ? 'bg-green text-navy hover:bg-green-dim shadow-lg shadow-green/20' : 'bg-lavender text-navy/30 cursor-not-allowed'}`}
                       >
-                        Pay {formatPrice(orderTotal)} via PayFast →
+                        {submitting ? 'Redirecting to PayFast…' : `Pay ${formatPrice(orderTotal)} via PayFast →`}
                       </button>
                     </div>
-                  </form>
-
-                  {/* Hidden PayFast form — submitted programmatically */}
-                  <form ref={payfastFormRef} action={PAYFAST_URL} method="POST" className="hidden">
-                    <input type="hidden" name="merchant_id"    value={MERCHANT_ID} />
-                    <input type="hidden" name="merchant_key"   value={MERCHANT_KEY} />
-                    <input type="hidden" name="return_url"     value={`${baseUrl}/order-confirmation`} />
-                    <input type="hidden" name="cancel_url"     value={`${baseUrl}/checkout`} />
-                    <input type="hidden" name="notify_url"     value={`${baseUrl}/api/payfast-notify`} />
-                    <input type="hidden" name="name_first"     value={delivery.firstName} />
-                    <input type="hidden" name="name_last"      value={delivery.lastName} />
-                    <input type="hidden" name="email_address"  value={delivery.email} />
-                    <input type="hidden" name="cell_number"    value={delivery.phone.replace(/\D/g,'')} />
-                    <input type="hidden" name="m_payment_id"   value={orderId} />
-                    <input type="hidden" name="amount"         value={(orderTotal).toFixed(2)} />
-                    <input type="hidden" name="item_name"      value={`Collide Sport Order ${orderId}`} />
-                    <input type="hidden" name="item_description" value={items.slice(0,3).map(i=>`${i.name} x${i.qty}`).join(', ')} />
-                    <input type="hidden" name="custom_str1"    value={JSON.stringify({ address: `${delivery.address}, ${delivery.city}, ${delivery.province} ${delivery.postalCode}`, shipping: shippingOption?.label })} />
                   </form>
                 </motion.div>
               )}
