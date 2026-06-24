@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { PRODUCTS, CATEGORIES } from '../data/products'
 import { useCart } from '../context/CartContext'
+import AppImage from '../components/ui/AppImage'
 
 const COLOUR_MAP = {
   Black: '#1a1a1a', White: '#f5f5f5', Blue: '#4770db', Navy: '#0e1b4d',
@@ -178,7 +179,7 @@ function ProductSelector({ selected, onSelect }) {
               onMouseEnter={e => { e.currentTarget.style.background = '#eff0f5' }}
               onMouseLeave={e => { e.currentTarget.style.background = 'transparent' }}
             >
-              <img
+              <AppImage
                 src={product.image}
                 alt={product.name}
                 style={{ width: 40, height: 40, borderRadius: 6, objectFit: 'cover' }}
@@ -230,7 +231,7 @@ function SelectedBar({ selected, onRemove }) {
               boxShadow: '0 2px 8px rgba(14,27,77,0.06)',
             }}
           >
-            <img
+            <AppImage
               src={product.image}
               alt={product.name}
               style={{ width: 44, height: 44, borderRadius: 8, objectFit: 'cover' }}
@@ -345,7 +346,7 @@ function ComparisonTable({ selected, addToCart, isInCart }) {
       label: 'Image',
       render: (p) => (
         <Link to={`/catalogue?quickview=${p.id}`}>
-          <img
+          <AppImage
             src={p.image}
             alt={p.name}
             style={{
@@ -495,7 +496,7 @@ function MobileCards({ selected, addToCart, isInCart }) {
               border: '1px solid #eff0f5',
             }}
           >
-            <img
+            <AppImage
               src={p.image}
               alt={p.name}
               style={{ width: '100%', aspectRatio: '1/1', objectFit: 'cover' }}

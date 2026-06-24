@@ -28,8 +28,8 @@ export const PRODUCTS = [
   { id: 14, name: 'Warrior Scrum Cap',                          category: 'scrum-caps', price: 550, stock: 13, colours: ['Black','Grey'],        badge: null,      image: `${CDN}/Warrior_Scrum_Cap.jpg?v=1724349324&width=533` },
   { id: 15, name: 'Tribal Scrum Cap — Black Border',            category: 'scrum-caps', price: 550, stock: 16, colours: ['White','Black'],       badge: null,      image: `${CDN}/Tribal_Scrum_Cap_with_Black_Border.jpg?v=1722097747&width=533` },
   { id: 16, name: 'Rugby Scrum Cap — Navy & White',             category: 'scrum-caps', price: 550, stock:  8, colours: ['Navy','White'],        badge: null,      image: `${CDN}/PHOTO-2024-07-24-16-31-06.jpg?v=1722103434&width=533` },
-  { id: 17, name: 'Rugby Scrum Cap — Green & Black',            category: 'scrum-caps', price: 450, stock: 20, colours: ['Green','Black'],       badge: null,      image: `${CDN}/1_165a1aff-9c87-41b8-b1c2-d8304dff7ab1.jpg?v=1722102398&width=533` },
-  { id: 18, name: 'Rugby Scrum Cap — Graffiti',                 category: 'scrum-caps', price: 450, stock: 18, colours: ['White','Black'],       badge: null,      image: `${CDN}/2_edc879f4-ec89-432d-abdb-fa6a49b88508.jpg?v=1722102793&width=533` },
+  { id: 17, name: 'Rugby Scrum Cap — Green & Black',            category: 'scrum-caps', price: 550, salePrice: 450, stock: 20, colours: ['Green','Black'],       badge: null,      image: `${CDN}/1_165a1aff-9c87-41b8-b1c2-d8304dff7ab1.jpg?v=1722102398&width=533` },
+  { id: 18, name: 'Rugby Scrum Cap — Graffiti',                 category: 'scrum-caps', price: 550, salePrice: 450, stock:  0, colours: ['White','Black'],       badge: null,      image: `${CDN}/2_edc879f4-ec89-432d-abdb-fa6a49b88508.jpg?v=1722102793&width=533` },
   { id: 19, name: 'Blue & White Camo — Black Border',           category: 'scrum-caps', price: 550, stock:  6, colours: ['Blue','White','Camo','Black'], badge: 'New', image: `${CDN}/2_5983c119-b758-4faf-9162-85a5b20e170c.jpg?v=1779389799&width=533` },
 
   // ── Premium Caps ────────────────────────────────────────────────────────
@@ -47,3 +47,42 @@ export const PRODUCTS = [
 
 export const PRICE_MIN = Math.min(...PRODUCTS.map(p => p.price))
 export const PRICE_MAX = Math.max(...PRODUCTS.map(p => p.price))
+
+// ── Product image galleries ───────────────────────────────────────────────────
+// Restores the old site's feature: a product's page shows the real photos that
+// were used on collidesport.co.za for that exact cap — including real-life shots
+// of players wearing it. Only products that genuinely had these extra photos on
+// the old site get a gallery; every other product keeps its single studio image.
+// Galleries below mirror the old product pages exactly (served larger, width=800).
+
+const gw = (url) => url.replace(/width=\d+/, 'width=800')
+
+const GALLERY_BY_ID = {
+  // Rugby Scrum Cap — Turquoise/White (old-site gallery: studio + real-life player shots)
+  1: [
+    { src: `${CDN}/ScrumCap-Turquoise_White.jpg?v=1689063382&width=800`,                     alt: 'Rugby Scrum Cap — Turquoise/White', caption: null },
+    { src: `${CDN}/14_d26a6051-8be3-4c53-a8b0-2329811c7d34.jpg?v=1728305634&width=800`,       alt: 'Player wearing the Turquoise/White scrum cap (front)', caption: 'On a player' },
+    { src: `${CDN}/15.jpg?v=1728305633&width=800`,                                            alt: 'Player wearing the Turquoise/White scrum cap (side)',  caption: 'On a player' },
+    { src: `${CDN}/16.jpg?v=1728305634&width=800`,                                            alt: 'Player wearing the Turquoise/White scrum cap',         caption: 'On a player' },
+    { src: `${CDN}/13_99aeeea7-c0ee-4e03-8006-67823fbd61c0.jpg?v=1728305634&width=800`,       alt: 'Player wearing the Turquoise/White scrum cap',         caption: 'On a player' },
+    { src: `${CDN}/17_9a163d61-b6d6-4118-829b-ef2f8e47ca19.jpg?v=1728305634&width=800`,       alt: 'Player wearing the Turquoise/White scrum cap',         caption: 'On a player' },
+  ],
+  // Predator Scrum Cap — Navy & Gold (old-site gallery: studio + live-match shots)
+  20: [
+    { src: `${CDN}/52E885BC-C2E8-4007-8B49-04A5AC567F56.jpg?v=1750614416&width=800`,          alt: 'Predator Scrum Cap — Navy & Gold', caption: null },
+    { src: `${CDN}/B1312125-7503-4483-A08E-2A8DE92545E8.jpg?v=1744644600&width=800`,          alt: 'Predator Scrum Cap — Navy & Gold (alternate view)', caption: null },
+    { src: `${CDN}/B56A8E00-266A-4270-A497-81E78BADDB10.jpg?v=1744644600&width=800`,          alt: 'Predator Scrum Cap — Navy & Gold (alternate view)', caption: null },
+    { src: `${CDN}/29544158-Large-Digital-Photo-Download-3428x2285.jpg?v=1744747280&width=800`, alt: 'Player scoring a try in the Predator Scrum Cap', caption: 'Live match' },
+    { src: `${CDN}/29544063-Large-Digital-Photo-Download-2810x1873.jpg?v=1744747333&width=800`, alt: 'Player carrying the ball in the Predator Scrum Cap', caption: 'Live match' },
+  ],
+}
+
+/**
+ * Image gallery for a product. Products with a real old-site gallery
+ * (GALLERY_BY_ID) return those exact photos; everything else returns just its
+ * single studio image (so the product page shows no extra slides).
+ */
+export function getProductGallery(product) {
+  if (GALLERY_BY_ID[product.id]) return GALLERY_BY_ID[product.id]
+  return [{ src: gw(product.image), alt: product.name, caption: null }]
+}

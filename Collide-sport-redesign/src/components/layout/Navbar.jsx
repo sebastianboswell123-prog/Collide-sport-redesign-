@@ -1,168 +1,167 @@
-import { useState } from 'react'
-import { Link, NavLink } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCart } from '../../context/CartContext'
-import SearchOverlay from '../SearchOverlay'
+import { useLogoClick } from '../EasterEgg'
+import CurrencySelector from '../CurrencySelector'
+import useWishlist from '../../hooks/useWishlist'
+import { SearchIcon, HeartIcon, CartIcon, CloseIcon, MenuIcon } from './NavIcons'
 import CollideLogo from '../CollideLogo'
+import { DesktopSearchBar, MobileSearchBar } from './NavSearch'
+import NavMobileMenu from './NavMobileMenu'
 
 const NAV_LINKS = [
-  { label: 'Catalogue', to: '/catalogue' },
-  { label: 'Fit Finder', to: '/fit-finder' },
-  { label: 'Team Kit',  to: '/team-kit' },
-  { label: 'Compare',   to: '/compare' },
-  { label: 'The Scrum', to: '/blog' },
-  { label: 'Ambassadors', to: '/ambassadors' },
-  { label: 'About',     to: '/about' },
+  { label: 'Shop',    to: '/catalogue' },
+  { label: 'About',   to: '/about' },
+  { label: 'Contact', to: '/contact' },
+]
+
+const MOBILE_MORE = [
+  { label: 'Fit Finder',     to: '/fit-finder' },
+  { label: 'Team Kit',       to: '/team-kit' },
+  { label: 'Compare',        to: '/compare' },
+  { label: 'The Scrum',      to: '/blog' },
+  { label: 'Ambassadors',    to: '/ambassadors' },
+  { label: 'Lookbook',       to: '/lookbook' },
+  { label: 'Bundles',        to: '/bundles' },
+  { label: 'Sustainability', to: '/sustainability' },
 ]
 
 export default function Navbar() {
-  const [menuOpen, setMenuOpen] = useState(false)
+  const { totalItems }  = useCart()
+  const wishlistCount   = useWishlist()
+  const logoClick       = useLogoClick()
+  const navigate        = useNavigate()
+
+  const [menuOpen,   setMenuOpen]   = useState(false)
   const [searchOpen, setSearchOpen] = useState(false)
-  const { totalItems, setOpen: openCart } = useCart()
+  const [query,      setQuery]      = useState('')
+
+  useEffect(() => {
+    if (!searchOpen) setQuery('')
+  }, [searchOpen])
+
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === 'Escape') { setSearchOpen(false); setMenuOpen(false) }
+    }
+    document.addEventListener('keydown', onKey)
+    return () => document.removeEventListener('keydown', onKey)
+  }, [])
+
+  function handleSelect(product) {
+    setSearchOpen(false)
+    navigate(`/catalogue/${product.id}`)
+  }
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-50 bg-white/95 backdrop-blur-sm border-b border-navy/8">
-        <div className="mx-auto max-w-[1440px] px-6 lg:px-12 flex items-center justify-between h-14">
+      <header className="fixed inset-x-0 top-0 z-50 bg-navy-dark border-b border-white/8">
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 lg:px-12 h-14 flex items-center gap-4">
+
           {/* Logo */}
-          <Link to="/" aria-label="Collide Sport — Home">
-            <CollideLogo size="sm" variant="dark" layout="inline" />
+          <Link to="/" onClick={logoClick} className="flex-shrink-0 z-10">
+            <CollideLogo size="sm" variant="light" />
           </Link>
 
-          {/* Desktop nav */}
-          <nav className="hidden lg:flex items-center gap-7">
-            {NAV_LINKS.map(({ label, to }) => (
-              <NavLink
-                key={to}
-                to={to}
-                className={({ isActive }) =>
-                  `text-sm font-medium transition-colors ${isActive ? 'text-blue' : 'text-navy/60 hover:text-navy'}`
-                }
-              >
-                {label}
-              </NavLink>
-            ))}
-          </nav>
+          {/* Desktop centre: nav links ↔ search bar */}
+          <AnimatePresence mode="wait">
+            {!searchOpen ? (
+              <motion.nav key="nav" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }}
+                className="hidden lg:flex items-center gap-8 flex-1 justify-center">
+                {NAV_LINKS.map(({ label, to }) => (
+                  <NavLink key={to} to={to}
+                    className={({ isActive }) => `text-sm font-semibold uppercase tracking-wider transition-colors ${isActive ? 'text-blue' : 'text-white/60 hover:text-white'}`}>
+                    {label}
+                  </NavLink>
+                ))}
+              </motion.nav>
+            ) : (
+              <DesktopSearchBar query={query} setQuery={setQuery} onSelect={handleSelect} />
+            )}
+          </AnimatePresence>
 
-          {/* Right side */}
-          <div className="hidden lg:flex items-center gap-2">
-            <Link to="/contact" className="text-sm font-medium text-navy/60 hover:text-navy transition-colors">
-              Contact
-            </Link>
+          {/* Right icons — desktop */}
+          <div className="hidden lg:flex items-center gap-1 flex-shrink-0 ml-auto">
+            <CurrencySelector />
 
-            {/* Search */}
-            <button
-              onClick={() => setSearchOpen(true)}
-              className="p-2 text-navy/50 hover:text-navy transition-colors"
-              aria-label="Search"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
-              </svg>
+            <button onClick={() => setSearchOpen(o => !o)} aria-label={searchOpen ? 'Close search' : 'Open search'}
+              className={`p-2 rounded-lg transition-colors ${searchOpen ? 'text-blue bg-blue/20' : 'text-white/50 hover:text-white hover:bg-white/10'}`}>
+              {searchOpen ? <CloseIcon className="w-5 h-5" /> : <SearchIcon className="w-5 h-5" />}
             </button>
 
-            {/* Cart */}
-            <button
-              onClick={() => openCart(true)}
-              className="relative p-2 text-navy/50 hover:text-navy transition-colors"
-              aria-label={`Cart (${totalItems} items)`}
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <path d="M16 10a4 4 0 01-8 0" />
-              </svg>
-              {totalItems > 0 && (
+            <Link to="/wishlist" aria-label={`Wishlist (${wishlistCount} items)`}
+              className="relative p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+              <HeartIcon className="w-5 h-5" />
+              {wishlistCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-blue text-white text-[9px] font-bold flex items-center justify-center">
+                  {wishlistCount > 9 ? '9+' : wishlistCount}
+                </span>
+              )}
+            </Link>
+
+            <Link to="/cart" aria-label={`Cart — ${totalItems} item${totalItems !== 1 ? 's' : ''}`}
+              className="relative p-2 text-white/50 hover:text-white hover:bg-white/10 rounded-lg transition-colors">
+              <CartIcon className="w-5 h-5" />
+              {totalItems > 0 && (
+                <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 rounded-full bg-blue text-white text-[9px] font-bold flex items-center justify-center px-0.5">
                   {totalItems > 9 ? '9+' : totalItems}
                 </span>
               )}
-            </button>
+            </Link>
 
-            <Link
-              to="/catalogue"
-              className="bg-blue text-white text-sm font-semibold px-5 py-2 rounded-full hover:bg-blue-light transition-colors"
-            >
+            <Link to="/catalogue" className="ml-2 bg-blue text-white text-xs font-black uppercase tracking-widest px-5 py-2.5 rounded-none hover:bg-blue-light transition-colors">
               Shop Now
             </Link>
           </div>
 
-          {/* Mobile: search + cart + menu */}
-          <div className="lg:hidden flex items-center gap-1">
-            <button
-              onClick={() => setSearchOpen(true)}
-              className="p-2 text-navy/50 hover:text-navy transition-colors"
-              aria-label="Search"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="11" cy="11" r="8" /><path d="M21 21l-4.35-4.35" />
-              </svg>
+          {/* Right icons — mobile */}
+          <div className="lg:hidden flex items-center gap-0.5 ml-auto flex-shrink-0">
+            <button onClick={() => { setSearchOpen(o => !o); setMenuOpen(false) }} aria-label="Search"
+              className={`p-2 rounded-lg transition-colors ${searchOpen ? 'text-blue' : 'text-white/50 hover:text-white'}`}>
+              {searchOpen ? <CloseIcon className="w-5 h-5" /> : <SearchIcon className="w-5 h-5" />}
             </button>
 
-            <button
-              onClick={() => openCart(true)}
-              className="relative p-2 text-navy/50 hover:text-navy transition-colors"
-              aria-label="Cart"
-            >
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z" />
-                <line x1="3" y1="6" x2="21" y2="6" />
-                <path d="M16 10a4 4 0 01-8 0" />
-              </svg>
+            <Link to="/cart" aria-label={`Cart — ${totalItems} items`}
+              className="relative p-2 text-white/50 hover:text-white rounded-lg transition-colors">
+              <CartIcon className="w-5 h-5" />
               {totalItems > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 w-4 h-4 rounded-full bg-blue text-white text-[9px] font-bold flex items-center justify-center">
+                <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 rounded-full bg-blue text-white text-[9px] font-bold flex items-center justify-center px-0.5">
                   {totalItems > 9 ? '9+' : totalItems}
                 </span>
               )}
-            </button>
+            </Link>
 
-            <button
-              className="text-navy p-2"
-              onClick={() => setMenuOpen(o => !o)}
-              aria-label="Toggle menu"
-            >
-              <span className="block w-5 h-0.5 bg-current mb-1" />
-              <span className="block w-5 h-0.5 bg-current mb-1" />
-              <span className="block w-5 h-0.5 bg-current" />
+            <button onClick={() => { setMenuOpen(o => !o); setSearchOpen(false) }} aria-label="Menu"
+              className="p-2 text-white/60 hover:text-white rounded-lg transition-colors">
+              {menuOpen ? <CloseIcon className="w-5 h-5" /> : <MenuIcon className="w-5 h-5" />}
             </button>
           </div>
         </div>
 
-        {/* Mobile menu */}
+        {/* Mobile search bar */}
+        <AnimatePresence>
+          {searchOpen && <MobileSearchBar query={query} setQuery={setQuery} onSelect={handleSelect} />}
+        </AnimatePresence>
+
+        {/* Mobile hamburger menu */}
         <AnimatePresence>
           {menuOpen && (
-            <motion.div
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              className="lg:hidden bg-white border-t border-navy/8 px-6 py-4 flex flex-col gap-3"
-            >
-              {NAV_LINKS.map(({ label, to }) => (
-                <NavLink
-                  key={to}
-                  to={to}
-                  onClick={() => setMenuOpen(false)}
-                  className={({ isActive }) =>
-                    `text-sm font-medium ${isActive ? 'text-blue' : 'text-navy/60'}`
-                  }
-                >
-                  {label}
-                </NavLink>
-              ))}
-              <NavLink to="/contact" onClick={() => setMenuOpen(false)} className={({ isActive }) => `text-sm font-medium ${isActive ? 'text-blue' : 'text-navy/60'}`}>Contact</NavLink>
-              <Link
-                to="/catalogue"
-                onClick={() => setMenuOpen(false)}
-                className="bg-blue text-white text-sm font-semibold px-5 py-2 rounded-full text-center mt-2"
-              >
-                Shop Now
-              </Link>
-            </motion.div>
+            <NavMobileMenu
+              menuOpen={menuOpen}
+              closeMenu={() => setMenuOpen(false)}
+              wishlistCount={wishlistCount}
+              navLinks={NAV_LINKS}
+              moreLinks={MOBILE_MORE}
+            />
           )}
         </AnimatePresence>
       </header>
 
-      <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
+      {/* Backdrop to close search on mobile */}
+      {searchOpen && query && (
+        <div className="fixed inset-0 z-40" onClick={() => setSearchOpen(false)} />
+      )}
     </>
   )
 }

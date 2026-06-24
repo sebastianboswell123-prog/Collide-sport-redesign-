@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
-import { PRODUCTS } from '../data/products'
+import { PRODUCTS, getProductGallery } from '../data/products'
 import { useCart } from '../context/CartContext'
+import AppImage from '../components/ui/AppImage'
 
 const fmt = new Intl.NumberFormat('en-ZA', { style: 'currency', currency: 'ZAR', maximumFractionDigits: 0 })
 
@@ -32,6 +33,10 @@ export default function ProductDetail() {
   const [selectedColour, setSelectedColour] = useState(product?.colours?.[0] ?? null)
   const [qty, setQty]     = useState(1)
   const [added, setAdded] = useState(false)
+  const [activeImg, setActiveImg] = useState(0)
+
+  const gallery = product ? getProductGallery(product) : []
+  const active  = gallery[activeImg] || gallery[0]
 
   if (!product) {
     return (
@@ -88,39 +93,73 @@ export default function ProductDetail() {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-20">
 
-          {/* ── Image ── */}
+          {/* ── Image gallery ── */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.45 }}
-            className="relative aspect-square rounded-3xl overflow-hidden bg-lavender"
+            className="flex flex-col gap-3"
           >
-            <img
-              src={product.image}
-              alt={product.name}
-              className={`w-full h-full object-cover ${outOfStock ? 'opacity-50 grayscale' : ''}`}
-            />
+            {/* Main image */}
+            <div className="relative aspect-square rounded-3xl overflow-hidden bg-lavender">
+              <AppImage
+                key={active?.src}
+                src={active?.src}
+                alt={active?.alt || product.name}
+                className={`w-full h-full object-cover ${outOfStock ? 'opacity-50 grayscale' : ''}`}
+              />
 
-            {/* Sale badge */}
-            {hasSale && (
-              <span className="absolute top-4 left-4 bg-red-500 text-white text-sm font-bold uppercase tracking-wide px-3 py-1.5 rounded-full">
-                −{discountPct}%
-              </span>
-            )}
-
-            {/* Product badge */}
-            {badge && !hasSale && (
-              <span className={`absolute top-4 left-4 text-sm font-bold uppercase tracking-wide px-3 py-1.5 rounded-full ${badge.cls}`}>
-                {badge.label}
-              </span>
-            )}
-
-            {/* Out of stock */}
-            {outOfStock && (
-              <div className="absolute inset-0 bg-navy-dark/60 flex items-center justify-center">
-                <span className="bg-white text-navy font-bold px-6 py-3 rounded-full text-sm uppercase tracking-widest">
-                  Out of Stock
+              {/* "In Action / Live Match" caption on real-life slides */}
+              {active?.caption && (
+                <span className="absolute bottom-4 left-4 flex items-center gap-1.5 bg-navy-dark/70 backdrop-blur-sm text-white text-[11px] font-mono uppercase tracking-widest px-3 py-1.5 rounded-full">
+                  <span className="w-1.5 h-1.5 rounded-full bg-green" />
+                  {active.caption}
                 </span>
+              )}
+
+              {/* Sale badge */}
+              {hasSale && (
+                <span className="absolute top-4 left-4 bg-red-500 text-white text-sm font-bold uppercase tracking-wide px-3 py-1.5 rounded-full">
+                  −{discountPct}%
+                </span>
+              )}
+
+              {/* Product badge */}
+              {badge && !hasSale && (
+                <span className={`absolute top-4 left-4 text-sm font-bold uppercase tracking-wide px-3 py-1.5 rounded-full ${badge.cls}`}>
+                  {badge.label}
+                </span>
+              )}
+
+              {/* Out of stock */}
+              {outOfStock && (
+                <div className="absolute inset-0 bg-navy-dark/60 flex items-center justify-center">
+                  <span className="bg-white text-navy font-bold px-6 py-3 rounded-full text-sm uppercase tracking-widest">
+                    Out of Stock
+                  </span>
+                </div>
+              )}
+            </div>
+
+            {/* Thumbnails — studio shot + real-life player / live-match slides */}
+            {gallery.length > 1 && (
+              <div className="grid grid-cols-5 gap-2.5">
+                {gallery.map((g, i) => (
+                  <button
+                    key={g.src}
+                    onClick={() => setActiveImg(i)}
+                    aria-label={g.caption ? `View: ${g.caption}` : 'View product image'}
+                    className={`relative aspect-square rounded-xl overflow-hidden bg-lavender transition-all ${
+                      i === activeImg ? 'ring-2 ring-blue ring-offset-2' : 'opacity-70 hover:opacity-100'
+                    }`}
+                  >
+                    <AppImage src={g.src} alt={g.alt} className="w-full h-full object-cover" />
+                    {/* tiny live-match dot on action thumbs */}
+                    {g.caption && (
+                      <span className="absolute bottom-1 right-1 w-2 h-2 rounded-full bg-green ring-1 ring-white/70" />
+                    )}
+                  </button>
+                ))}
               </div>
             )}
           </motion.div>

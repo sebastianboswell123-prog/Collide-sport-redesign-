@@ -2,6 +2,7 @@ import { useState, useMemo, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { PRODUCTS } from '../data/products'
+import AppImage from '../components/ui/AppImage'
 
 /* ── helpers ─────────────────────────────────────────────── */
 
@@ -215,7 +216,7 @@ export default function TeamKit() {
                   }}
                 >
                   <div style={{ aspectRatio: '1', overflow: 'hidden', background: '#f3f4f8' }}>
-                    <img
+                    <AppImage
                       src={product.image}
                       alt={product.name}
                       loading="lazy"
@@ -456,8 +457,8 @@ export default function TeamKit() {
         </motion.h2>
         <p style={{ margin: 0, fontSize: '1rem', opacity: 0.9 }}>
           WhatsApp us or email{' '}
-          <a href="mailto:teams@collidesport.co.za" style={{ color: C.green, fontWeight: 600 }}>
-            teams@collidesport.co.za
+          <a href="mailto:info@collidesport.co.za" style={{ color: C.green, fontWeight: 600 }}>
+            info@collidesport.co.za
           </a>
         </p>
       </section>

@@ -29,3 +29,30 @@ jobs:
       - name: Build
         working-directory: Collide-sport-redesign
         run: npm run build
+
+  lighthouse:
+    name: Lighthouse (90+ Perf / A11y / SEO)
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: Collide-sport-redesign/package-lock.json
+
+      - name: Install dependencies
+        working-directory: Collide-sport-redesign
+        run: npm ci
+
+      - name: Build
+        working-directory: Collide-sport-redesign
+        run: npm run build
+
+      - name: Run Lighthouse CI (serves dist, audits /, /catalogue, /about)
+        working-directory: Collide-sport-redesign
+        run: npx --yes @lhci/cli@0.13.x autorun

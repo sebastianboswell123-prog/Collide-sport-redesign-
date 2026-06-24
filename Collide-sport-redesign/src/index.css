@@ -1,15 +1,17 @@
 @import "tailwindcss";
 
 @theme {
-  /* Brand colors */
-  --color-navy: #0e1b4d;
-  --color-navy-dark: #080f2e;
-  --color-blue: #4770db;
-  --color-blue-light: #5a82e8;
+  /* Brand colors — deepened for premium athletic feel */
+  --color-navy: #0a1230;
+  --color-navy-dark: #050916;
+  --color-blue: #3d6be8;
+  --color-blue-light: #5a82ee;
   --color-green: #47db71;
   --color-green-dim: #3bc260;
-  --color-lavender: #eff0f5;
-  --color-lavender-dark: #dfe0e8;
+  --color-gold: #f5c518;
+  --color-gold-dim: #d9ad10;
+  --color-lavender: #eef0f7;
+  --color-lavender-dark: #dcdfe9;
 
   /* Fonts */
   --font-display: "Plus Jakarta Sans", "Outfit", sans-serif;
@@ -49,6 +51,14 @@ body {
 ::selection {
   color: #fff;
   background-color: #4770db;
+}
+
+/* Visible keyboard focus for accessibility. Mouse clicks don't trigger
+   :focus-visible, so this only shows for keyboard/AT users. */
+:focus-visible {
+  outline: 2px solid #4770db;
+  outline-offset: 2px;
+  border-radius: 3px;
 }
 
 ::-webkit-scrollbar { width: 6px; }
@@ -95,35 +105,6 @@ body {
 }
 .animate-skeleton { animation: skeleton 1.5s ease-in-out infinite; }
 
-/* Custom cursor — subtle brand dot on desktop */
-@media (pointer: fine) {
-  * { cursor: none !important; }
-  body::before {
-    content: '';
-    position: fixed;
-    top: 0; left: 0;
-    width: 8px; height: 8px;
-    background: #4770db;
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 99999;
-    transform: translate(var(--cx, -20px), var(--cy, -20px)) translate(-50%, -50%);
-    transition: width 0.15s, height 0.15s, background 0.15s;
-    mix-blend-mode: difference;
-  }
-  body::after {
-    content: '';
-    position: fixed;
-    top: 0; left: 0;
-    width: 32px; height: 32px;
-    border: 1.5px solid rgba(71, 112, 219, 0.3);
-    border-radius: 50%;
-    pointer-events: none;
-    z-index: 99998;
-    transform: translate(var(--cx, -40px), var(--cy, -40px)) translate(-50%, -50%);
-    transition: width 0.25s ease, height 0.25s ease, border-color 0.2s;
-  }
-}
 
 /* Safe area for mobile bottom bar */
 .pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
