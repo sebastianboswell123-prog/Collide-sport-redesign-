@@ -1,4 +1,11 @@
 /**
+ * ⚠️ SUPERSEDED — client-side PayFast helper (unsigned).
+ *
+ * Checkout now builds the SIGNED payment request server-side via
+ * `api/checkout/create` and confirms payment via `api/payfast-notify`.
+ * This module is kept only for reference; do not use it for live payments —
+ * it cannot generate the MD5 signature (the passphrase must stay server-side).
+ *
  * PayFast integration — redirect (Custom Integration) flow.
  *
  * PayFast takes a standard HTML form POST to its process endpoint and then
@@ -68,7 +75,7 @@ export function buildPayfastFields(order) {
     // Redirects
     return_url: `${origin}/order-confirmation?order=${encodeURIComponent(order.orderNumber)}`,
     cancel_url: `${origin}/checkout?cancelled=${encodeURIComponent(order.orderNumber)}`,
-    notify_url: import.meta.env.VITE_PAYFAST_NOTIFY_URL || `${origin}/api/payfast-itn`,
+    notify_url: import.meta.env.VITE_PAYFAST_NOTIFY_URL || `${origin}/api/payfast-notify`,
     // Buyer
     name_first:    firstName || 'Customer',
     name_last:     rest.join(' '),

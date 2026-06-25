@@ -200,12 +200,39 @@ These files are frequently changed by multiple roles — pull latest before edit
 
 ## 6. Environment Variables
 
-No secret environment variables are currently required (the app is fully client-side). If a backend/API is added later, variables must be:
+PayFast checkout adds **server-side** serverless functions (`api/`), so secret
+variables are now required for live payments. See `.env.example` for the full list.
 
+### Server-side (PayFast + order store) — **no `VITE_` prefix**
+
+| Variable | Purpose |
+|---|---|
+| `PAYFAST_MERCHANT_ID` | PayFast merchant ID (live mode) |
+| `PAYFAST_MERCHANT_KEY` | PayFast merchant key (live mode) |
+| `PAYFAST_PASSPHRASE` | PayFast passphrase — used to sign requests & verify the ITN |
+| `PAYFAST_MODE` | `sandbox` (default) or `live` |
+| `KV_REST_API_URL` / `KV_REST_API_TOKEN` | Upstash Redis (auto-injected by the Vercel **Redis** Marketplace integration) — stores pending orders so the ITN can verify the paid amount |
+| `SITE_URL` | Base URL for PayFast return/cancel/notify URLs (optional; falls back to host) |
+
+> These are read only inside `api/` functions and must **never** carry the `VITE_`
+> prefix (that would expose them in the browser bundle).
+
+### Client-side (must be `VITE_`-prefixed)
+
+| Variable | Purpose |
+|---|---|
+| `VITE_PAYFAST_MODE` | Optional — forces the checkout "SANDBOX" badge |
+| `VITE_EMAILJS_*` | Order confirmation emails (see `.env.example`) |
+
+### Rules
 1. Added to Vercel dashboard → **Settings → Environment Variables**
 2. Scoped to the correct environment (Production / Preview / Development)
-3. Prefixed with `VITE_` to be accessible in the client bundle
+3. Only browser-facing values get the `VITE_` prefix; secrets never do
 4. Never committed to the repo
+
+### Provisioning the order store (one-time)
+Vercel dashboard → **Storage → Marketplace → Redis (Upstash)** → connect to the
+project. This injects `KV_REST_API_URL` / `KV_REST_API_TOKEN` automatically.
 
 ---
 
