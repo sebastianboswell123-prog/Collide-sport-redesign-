@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 
-const WHATSAPP_NUMBER = "27827804116";
-const PREFILLED_TEXT = "Hi, I need help with my order.";
+// ── Replace with the store owner's real WhatsApp number (digits only, intl format, no +) ──
+const WHATSAPP_NUMBER = '27827804116'
+const PREFILLED_TEXT  = 'Hi, I need help with my order.'
 
 const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(PREFILLED_TEXT)}`;
 

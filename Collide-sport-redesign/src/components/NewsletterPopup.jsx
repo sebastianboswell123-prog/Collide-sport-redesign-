@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { api } from "../api";
 
 const STORAGE_KEY = "collide_newsletter_dismissed";
 
@@ -7,6 +8,8 @@ export default function NewsletterPopup() {
   const [visible, setVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (localStorage.getItem(STORAGE_KEY) === "true") return;
@@ -23,11 +26,20 @@ export default function NewsletterPopup() {
     localStorage.setItem(STORAGE_KEY, "true");
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email.trim()) return;
-    setSubmitted(true);
-    localStorage.setItem(STORAGE_KEY, "true");
+    setLoading(true);
+    setError("");
+    try {
+      await api.subscribeNewsletter(email.trim());
+      setSubmitted(true);
+      localStorage.setItem(STORAGE_KEY, "true");
+    } catch (err) {
+      setError(err.data?.error || "Something went wrong. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -105,12 +117,17 @@ export default function NewsletterPopup() {
                 />
                 <button
                   type="submit"
-                  className="w-full rounded-full text-white font-semibold py-2.5 text-sm transition hover:opacity-90 cursor-pointer"
+                  disabled={loading}
+                  className="w-full rounded-full text-white font-semibold py-2.5 text-sm transition hover:opacity-90 cursor-pointer disabled:opacity-60"
                   style={{ backgroundColor: "#4770db" }}
                 >
-                  Subscribe
+                  {loading ? "Subscribing…" : "Subscribe"}
                 </button>
               </form>
+
+              {error && (
+                <p className="text-[12px] text-red-500 text-center mt-2">{error}</p>
+              )}
 
               <p className="text-[11px] text-gray-400 text-center mt-3">
                 We respect your privacy. Unsubscribe anytime.

@@ -10,7 +10,7 @@
       ],
       "numberOfRuns": 3,
       "settings": {
-        "chromeFlags": "--no-sandbox --disable-gpu"
+        "chromeFlags": "--no-sandbox --disable-gpu --disable-dev-shm-usage --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-renderer-backgrounding"
       }
     },
 

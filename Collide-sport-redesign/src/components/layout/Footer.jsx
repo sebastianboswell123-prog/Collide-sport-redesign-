@@ -5,12 +5,12 @@ import CollideLogo from '../CollideLogo'
 import { VisaBadge, MastercardBadge, PayFastBadge } from './PaymentBadges'
 import ReturnsPolicyModal from './ReturnsPolicyModal'
 
+// ── Store details — update these when confirmed ───────────────────────────────
 const STORE_EMAIL     = 'info@collidesport.co.za'
 const WHATSAPP_NUMBER = '27827804116'
-const VAT_NUMBER      = '4950265141'
-const STORE_ADDRESS   = '40 Kenilworth Rd, Kenilworth, Cape Town, 7708'
-const STORE_MAPS_URL  = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(STORE_ADDRESS)}`
-const WA_URL = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent('Hi, I need help with my Collide Sport order.')}`
+const WHATSAPP_MSG    = 'Hi, I need help with my order.'
+const VAT_NUMBER      = '4XXXXXXXXX'           // replace with real VAT registration number
+const STORE_ADDRESS   = null                   // e.g. '12 Rugby Rd, Bellville, Cape Town, 7530'
 
 const QUICK_LINKS = [
   { label: 'About Us',   to: '/about' },
