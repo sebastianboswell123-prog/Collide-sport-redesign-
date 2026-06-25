@@ -5,12 +5,8 @@ import AppImage from '../components/ui/AppImage'
 
 const CDN = 'https://collidesport.co.za/cdn/shop/files'
 
-// ── Store contact details — update these when confirmed ──────────────────────
-const STORE_EMAIL     = 'info@collidesport.co.za'
-const WHATSAPP_NUMBER = '27827804116'           // digits only, no +
-const WHATSAPP_MSG    = 'Hi, I need help with my order.'
-const STORE_ADDRESS   = null                    // set to string when confirmed, e.g. '12 Rugby Rd, Bellville, Cape Town, 7530'
-const MAPS_EMBED_URL  = null                    // paste your Google Maps embed src here
+// ── Replace with your Formspree form ID from https://formspree.io ──────────
+const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xpwzgkje'
 
 const STORE_EMAIL     = 'info@collidesport.co.za'
 const WHATSAPP_NUMBER = '27827804116'

@@ -2,7 +2,16 @@ import { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useCart } from '../context/CartContext'
-import { api } from '../api'
+import { useCurrency } from '../context/CurrencyContext'
+import AppImage from '../components/ui/AppImage'
+
+// ─── Coupon codes (client can expand this list) ───────────────────────────────
+const VALID_COUPONS = {
+  COLLIDE10:  { type: 'percent', value: 10,  label: '10% off' },
+  SCHOOL20:   { type: 'percent', value: 20,  label: '20% off for schools' },
+  NEWPLAYER:  { type: 'fixed',   value: 50,  label: 'R50 off first order' },
+  FREESHIP:   { type: 'shipping',value: 0,   label: 'Free shipping' },
+}
 
 const FREE_SHIPPING_THRESHOLD = 1000
 
@@ -118,40 +127,45 @@ function CartItemRow({ item }) {
   )
 }
 
-// ── Coupon field ─────────────────────────────────────────────────────────────
-function CouponField({ subtotal, onApply }) {
-  const [value, setValue]     = useState('')
-  const [state, setState]     = useState(null) // null | 'loading' | 'applied' | 'invalid'
-  const [applied, setApplied] = useState('')
-  const [errorMsg, setErrorMsg] = useState('')
-  const [savingMsg, setSavingMsg] = useState('')
+export default function Cart() {
+  const { items, totalPrice, clearCart } = useCart()
+  const { formatPrice } = useCurrency()
+  const navigate = useNavigate()
 
-  async function handleApply(e) {
+  const [couponInput, setCouponInput] = useState('')
+  const [appliedCoupon, setAppliedCoupon] = useState(null)
+  const [couponError, setCouponError] = useState('')
+  const [couponSuccess, setCouponSuccess] = useState('')
+
+  const subtotal   = totalPrice
+  const discount   = applyDiscount(subtotal, appliedCoupon)
+  const afterDiscount = subtotal - discount
+  const shipping   = ShippingEstimate(afterDiscount, appliedCoupon)
+  const total      = afterDiscount + shipping
+  const vatAmount  = Math.round(total - total / 1.15)
+  const totalExVat = total - vatAmount
+
+  function handleApplyCoupon(e) {
     e.preventDefault()
     const code = couponInput.trim().toUpperCase()
     if (!code) return
-    setState('loading')
-    setErrorMsg('')
-    try {
-      const res = await api.validateDiscount(code, subtotal)
-      setApplied(code)
-      setSavingMsg(res.message || `${res.discount_percent}% off applied`)
-      setState('applied')
-      onApply({ code, savingRands: res.saving / 100 })
-    } catch (err) {
-      setErrorMsg(err.data?.error || 'Invalid or expired code')
-      setState('invalid')
-      onApply(null)
+    const found = VALID_COUPONS[code]
+    if (found) {
+      setAppliedCoupon({ code, ...found })
+      setCouponError('')
+      setCouponSuccess(`✓ "${code}" applied — ${found.label}`)
+      setCouponInput('')
+    } else {
+      setCouponError('Invalid coupon code. Please try again.')
+      setCouponSuccess('')
+      setAppliedCoupon(null)
     }
   }
 
-  function handleRemove() {
-    setValue('')
-    setApplied('')
-    setErrorMsg('')
-    setSavingMsg('')
-    setState(null)
-    onApply(null)
+  function removeCoupon() {
+    setAppliedCoupon(null)
+    setCouponSuccess('')
+    setCouponError('')
   }
 
   // Empty cart
@@ -172,40 +186,9 @@ function CouponField({ subtotal, onApply }) {
             Browse Products
           </Link>
         </motion.div>
-      ) : (
-        <form onSubmit={handleApply} className="flex gap-2">
-          <input
-            type="text"
-            value={value}
-            onChange={e => { setValue(e.target.value); setState(null); setErrorMsg('') }}
-            placeholder="Enter code"
-            className={`flex-1 px-4 py-2.5 rounded-xl border text-sm text-navy placeholder-navy/30 bg-white focus:outline-none focus:ring-2 transition font-mono tracking-wider uppercase ${
-              state === 'invalid'
-                ? 'border-red-400 focus:border-red-400 focus:ring-red-100'
-                : 'border-navy/12 focus:border-blue focus:ring-blue/10'
-            }`}
-            autoComplete="off"
-            spellCheck="false"
-          />
-          <button
-            type="submit"
-            disabled={!value.trim() || state === 'loading'}
-            className="px-4 py-2.5 rounded-xl bg-navy text-white text-sm font-semibold hover:bg-navy/80 disabled:opacity-30 disabled:cursor-not-allowed transition-all whitespace-nowrap"
-          >
-            {state === 'loading' ? '…' : 'Apply'}
-          </button>
-        </form>
-      )}
-
-      {state === 'invalid' && (
-        <p className="text-[11px] text-red-500 mt-1.5">{errorMsg}</p>
-      )}
-      {state === 'applied' && savingMsg && (
-        <p className="text-[11px] text-green font-semibold mt-1.5">{savingMsg}</p>
-      )}
-    </div>
-  )
-}
+      </div>
+    )
+  }
 
   return (
     <div className="pt-14 min-h-screen bg-lavender">
@@ -226,17 +209,12 @@ function CouponField({ subtotal, onApply }) {
         </div>
       </div>
 
-// ── Main page ────────────────────────────────────────────────────────────────
-export default function Cart() {
-  const { items, updateQty, removeFromCart, totalPrice, totalItems } = useCart()
-  const [discount, setDiscount] = useState(null) // { code, savingRands } | null
+      {/* Body */}
+      <div className="mx-auto max-w-[1440px] px-6 lg:px-12 py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8 items-start">
 
-  const discountAmount = discount ? discount.savingRands : 0
-  const discountedSubtotal = Math.max(0, totalPrice - discountAmount)
-  const shipping   = discountedSubtotal >= SHIPPING_THRESHOLD ? 0 : SHIPPING_RATE
-  const grandTotal = discountedSubtotal + shipping
-  const vatAmount  = vatContent(grandTotal)
-  const toFreeShip = Math.max(0, SHIPPING_THRESHOLD - discountedSubtotal)
+          {/* ── Left: Items ── */}
+          <div className="bg-white rounded-2xl p-6 lg:p-8">
 
             {/* Column headers */}
             <div className="hidden sm:grid grid-cols-[1fr_auto] gap-4 pb-3 border-b border-navy/8 mb-1">
@@ -330,26 +308,21 @@ export default function Cart() {
                   </span>
                 </div>
 
-                <div className="border-t border-navy/6" />
-
-                {/* Discount line — shown once a code is applied */}
-                {discount && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    className="flex justify-between text-sm"
-                  >
-                    <span className="text-green font-semibold flex items-center gap-1">
-                      <TagIcon /> {discount.code}
-                    </span>
-                    <span className="font-semibold text-green">−{fmt(discount.savingRands)}</span>
-                  </motion.div>
+                {shipping === 0 && subtotal < FREE_SHIPPING_THRESHOLD && appliedCoupon?.type !== 'shipping' && (
+                  <p className="text-xs text-green-600 bg-green/10 rounded-lg px-3 py-2">
+                    Free shipping applied via coupon
+                  </p>
                 )}
-
-                {/* Coupon */}
-                <CouponField subtotal={totalPrice} onApply={setDiscount} />
-
-                <div className="border-t border-navy/6" />
+                {shipping > 0 && (
+                  <p className="text-xs text-navy/40 bg-lavender rounded-lg px-3 py-2">
+                    Spend {formatPrice(FREE_SHIPPING_THRESHOLD - afterDiscount)} more for free shipping
+                  </p>
+                )}
+                {shipping === 0 && subtotal >= FREE_SHIPPING_THRESHOLD && (
+                  <p className="text-xs text-green-600 bg-green/10 rounded-lg px-3 py-2">
+                    🎉 You qualify for free shipping!
+                  </p>
+                )}
 
                 {/* VAT breakdown */}
                 <div className="border-t border-navy/8 pt-3 space-y-2">
