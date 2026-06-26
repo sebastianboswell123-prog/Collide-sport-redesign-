@@ -1,8 +1,8 @@
 {
   "ci": {
     "collect": {
-      "startServerCommand": "npx --yes serve -s dist -l 5173",
-      "startServerReadyPattern": "Accepting connections",
+      "startServerCommand": "npx vite preview --port 5173",
+      "startServerReadyPattern": "Local:",
       "url": [
         "http://localhost:5173/",
         "http://localhost:5173/catalogue",
