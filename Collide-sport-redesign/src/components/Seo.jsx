@@ -14,7 +14,7 @@ import { useEffect } from 'react'
 
 const SITE_NAME = 'Collide Sport'
 const SITE_URL  = 'https://www.collidesport.co.za'
-const DEFAULT_IMAGE = 'https://collidesport.co.za/cdn/shop/files/COLLIDE_TM_SPORT.png?v=1696518150&width=1200'
+const DEFAULT_IMAGE = 'https://collidesport.co.za/cdn/shop/files/Sabre_Sport_Banner_2_02d6cd8e-fd57-410e-baac-c9e18c9daaa4.jpg?v=1689090191&width=1200'
 
 function upsertMeta(selectorAttr, key, content) {
   if (content == null) return
