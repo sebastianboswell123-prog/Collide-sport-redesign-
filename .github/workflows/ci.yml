@@ -53,6 +53,13 @@ jobs:
         working-directory: Collide-sport-redesign
         run: npm run build
 
+      - name: Start preview server
+        working-directory: Collide-sport-redesign
+        run: |
+          npx vite preview --port 5173 &
+          # Wait until the server responds before handing off to LHCI
+          until curl -sf http://localhost:5173/ > /dev/null; do sleep 1; done
+
       - name: Run Lighthouse CI (serves dist, audits /, /catalogue, /about)
         working-directory: Collide-sport-redesign
-        run: npx --yes @lhci/cli@0.13.x autorun
+        run: npx --yes @lhci/cli@0.14.x autorun
