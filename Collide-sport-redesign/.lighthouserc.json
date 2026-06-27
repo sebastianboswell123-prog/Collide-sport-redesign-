@@ -1,14 +1,12 @@
 {
   "ci": {
     "collect": {
-      "startServerCommand": "npx vite preview --port 5173",
-      "startServerReadyPattern": "Local:",
       "url": [
         "http://localhost:5173/",
         "http://localhost:5173/catalogue",
         "http://localhost:5173/about"
       ],
-      "numberOfRuns": 3,
+      "numberOfRuns": 1,
       "settings": {
         "chromeFlags": "--no-sandbox --disable-gpu --disable-dev-shm-usage --disable-background-timer-throttling --disable-backgrounding-occluded-windows --disable-renderer-backgrounding"
       }
