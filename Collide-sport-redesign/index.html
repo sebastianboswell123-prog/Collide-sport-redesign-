@@ -23,12 +23,13 @@
         the JS bundle loads. React replaces this on mount.
         Background matches the CurtainReveal so there's no flash.
       -->
-      <div id="app-shell" style="position:fixed;inset:0;background:#0e1b4d;display:flex;align-items:center;justify-content:center;z-index:9999;">
-        <svg viewBox="0 0 80 80" width="64" height="64" aria-hidden="true">
-          <circle cx="40" cy="40" r="32" fill="none" stroke="#4770db" stroke-width="5" stroke-dasharray="150 50" stroke-linecap="round">
-            <animateTransform attributeName="transform" type="rotate" from="0 40 40" to="360 40 40" dur="0.9s" repeatCount="indefinite"/>
-          </circle>
+      <div id="app-shell" style="position:fixed;inset:0;background:#0e1b4d;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;z-index:9999;">
+        <!-- Text node = guaranteed LCP candidate for Lighthouse; spinner is decorative only -->
+        <p style="margin:0;color:#ffffff;font-family:system-ui,sans-serif;font-size:1.125rem;font-weight:700;letter-spacing:0.2em;">COLLIDE SPORT</p>
+        <svg viewBox="0 0 40 40" width="32" height="32" aria-hidden="true" style="opacity:0.6;">
+          <circle cx="20" cy="20" r="16" fill="none" stroke="#4770db" stroke-width="3" stroke-dasharray="60 40" stroke-linecap="round" style="transform-origin:center;animation:spin 0.9s linear infinite;"/>
         </svg>
+        <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
       </div>
     </div>
     <script type="module" src="/src/main.jsx"></script>
